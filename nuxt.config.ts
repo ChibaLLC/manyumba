@@ -13,13 +13,13 @@ export default defineNuxtConfig({
 		},
 	},
 	imports: {
-		dirs: ["../shared/types", "../shared/utils", "./shad-cn/ui"],
+		dirs: ["../shared/types", "../shared/utils"],
 	},
 	shadcn: {
 		/**
 		 * Directory that the component lives in.
 		 * @default "./components/ui"
 		 */
-		componentDir: "./app/shad-cn",
-	},
+		componentDir: "./app/components/ui",
+	}
 });

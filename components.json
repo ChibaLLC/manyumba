@@ -12,7 +12,7 @@
   },
   "framework": "nuxt",
   "aliases": {
-    "components": "@/shad-cn",
+    "components": "@/components",
     "utils": "@/utils/shad"
   }
 }
