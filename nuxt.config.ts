@@ -2,7 +2,7 @@
 export default defineNuxtConfig({
 	compatibilityDate: "2024-11-01",
 	devtools: { enabled: true },
-	modules: ["reka-ui/nuxt", "shadcn-nuxt"],
+	modules: ["reka-ui/nuxt", "shadcn-nuxt", "@nuxt/fonts"],
 	future: {
 		compatibilityVersion: 4,
 	},
@@ -21,5 +21,5 @@ export default defineNuxtConfig({
 		 * @default "./components/ui"
 		 */
 		componentDir: "./app/components/ui",
-	}
+	},
 });

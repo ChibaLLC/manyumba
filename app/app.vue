@@ -1,9 +1,13 @@
+<script setup lang="ts">
+import { Toaster } from "./components/ui/toast";
+</script>
 <template>
 	<NuxtLayout>
 		<NuxtLoadingIndicator
-			:color="`repeating-linear-gradient(to right, #ee6c4d, red`"
-			:height="4"
+		:color="`repeating-linear-gradient(to right, #ee6c4d, red`"
+		:height="4"
 		/>
+		<Toaster />
 		<NuxtPage />
 	</NuxtLayout>
 </template>
