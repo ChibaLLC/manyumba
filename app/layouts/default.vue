@@ -1,4 +1,4 @@
 <template>
-	<NavbarTop />
+	<NavTop />
 	<slot />
 </template>
