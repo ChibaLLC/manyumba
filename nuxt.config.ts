@@ -23,12 +23,14 @@ export default defineNuxtConfig({
 		componentDir: "./app/components/ui",
 	},
 	icon: {
-		size: '24px',
+		size: "24px",
 		customCollections: [
 			{
 				dir: "./app/assets/icons",
 				prefix: "local",
 			},
 		],
+		class: "icon",
+		mode: "svg",
 	},
 });
