@@ -25,7 +25,7 @@ const properties = [
 		baths: 2,
 		area: 500,
 		location: "Nairobi - Kinoo, Rungiri",
-		images: ["/placeholder.svg?height=200&width=300"],
+		images: ["https://www.kpmindustries.com/wp-content/uploads/2018/08/Placeholder-Map-Image.png"],
 	},
 	{
 		id: 2,
@@ -35,7 +35,8 @@ const properties = [
 		baths: 2,
 		area: 500,
 		location: "Nairobi - Kinoo, Rungiri",
-		images: ["/placeholder.svg?height=200&width=300"],
+
+		images: ["https://www.kpmindustries.com/wp-content/uploads/2018/08/Placeholder-Map-Image.png"],
 	},
 	{
 		id: 3,
@@ -45,7 +46,8 @@ const properties = [
 		baths: 2,
 		area: 500,
 		location: "Nairobi - Kinoo, Rungiri",
-		images: ["/placeholder.svg?height=200&width=300"],
+
+		images: ["https://www.kpmindustries.com/wp-content/uploads/2018/08/Placeholder-Map-Image.png"],
 	},
 	{
 		id: 4,
@@ -55,7 +57,8 @@ const properties = [
 		baths: 2,
 		area: 500,
 		location: "Nairobi - Kinoo, Rungiri",
-		images: ["/placeholder.svg?height=200&width=300"],
+
+		images: ["https://www.kpmindustries.com/wp-content/uploads/2018/08/Placeholder-Map-Image.png"],
 	},
 ];
 
@@ -114,14 +117,19 @@ const toggleFavorite = (id: number) => {
 				<!-- Property Listings -->
 				<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 					<!-- Property Card 1 -->
-					<div class="bg-white border border-border rounded-md overflow-hidden">
+					<div
+						v-for="property in properties"
+						:key="property.id"
+						class="bg-white border border-border rounded-md overflow-hidden"
+					>
 						<div class="relative">
 							<img
 								src="https://www.kpmindustries.com/wp-content/uploads/2018/08/Placeholder-Map-Image.png"
 								alt="Property"
 								class="w-full h-48 object-cover"
 							/>
-							<div class="absolute top-0 left-0 right-0 flex justify-between p-2">
+
+							<div class="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-2">
 								<button class="bg-white rounded-full p-1 shadow-sm">
 									<ChevronLeftIcon class="h-5 w-5" />
 								</button>
@@ -137,27 +145,29 @@ const toggleFavorite = (id: number) => {
 									<span class="text-muted-foreground text-sm">KES</span>
 									<span class="font-bold text-lg">50,000</span>
 								</div>
-								<div class="bg-gray-200 px-2 py-0.5 rounded text-xs font-medium">RENT</div>
+								<div class="bg-gray-200 px-2 py-0.5 rounded text-xs font-medium">
+									{{ property.type }}
+								</div>
 							</div>
 
 							<div class="flex gap-4 mb-3">
 								<div class="flex items-center">
 									<BedIcon class="h-4 w-4 mr-1 text-muted-foreground" />
-									<span class="text-sm">2 bds</span>
+									<span class="text-sm">{{ property.beds }} bds</span>
 								</div>
 								<div class="flex items-center">
 									<ShowerHeadIcon class="h-4 w-4 mr-1 text-muted-foreground" />
-									<span class="text-sm">2 ba</span>
+									<span class="text-sm">{{ property.baths }} ba</span>
 								</div>
 								<div class="flex items-center">
 									<SquareIcon class="h-4 w-4 mr-1 text-muted-foreground" />
-									<span class="text-sm">500 m²</span>
+									<span class="text-sm">{{ property.area }} m²</span>
 								</div>
 							</div>
 
 							<div class="flex items-center mb-4">
 								<MapPinIcon class="h-4 w-4 mr-1 text-muted-foreground" />
-								<span class="text-sm text-muted-foreground">Nairobi - Kinoo, Rungiri</span>
+								<span class="text-sm text-muted-foreground">{{ property.location }}</span>
 							</div>
 
 							<div class="flex justify-between">
@@ -173,185 +183,11 @@ const toggleFavorite = (id: number) => {
 							</div>
 						</div>
 					</div>
-
-					<!-- Property Card 2 -->
-					<div class="bg-white border border-border rounded-md overflow-hidden">
-						<div class="relative">
-							<img
-								src="https://www.kpmindustries.com/wp-content/uploads/2018/08/Placeholder-Map-Image.png"
-								alt="Property"
-								class="w-full h-48 object-cover"
-							/>
-							<div class="absolute top-0 left-0 right-0 flex justify-between p-2">
-								<button class="bg-white rounded-full p-1 shadow-sm">
-									<ChevronLeftIcon class="h-5 w-5" />
-								</button>
-								<button class="bg-white rounded-full p-1 shadow-sm">
-									<ChevronRightIcon class="h-5 w-5" />
-								</button>
-							</div>
-						</div>
-
-						<div class="p-4">
-							<div class="flex justify-between items-start mb-2">
-								<div>
-									<span class="text-muted-foreground text-sm">KES</span>
-									<span class="font-bold text-lg">5,000,000</span>
-								</div>
-								<div class="bg-gray-200 px-2 py-0.5 rounded text-xs font-medium">SALE</div>
-							</div>
-
-							<div class="flex gap-4 mb-3">
-								<div class="flex items-center">
-									<BedIcon class="h-4 w-4 mr-1 text-muted-foreground" />
-									<span class="text-sm">2 bds</span>
-								</div>
-								<div class="flex items-center">
-									<ShowerHeadIcon class="h-4 w-4 mr-1 text-muted-foreground" />
-									<span class="text-sm">2 ba</span>
-								</div>
-								<div class="flex items-center">
-									<SquareIcon class="h-4 w-4 mr-1 text-muted-foreground" />
-									<span class="text-sm">500 m²</span>
-								</div>
-							</div>
-
-							<div class="flex items-center mb-4">
-								<MapPinIcon class="h-4 w-4 mr-1 text-muted-foreground" />
-								<span class="text-sm text-muted-foreground">Nairobi - Kinoo, Rungiri</span>
-							</div>
-
-							<div class="flex justify-between">
-								<button class="bg-muted hover:bg-muted/80 px-4 py-2 rounded-md text-sm w-3/4">
-									View Listing
-								</button>
-								<button class="border border-muted rounded-md p-2">
-									<HeartIcon class="h-5 w-5 text-muted-foreground" />
-								</button>
-							</div>
-						</div>
-					</div>
-
-					<!-- Property Card 3 -->
-					<div class="bg-white border border-border rounded-md overflow-hidden">
-						<div class="relative">
-							<img
-								src="https://www.kpmindustries.com/wp-content/uploads/2018/08/Placeholder-Map-Image.png"
-								alt="Property"
-								class="w-full h-48 object-cover"
-							/>
-							<div class="absolute top-0 left-0 right-0 flex justify-between p-2">
-								<button class="bg-white rounded-full p-1 shadow-sm">
-									<ChevronLeftIcon class="h-5 w-5" />
-								</button>
-								<button class="bg-white rounded-full p-1 shadow-sm">
-									<ChevronRightIcon class="h-5 w-5" />
-								</button>
-							</div>
-						</div>
-
-						<div class="p-4">
-							<div class="flex justify-between items-start mb-2">
-								<div>
-									<span class="text-muted-foreground text-sm">KES</span>
-									<span class="font-bold text-lg">50,000</span>
-								</div>
-								<div class="bg-gray-200 px-2 py-0.5 rounded text-xs font-medium">RENT</div>
-							</div>
-
-							<div class="flex gap-4 mb-3">
-								<div class="flex items-center">
-									<BedIcon class="h-4 w-4 mr-1 text-muted-foreground" />
-									<span class="text-sm">2 bds</span>
-								</div>
-								<div class="flex items-center">
-									<ShowerHeadIcon class="h-4 w-4 mr-1 text-muted-foreground" />
-									<span class="text-sm">2 ba</span>
-								</div>
-								<div class="flex items-center">
-									<SquareIcon class="h-4 w-4 mr-1 text-muted-foreground" />
-									<span class="text-sm">500 m²</span>
-								</div>
-							</div>
-
-							<div class="flex items-center mb-4">
-								<MapPinIcon class="h-4 w-4 mr-1 text-muted-foreground" />
-								<span class="text-sm text-muted-foreground">Nairobi - Kinoo, Rungiri</span>
-							</div>
-
-							<div class="flex justify-between">
-								<button class="bg-muted hover:bg-muted/80 px-4 py-2 rounded-md text-sm w-3/4">
-									View Listing
-								</button>
-								<button class="border border-muted rounded-md p-2">
-									<HeartIcon class="h-5 w-5 text-muted-foreground" />
-								</button>
-							</div>
-						</div>
-					</div>
-
-					<!-- Property Card 4 -->
-					<div class="bg-white border border-border rounded-md overflow-hidden">
-						<div class="relative">
-							<img
-								src="https://www.kpmindustries.com/wp-content/uploads/2018/08/Placeholder-Map-Image.png"
-								alt="Property"
-								class="w-full h-48 object-cover"
-							/>
-							<div class="absolute top-0 left-0 right-0 flex justify-between p-2">
-								<button class="bg-white rounded-full p-1 shadow-sm">
-									<ChevronLeftIcon class="h-5 w-5" />
-								</button>
-								<button class="bg-white rounded-full p-1 shadow-sm">
-									<ChevronRightIcon class="h-5 w-5" />
-								</button>
-							</div>
-						</div>
-
-						<div class="p-4">
-							<div class="flex justify-between items-start mb-2">
-								<div>
-									<span class="text-muted-foreground text-sm">KES</span>
-									<span class="font-bold text-lg">50,000</span>
-								</div>
-								<div class="bg-gray-200 px-2 py-0.5 rounded text-xs font-medium">RENT</div>
-							</div>
-
-							<div class="flex gap-4 mb-3">
-								<div class="flex items-center">
-									<BedIcon class="h-4 w-4 mr-1 text-muted-foreground" />
-									<span class="text-sm">2 bds</span>
-								</div>
-								<div class="flex items-center">
-									<ShowerHeadIcon class="h-4 w-4 mr-1 text-muted-foreground" />
-									<span class="text-sm">2 ba</span>
-								</div>
-								<div class="flex items-center">
-									<SquareIcon class="h-4 w-4 mr-1 text-muted-foreground" />
-									<span class="text-sm">500 m²</span>
-								</div>
-							</div>
-
-							<div class="flex items-center mb-4">
-								<MapPinIcon class="h-4 w-4 mr-1 text-muted-foreground" />
-								<span class="text-sm text-muted-foreground">Nairobi - Kinoo, Rungiri</span>
-							</div>
-
-							<div class="flex justify-between">
-								<button class="bg-muted hover:bg-muted/80 px-4 py-2 rounded-md text-sm w-3/4">
-									View Listing
-								</button>
-								<button class="border border-muted rounded-md p-2">
-									<HeartIcon class="h-5 w-5 text-muted-foreground" />
-								</button>
-							</div>
-						</div>
-					</div>
 				</div>
 			</div>
 
 			<!-- Right Column - Map -->
-			<div class="w-full lg:w-1/2 h-[600px] bg-muted rounded-md overflow-hidden">
+			<div class="w-full lg:w-1/2 max-h-screen bg-muted rounded-md overflow-hidden">
 				<!-- Map placeholder - In a real app, you would integrate with a maps API -->
 				<img
 					src="https://www.kpmindustries.com/wp-content/uploads/2018/08/Placeholder-Map-Image.png"
