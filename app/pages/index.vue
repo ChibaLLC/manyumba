@@ -62,9 +62,12 @@ const useCurrentLocation = () => {
 			</div>
 
 			<div class="flex justify-end">
-				<button class="border border-input bg-white hover:bg-muted px-6 py-2 rounded-md transition-colors">
+				<NuxtLink
+					to="/listing"
+					class="border border-input bg-white hover:bg-muted px-6 py-2 rounded-md transition-colors"
+				>
 					Next
-				</button>
+				</NuxtLink>
 			</div>
 		</div>
 	</main>
