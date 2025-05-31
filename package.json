@@ -1,5 +1,5 @@
 {
-  "name": "nuxt-app",
+  "name": "manyumba",
   "private": true,
   "type": "module",
   "scripts": {
@@ -13,16 +13,16 @@
     "@nuxt/fonts": "0.10.3",
     "@nuxt/icon": "1.10.3",
     "@nuxtjs/color-mode": "3.5.2",
+    "@nuxtjs/i18n": "9.5.5",
     "@vueuse/core": "^12.5.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.39.2",
     "lucide-vue-next": "^0.475.0",
     "nodemailer": "^6.10.0",
-    "nuxt": "^3.15.4",
+    "nuxt": "^3.17.4",
     "postgres": "^3.4.5",
     "radix-vue": "^1.9.13",
-    "reka-ui": "1.0.0-alpha.9",
     "tailwind-merge": "^3.0.1",
     "tailwindcss": "^4.1.8",
     "tailwindcss-animate": "^1.0.7",
@@ -34,8 +34,7 @@
   },
   "packageManager": "pnpm@9.15.3+sha512.1f79bc245a66eb0b07c5d4d83131240774642caaa86ef7d0434ab47c0d16f66b04e21e0c086eb61e62c77efc4d7f7ec071afad3796af64892fae66509173893a",
   "devDependencies": {
-    "@nuxtjs/tailwindcss": "^6.13.1",
-    "drizzle-kit": "^0.30.4",
-    "shadcn-nuxt": "^0.11.3"
+    "@tailwindcss/vite": "^4.1.8",
+    "drizzle-kit": "^0.30.4"
   }
 }
