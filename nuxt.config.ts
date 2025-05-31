@@ -10,10 +10,12 @@ export default defineNuxtConfig({
   components: {
     dirs: [
       {
+        path: "@/components",
         ignore: ["ui"],
       },
     ],
   },
+  extends: ["github:kgarchie/nuxt-starter#2"],
   nitro: {
     experimental: {
       websocket: true,
