@@ -1,0 +1,19 @@
+{
+	"recommendations": [
+		"antfu.goto-alias",
+		"atommaterial.a-file-icon-vscode",
+		"lokalise.i18n-ally",
+		"antfu.iconify",
+		"pushqrdx.inline-html",
+		"alimozdemir.vscode-nuxt-dx-tools",
+		"doggy8088.quicktype-refresh",
+		"christian-kohler.path-intellisense",
+		"esbenp.prettier-vscode",
+		"yoavbls.pretty-ts-errors",
+		"bradlc.vscode-tailwindcss",
+		"jock.svg",
+		"wayou.vscode-todo-highlight",
+		"chwoerz.type-buddy",
+		"vue.volar"
+	]
+}

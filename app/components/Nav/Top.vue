@@ -11,7 +11,7 @@
 			<li>
 				<button class="border border-black rounded px-3 py-1">List Property</button>
 			</li>
-			<li class="font-semibold"><span>Log In</span> | <span>Log Out</span></li>
+			<li class="font-semibold"><span>Log In</span> | <span>Sig Up</span></li>
 		</ul>
 	</div>
 </template>

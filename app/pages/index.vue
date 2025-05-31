@@ -35,7 +35,7 @@ function variant(expected: typeof query.lease) {
 						<option value="Nairobi, Kiambu, Kenya" />
 						<option value="Juja, Kiambu, Kenya" />
 					</datalist>
-					<Icon name="local:location"/>
+					<Icon name="local:location" />
 				</Input>
 			</div>
 		</main>
