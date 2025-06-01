@@ -1,5 +1,5 @@
 <template>
-    <section class="rounded border border-gray-500 p-8">
-        <slot/>
-    </section>
+  <section class="rounded border-1 border-gray-200 p-8">
+    <slot />
+  </section>
 </template>

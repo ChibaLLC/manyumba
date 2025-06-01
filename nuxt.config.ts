@@ -3,7 +3,7 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineNuxtConfig({
   compatibilityDate: "2025-06-01",
   devtools: { enabled: true },
-  modules: ["@nuxt/fonts", "@nuxt/icon", "@nuxtjs/i18n"],
+  modules: ["@nuxt/fonts", "@nuxt/icon", "@nuxtjs/i18n", "@nuxt/scripts"],
   future: {
     compatibilityVersion: 4,
   },
@@ -16,7 +16,7 @@ export default defineNuxtConfig({
     ],
   },
   css: ["~/assets/css/tailwind.css", "~/assets/css/custom.scss"],
-  extends: ["github:kgarchie/nuxt-starter#2"],
+  extends: ["github:kgarchie/nuxt-starter#4"],
   nitro: {
     experimental: {
       websocket: true,
@@ -49,5 +49,14 @@ export default defineNuxtConfig({
     },
     locales: [{ code: "en", name: "English", file: "en.json" }],
     langDir: "../app/locales",
+  },
+  runtimeConfig: {
+    public: {
+      google: {
+        maps: {
+          key: "",
+        },
+      },
+    },
   },
 });
