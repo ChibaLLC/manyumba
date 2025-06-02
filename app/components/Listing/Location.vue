@@ -31,16 +31,19 @@ type SuggestionResponse = {
   }>;
 };
 
+type SuggestionRequest = {
+  input: string;
+  locationBias?: CircleBias;
+};
+
 type CircleBias = {
-  locationBias: {
-    circle: {
-      center: {
-        latitude: number;
-        longitude: number;
-      };
-      // in meters
-      radius: number;
+  circle: {
+    center: {
+      latitude: number;
+      longitude: number;
     };
+    // in meters
+    radius: number;
   };
 };
 
@@ -58,7 +61,18 @@ const fetchSuggestions = debounce(async (v?: string) => {
       method: "POST",
       body: {
         input: v,
-      },
+        locationBias: location.value
+          ? {
+              circle: {
+                center: {
+                  latitude: location.value.cood.lat,
+                  longitude: location.value.cood.lng,
+                },
+                radius: 1000,
+              },
+            }
+          : undefined,
+      } satisfies SuggestionRequest,
     })
   );
 
@@ -72,6 +86,7 @@ const fetchSuggestions = debounce(async (v?: string) => {
 
 const data = shallowRef<SuggestionResponse>();
 watch(input, fetchSuggestions);
+const location = shallowRef<LocationCoods>();
 </script>
 <template>
   <ListingContainer class="flex flex-col">
@@ -92,7 +107,7 @@ watch(input, fetchSuggestions);
         <option v-for="item of data?.suggestions" :value="item.placePrediction.text.text" />
       </datalist>
     </div>
-    <MapLocator class="my-2" ref="locator" />
+    <MapLocator class="my-2" ref="locator" @location="location = $event" />
     <Button class="self-end">Next</Button>
   </ListingContainer>
 </template>

@@ -13,7 +13,6 @@ watch(
   input,
   (el) => {
     if (!el || !icon.value) return;
-    if (model.value?.trim().length) return;
     const { paddingLeft, paddingBottom, paddingTop, height } = getComputedStyle(el);
     icon.value.style.setProperty("--margin-top", paddingTop);
     icon.value.style.setProperty("--margin-left", paddingLeft);
@@ -61,7 +60,7 @@ watch(
   { immediate: true }
 );
 
-const showIcon = computed(() => !focus.value && !model.value?.trim().length);
+const showIcon = computed(() => !focus.value && !model.value?.length);
 </script>
 <template>
   <div class="relative isolate">
