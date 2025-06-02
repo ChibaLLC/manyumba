@@ -1,15 +1,15 @@
 <template>
-  <section class="h-56 rounded-sm">
-    <div ref="map"></div>
+  <section class="h-60 rounded-sm">
+    <div ref="map" class="h-full w-full"></div>
     <MapLoadingIndicator :loading />
-    <Pin ref="pin" v-if="!loading" />
+    <div ref="pin">
+      <Icon name="bxs:pin" class="text-red-500 w-8 h-8 pin-glow" v-if="!loading" />
+    </div>
   </section>
 </template>
 
 <script setup lang="ts">
 /// <reference types="@types/google.maps" />
-import { Pin } from "lucide-vue-next";
-
 const props = defineProps<{
   initialLocation?: LocationCoods;
 }>();
@@ -25,7 +25,7 @@ const config = useRuntimeConfig();
 const loading = ref(true);
 const pin = useTemplateRef("pin");
 
-const { onLoaded } = useScript(
+const { onLoaded, status } = useScript(
   {
     src: `https://maps.googleapis.com/maps/api/js?key=${config.public.google.maps.key}&v=weekly&solution_channel=GMP_CCS_geolocation_v2&loading=async`,
     async: true,
@@ -115,7 +115,7 @@ async function getCurrentLocation() {
   loading.value = false;
 }
 
-defineExpose({ getCurrentLocation });
+defineExpose({ getCurrentLocation, setMapCenter });
 
 let setUp = false;
 function setUpMap(maps?: typeof google.maps) {
@@ -141,7 +141,7 @@ function setUpMap(maps?: typeof google.maps) {
           const _Map = maps?.Map || google.maps.Map;
           Map.value = new _Map(mapEl.value, {
             center: pos.cood,
-            zoom: 8,
+            zoom: 20,
             // actually required
             mapId: "DEMO_MAP_ID",
           });
@@ -163,6 +163,31 @@ onLoaded((maps) => {
 });
 
 onMounted(() => {
-  setUpMap();
+  if (status.value === "loaded") {
+    setUpMap();
+  } else {
+    let w = watch(
+      status,
+      (state) => {
+        if (state === "loaded") {
+          setUpMap();
+          w.stop();
+        }
+
+        if (state === "error") {
+          $alert("Unable to load google maps");
+          w.stop();
+        }
+      },
+      {
+        immediate: true,
+      }
+    );
+  }
 });
 </script>
+<style>
+.pin-glow svg {
+  box-shadow: 0px 0px 248px 19px var(--color-red-300);
+}
+</style>

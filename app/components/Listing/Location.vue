@@ -36,6 +36,11 @@ type SuggestionRequest = {
   locationBias?: CircleBias;
 };
 
+type Coordinates = {
+  latitude: number;
+  longitude: number;
+};
+
 type CircleBias = {
   circle: {
     center: {
@@ -50,9 +55,39 @@ type CircleBias = {
 const input = ref<string>();
 const config = useRuntimeConfig();
 
-const fetchSuggestions = debounce(async (v?: string) => {
-  v = v?.trim();
-  if (!v) return;
+async function getPlaceCoordinates(placeID: string): Promise<LocationCoods | undefined> {
+  const { result, error } = await execute(
+    $fetch<{ location: Coordinates }>(`https://places.googleapis.com/v1/places/${placeID}`, {
+      headers: {
+        "X-Goog-Api-Key": config.public.google.maps.key,
+        "X-Goog-FieldMask": "location",
+      },
+    })
+  );
+
+  if (error) {
+    $alert("A Google Maps error occurred")
+    return undefined
+  }
+
+  return {
+    isAccurate: true,
+    cood: {
+      lat: result.location.latitude,
+      lng: result.location.longitude,
+    },
+  };
+}
+
+const fetchSuggestions = debounce(async (value?: string) => {
+  value = value?.trim();
+  if (!value) return;
+
+  const prediction = data.value?.suggestions.at(0);
+  if (value === prediction?.placePrediction.text.text) {
+    setPlaceCoords(prediction.placePrediction.placeId);
+    return;
+  }
   const { result, error } = await execute(
     $fetch<SuggestionResponse>("https://places.googleapis.com/v1/places:autocomplete", {
       headers: {
@@ -60,7 +95,7 @@ const fetchSuggestions = debounce(async (v?: string) => {
       },
       method: "POST",
       body: {
-        input: v,
+        input: value,
         locationBias: location.value
           ? {
               circle: {
@@ -87,6 +122,12 @@ const fetchSuggestions = debounce(async (v?: string) => {
 const data = shallowRef<SuggestionResponse>();
 watch(input, fetchSuggestions);
 const location = shallowRef<LocationCoods>();
+
+async function setPlaceCoords(placeID: string) {
+  const coords = await getPlaceCoordinates(placeID);
+  if(!coords) return
+  locator.value?.setMapCenter(coords.cood, coords.isAccurate)
+}
 </script>
 <template>
   <ListingContainer class="flex flex-col">
@@ -104,7 +145,11 @@ const location = shallowRef<LocationCoods>();
         <Icon name="local:location" />
       </Input>
       <datalist id="locations">
-        <option v-for="item of data?.suggestions" :value="item.placePrediction.text.text" />
+        <option
+          v-for="item of data?.suggestions"
+          :value="item.placePrediction.text.text"
+          @click="setPlaceCoords(item.placePrediction.placeId)"
+        />
       </datalist>
     </div>
     <MapLocator class="my-2" ref="locator" @location="location = $event" />
