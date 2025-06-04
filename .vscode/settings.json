@@ -1,0 +1,5 @@
+{
+  "editor.gotoLocation.multipleDefinitions": "goto",
+  "i18n-ally.localesPaths": ["./app/locales"],
+  "i18n-ally.enabledFrameworks": ["vue"]
+}
