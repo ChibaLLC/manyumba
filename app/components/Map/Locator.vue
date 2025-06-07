@@ -132,6 +132,7 @@ function setUpMap(maps?: typeof google.maps) {
           initial: props.initialLocation,
           accurate: false,
           default: {
+            // Out HQ
             lat: -1.258507,
             lng: 36.805931,
           },
@@ -166,6 +167,7 @@ onMounted(() => {
   if (status.value === "loaded") {
     setUpMap();
   } else {
+    // sth dumb I have to do because useScript is unstable
     let w = watch(
       status,
       (state) => {

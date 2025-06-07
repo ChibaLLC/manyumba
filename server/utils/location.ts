@@ -68,5 +68,5 @@ export async function getIpLocation(event: H3Event): Promise<IpapiResponse> {
     });
   }
   const cleanedIp = await cleanIp(ip);
-  return $fetch<IpapiResponse>(`https://ipapi.co/${cleanedIp}/json/`);
+  return proxyRequest(event, `https://ipapi.co/${cleanedIp}/json/`);
 }
