@@ -1,4 +1,5 @@
 <script lang="ts">
+import { computedAsync } from "@vueuse/core";
 export type SuggestionResponse = {
   suggestions: Array<{
     placePrediction: {
@@ -92,6 +93,14 @@ async function emitPlaceCoords(placeID: string) {
   emits("coordinates", coords);
 }
 
+const center = computedAsync(() => {
+  if (props.initialLocation) {
+    return props.initialLocation;
+  }
+
+  return useCoords();
+});
+
 const fetchSuggestions = debounce(async (value?: string) => {
   value = value?.trim();
   if (!value) return;
@@ -109,12 +118,12 @@ const fetchSuggestions = debounce(async (value?: string) => {
       method: "POST",
       body: {
         input: value,
-        locationBias: props.initialLocation
+        locationBias: center.value
           ? {
               circle: {
                 center: {
-                  latitude: props.initialLocation.cood.lat,
-                  longitude: props.initialLocation.cood.lng,
+                  latitude: center.value.cood.lat,
+                  longitude: center.value.cood.lng,
                 },
                 radius: 1000,
               },
