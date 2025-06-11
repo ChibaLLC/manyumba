@@ -54,8 +54,6 @@ async function setMapCenter(pos: google.maps.LatLngLiteral | undefined, isAccura
   Map.value.setCenter(pos);
   if(isAccurate) {
     Map.value.setZoom(25)
-  } else {
-    Map.value.setZoom(15)
   }
 
   if (!marker.value) {
@@ -95,7 +93,7 @@ function enableMapClickSelection() {
         lat: e.latLng.lat(),
         lng: e.latLng.lng(),
       };
-      setMapCenter(coords, true);      
+      setMapCenter(coords, false);      
     }
   });
 }
