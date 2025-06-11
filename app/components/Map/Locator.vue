@@ -148,6 +148,7 @@ function setUpMap(maps?: typeof google.maps) {
             zoom: pos.isAccurate ? 25 : 15,
             // actually required
             mapId: "DEMO_MAP_ID",
+            mapTypeId: "satellite"
           });
         }
 

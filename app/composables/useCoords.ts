@@ -5,14 +5,14 @@ export type LocationCoods = {
   cood: google.maps.LatLngLiteral;
 };
 
-export async function getApproximateLocation(): Promise<google.maps.LatLngLiteral | undefined> {
+export async function getApproximateLocation(): Promise<LocationResult | undefined> {
   const { result: response, error } = await execute(
     (async function () {
       if (import.meta.server) {
         const event = useRequestEvent();
         return await getIpLocation(event!);
       } else {
-        // @ts-ignore
+        // @ts-ignore Deep types
         return await $fetch("/api/ip-lookup");
       }
     })()
@@ -32,8 +32,8 @@ export async function getApproximateLocation(): Promise<google.maps.LatLngLitera
   };
 }
 
-export interface AccurateLocation extends google.maps.LatLngLiteral {
-  accuracy: number;
+export interface LocationResult extends google.maps.LatLngLiteral {
+  accuracy?: number;
 }
 export interface AccurateLocationOptions {
   watch?: boolean;
@@ -42,7 +42,7 @@ export interface AccurateLocationOptions {
   maximumAge?: number;
 }
 
-export async function getAccurateLocation(options?: AccurateLocationOptions): Promise<DeepReadonly<AccurateLocation>> {
+export async function getAccurateLocation(options?: AccurateLocationOptions): Promise<DeepReadonly<LocationResult>> {
   if (import.meta.server) {
     throw createError({
       message: "Cannot get client location on server",
@@ -54,7 +54,7 @@ export async function getAccurateLocation(options?: AccurateLocationOptions): Pr
     throw new Error("Your browser does not support geolocation");
   }
 
-  const location = await new Promise<AccurateLocation>((resolve, reject) => {
+  const location = await new Promise<LocationResult>((resolve, reject) => {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         resolve({
@@ -121,7 +121,7 @@ export async function getLocation(options?: { aproximate?: boolean; watch?: bool
 }
 
 type LocationOptions = {
-  /** @deprecated */
+  /** @deprecated use default */
   initial?: LocationCoods;
   accurate?: boolean;
   default?: LocationCoods["cood"];

@@ -5,6 +5,19 @@ const location = shallowRef<LocationCoods>();
 async function setPlaceCoords(coords: LocationCoods) {
   locator.value?.setMapCenter(coords.cood, coords.isAccurate);
 }
+
+const emits = defineEmits<{
+  location: [LocationCoods];
+}>();
+
+function next() {
+  if (!location.value) {
+    $alert("We couldn't get your location, please retry");
+    return;
+  }
+
+  emits("location", location.value);
+}
 </script>
 <template>
   <ListingContainer class="flex flex-col">
@@ -21,6 +34,6 @@ async function setPlaceCoords(coords: LocationCoods) {
       <InputLocation @coordinates="setPlaceCoords" :initialLocation="location" />
     </div>
     <MapLocator class="my-2" ref="locator" @location="location = $event" />
-    <Button class="self-end">Next</Button>
+    <Button class="self-end" @click="next()">Next</Button>
   </ListingContainer>
 </template>
