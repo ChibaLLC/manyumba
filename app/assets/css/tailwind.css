@@ -32,6 +32,8 @@
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
+    --navy: hsl(222, 47%, 11%);
+
     --ring: 222.2 84% 4.9%;
 
     --radius: 0.5rem;
@@ -43,6 +45,10 @@
     --sidebar-accent-foreground: hsl(240 5.9% 10%);
     --sidebar-border: hsl(220 13% 91%);
     --sidebar-ring: hsl(217.2 91.2% 59.8%);
+
+    --navy: hsl(222, 47%, 11%);
+    --sky-100: hsl(210, 40%, 96%);
+    --sky-200: hsl(213, 27%, 74%);
   }
 
   .dark {
@@ -83,9 +89,11 @@
     --sidebar-accent-foreground: hsl(240 4.8% 95.9%);
     --sidebar-border: hsl(240 3.7% 15.9%);
     --sidebar-ring: hsl(217.2 91.2% 59.8%);
+
+    --navy: hsl(217.2 91.2% 59.8%);
   }
 
-  @theme inline {
+  @theme {
     --color-sidebar: var(--sidebar);
     --color-sidebar-foreground: var(--sidebar-foreground);
     --color-sidebar-primary: var(--sidebar-primary);
@@ -94,6 +102,9 @@
     --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-ring: var(--sidebar-ring);
+    --color-navy: var(--navy);
+    --color-sky-100: var(--sky-100);
+    --color-sky-200: var(--sky-200);
   }
 
   * {
