@@ -26,19 +26,10 @@ function variant(expected: typeof query.lease) {
             <Icon name="local:heart-home" class="w-5 h-5" /> Buy
           </Button>
         </div>
-        <Input
+        <InputLocation
           class="w-[600px] h-14 rounded-lg focus:outline-none focus:ring-1 ring-purple-400 px-4 text-16 mulish lg:w-[700px]"
-          list="locations"
-          style="max-width: 80vw"
           placeholder="Enter a city, town or location to search"
-          autocomplete="off"
-        >
-          <datalist id="locations">
-            <option value="Nairobi, Kiambu, Kenya" />
-            <option value="Juja, Kiambu, Kenya" />
-          </datalist>
-          <Icon name="local:location" />
-        </Input>
+        />
       </div>
     </main>
   </section>

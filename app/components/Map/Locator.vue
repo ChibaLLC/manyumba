@@ -52,6 +52,9 @@ async function setMapCenter(pos: google.maps.LatLngLiteral | undefined, isAccura
   if (!Map.value || !pos) return;
 
   Map.value.setCenter(pos);
+  if(isAccurate) {
+    Map.value.setZoom(25)
+  }
 
   if (!marker.value) {
     loading.value = true;
@@ -90,7 +93,7 @@ function enableMapClickSelection() {
         lat: e.latLng.lat(),
         lng: e.latLng.lng(),
       };
-      setMapCenter(coords, false);
+      setMapCenter(coords, false);      
     }
   });
 }
@@ -132,6 +135,7 @@ function setUpMap(maps?: typeof google.maps) {
           initial: props.initialLocation,
           accurate: false,
           default: {
+            // Our HQ
             lat: -1.258507,
             lng: 36.805931,
           },
@@ -141,9 +145,10 @@ function setUpMap(maps?: typeof google.maps) {
           const _Map = maps?.Map || google.maps.Map;
           Map.value = new _Map(mapEl.value, {
             center: pos.cood,
-            zoom: 20,
+            zoom: pos.isAccurate ? 25 : 15,
             // actually required
             mapId: "DEMO_MAP_ID",
+            mapTypeId: "satellite"
           });
         }
 
@@ -166,6 +171,7 @@ onMounted(() => {
   if (status.value === "loaded") {
     setUpMap();
   } else {
+    // sth dumb I have to do because useScript is unstable
     let w = watch(
       status,
       (state) => {
