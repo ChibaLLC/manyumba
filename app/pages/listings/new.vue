@@ -13,8 +13,8 @@ export const listingSchema = z.object({
   basicInfo: z.object({
     title: z.string().min(5, "Title must be at least 5 characters"),
     description: z.string().min(20, "Description must be at least 20 characters"),
-    propertyType: z.enum(["apartment", "house", "commercial", "plot", "land"]),
-    listingType: z.enum(["rent", "sale"]),
+    propertyType: z.enum(["apartment", "house", "commercial", "plot", "land"] as const),
+    listingType: z.enum(["rent", "sale"] as const),
     price: z.number().positive("Price must be positive"),
     bedrooms: z.number().int().optional(),
     bathrooms: z.number().int().optional(),
@@ -50,13 +50,11 @@ export type ListingData = z.infer<typeof listingSchema>;
 
 <script setup lang="ts">
 import { Button } from "@/components/ui/button";
-import { useRouter } from "vue-router";
 
 const steps = ref(0);
 const data = reactive<Partial<ListingData>>({});
-const router = useRouter();
 
-const stepTitles = ["Location", "Basic Information", "Address", "Images", "Features", "Review"];
+const stepTitles = ["Location", "Basic Information", "Address", "Images", "Features", "Review"] as const;
 
 function handleLocation(locationData: any) {
   data.location = locationData;
@@ -85,9 +83,9 @@ function handleFeatures(featuresData: any) {
 
 function handleSubmit() {
   // Here you would handle the final submission
-  router.push("/listings");
+  navigateTo("/listings");
   // Show success message
-  $alert("Listing created successfully!", { type: "success" });
+  $alert("Listing created successfully!");
 }
 
 function goBack() {
@@ -117,18 +115,20 @@ function goBack() {
       </div>
 
       <!-- Step Components -->
-      <div class="h-full grid place-items-center grow">
+      <div class="h-full grid place-items-center grow w-full">
         <ListingLocation v-if="steps === 0" @location="handleLocation" />
 
         <ListingInformationBasic v-if="steps === 1" @next="handleBasicInfo" @back="goBack" />
 
-        <ListingInformationAddress v-if="steps === 2" @next="handleAddress" @back="goBack" />
+        <ListingInformationDetails v-if="steps === 2" :propertyType="data.basicInfo?.propertyType" />
 
-        <ListingInformationImages v-if="steps === 3" @next="handleImages" @back="goBack" />
+        <ListingInformationAddress v-if="steps === 3" @next="handleAddress" @back="goBack" />
+
+        <ListingInformationImages v-if="steps === 4" @next="handleImages" @back="goBack" />
 
         <ListingInformationFeatures v-if="steps === 4" @next="handleFeatures" @back="goBack" />
 
-        <ListingInformationReview v-if="steps === 5" :data="data" @submit="handleSubmit" @back="goBack" />
+        <ListingInformationReview v-if="steps === 6" :data="data" @submit="handleSubmit" @back="goBack" />
       </div>
     </div>
   </section>
