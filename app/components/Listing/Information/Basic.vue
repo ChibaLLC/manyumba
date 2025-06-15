@@ -1,64 +1,27 @@
+<script lang="ts">
+export type PropertyType = "house" | "land";
+export type ListingType = "sale" | "rent";
+</script>
 <script setup lang="ts">
 import { z } from "zod/v4";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-// Define the schema for basic information
-const basicInfoSchema = z.object({
-  title: z.string().min(5, "Title must be at least 5 characters"),
-  description: z.string().min(20, "Description must be at least 20 characters"),
-  propertyType: z.enum(["apartment", "house", "commercial", "plot", "land"]),
-  listingType: z.enum(["rent", "sale"]),
-  price: z.number().positive("Price must be positive"),
-  bedrooms: z.number().int().optional(),
-  bathrooms: z.number().int().optional(),
-  area: z.number().positive("Area must be positive").optional(),
-  yearBuilt: z.number().int().optional(),
-});
+const listingType = ref<ListingType>("sale");
+const propertyType = ref<PropertyType>("house");
 
-export type BasicInfoData = z.infer<typeof basicInfoSchema>;
-
-const basicInfo = reactive<BasicInfoData>({
-  title: "",
-  description: "",
-  propertyType: "house",
-  listingType: "sale",
-  price: 0,
-});
-
-const emits = defineEmits<{
-  next: [BasicInfoData];
-  back: [];
-}>();
-
-const listingType = ref<"sale" | "rent">("sale");
-const propertyType = ref<"house" | "land">("house");
 const homeType = ref<string>("");
-
 const homeTypes = ["Single Family", "Townhouse", "Condo", "Apartment", "Duplex", "Mobile Home", "Cabin", "Loft"];
-
 const landTypes = ["Residential", "Commercial", "Agricultural", "Industrial", "Recreational"];
 
 const filteredTypes = computed(() => {
   return propertyType.value === "house" ? homeTypes : landTypes;
 });
 
-function setListingType(type: "sale" | "rent") {
-  listingType.value = type;
-  basicInfo.listingType = type;
-}
-
-function setPropertyType(type: "house" | "land") {
-  propertyType.value = type;
-  basicInfo.propertyType = type === "house" ? "house" : "land";
-}
-
 function next() {
   try {
-    const validated = basicInfoSchema.parse(basicInfo);
-    emits("next", validated);
+    // const validated = basicInfoSchema.parse(basicInfo);
+    // emits("next", validated);
   } catch (error) {
     if (error instanceof z.ZodError) {
       $alert(error.message);
@@ -70,6 +33,19 @@ function next() {
 
 function back() {
   emits("back");
+}
+
+const emits = defineEmits<{
+  next: [BasicInfoData];
+  back: [];
+}>();
+
+function setListingType(type: ListingType) {
+  listingType.value = type;
+}
+
+function setPropertyType(type: PropertyType) {
+  propertyType.value = type;
 }
 </script>
 
@@ -144,49 +120,6 @@ function back() {
         >
           {{ type }}
         </Button>
-      </div>
-    </div>
-
-    <div class="mt-6">
-      <h2 class="newton font-semibold text-lg mb-2">Property Details</h2>
-      <div class="space-y-4">
-        <div>
-          <label class="block text-sm font-medium mb-1">Title</label>
-          <Input v-model="basicInfo.title" placeholder="Enter property title" class="w-full" />
-        </div>
-        <div>
-          <label class="block text-sm font-medium mb-1">Description</label>
-          <Textarea v-model="basicInfo.description" placeholder="Describe your property" class="w-full min-h-[120px]" />
-        </div>
-        <div>
-          <label class="block text-sm font-medium mb-1">Price</label>
-          <div class="relative">
-            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
-            <Input v-model.number="basicInfo.price" type="number" placeholder="0.00" class="w-full pl-8" />
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="mt-6" v-if="propertyType === 'house'">
-      <h2 class="newton font-semibold text-lg mb-2">Home Features</h2>
-      <div class="grid grid-cols-2 gap-4">
-        <div>
-          <label class="block text-sm font-medium mb-1">Bedrooms</label>
-          <Input v-model.number="basicInfo.bedrooms" type="number" placeholder="0" class="w-full" />
-        </div>
-        <div>
-          <label class="block text-sm font-medium mb-1">Bathrooms</label>
-          <Input v-model.number="basicInfo.bathrooms" type="number" placeholder="0" class="w-full" />
-        </div>
-        <div>
-          <label class="block text-sm font-medium mb-1">Area (sq ft)</label>
-          <Input v-model.number="basicInfo.area" type="number" placeholder="0" class="w-full" />
-        </div>
-        <div>
-          <label class="block text-sm font-medium mb-1">Year Built</label>
-          <Input v-model.number="basicInfo.yearBuilt" type="number" placeholder="2023" class="w-full" />
-        </div>
       </div>
     </div>
 
