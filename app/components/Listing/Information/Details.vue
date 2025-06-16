@@ -1,17 +1,17 @@
 <script lang="ts">
-import { z } from "zod/v4";
+import { z } from "zod/v4/mini";
 import type { PropertyType } from "./Basic.vue";
 
 const basicInfoSchema = z.object({
-  title: z.string().min(5, "Title must be at least 5 characters"),
-  description: z.string().min(20, "Description must be at least 20 characters"),
+  title: z.string().check(z.minLength(5, "Title must be at least 5 characters")),
+  description: z.string().check(z.minLength(20, "Description must be at least 20 characters")),
   propertyType: z.enum(["apartment", "house", "commercial", "plot", "land"]),
   listingType: z.enum(["rent", "sale"]),
-  price: z.number().positive("Price must be positive"),
-  bedrooms: z.number().int().optional(),
-  bathrooms: z.number().int().optional(),
-  area: z.number().positive("Area must be positive").optional(),
-  yearBuilt: z.number().int().optional(),
+  price: z.number().check(z.positive("Price must be positive")),
+  bedrooms: z.number().check(z.int()),
+  bathrooms: z.number().check(z.int()),
+  area: z.number().check(z.positive("Area must be positive")),
+  yearBuilt: z.number().check(z.int()),
 });
 
 export type BasicInfoData = z.infer<typeof basicInfoSchema>;

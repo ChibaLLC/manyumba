@@ -1,26 +1,19 @@
 <script setup lang="ts">
-import { z } from "zod/v4";
+import { z } from "zod/v4/mini";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import useZodState from "~/composables/useZodState";
 
 // Define the schema for address information
-const addressSchema = z.object({
-  address: z.string().min(5, "Address must be at least 5 characters"),
-  city: z.string().min(2, "City must be at least 2 characters"),
-  state: z.string().min(2, "State must be at least 2 characters"),
-  zipCode: z.string().min(3, "Zip code must be at least 3 characters"),
-  country: z.string().min(2, "Country must be at least 2 characters"),
+const address = useZodState({
+  address: z.string().check(z.minLength(5, "Address must be at least 5 characters")),
+  city: z.string().check(z.minLength(2, "City must be at least 2 characters")),
+  state: z.string().check(z.minLength(2, "State must be at least 2 characters")),
+  zipCode: z.string().check(z.minLength(3, "Zip code must be at least 3 characters")),
+  country: z.string().check(z.minLength(2, "Country must be at least 2 characters")),
 });
 
-export type AddressData = z.infer<typeof addressSchema>;
-
-const addressInfo = reactive<AddressData>({
-  address: "",
-  city: "",
-  state: "",
-  zipCode: "",
-  country: "",
-});
+export type AddressData = z.infer<(typeof address)["schema"]>;
 
 const emits = defineEmits<{
   next: [AddressData];
@@ -28,15 +21,15 @@ const emits = defineEmits<{
 }>();
 
 function next() {
-  try {
-    const validated = addressSchema.parse(addressInfo);
-    emits("next", validated);
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      $alert(error.errors[0].message);
-    } else {
-      $alert("Please fill all required fields");
-    }
+  const { success, data, error } = address.validate({
+    prettifyError: true,
+    flattenError: true,
+  });
+
+  if (success) {
+    emits("next", data);
+  } else {
+    console.log(error);
   }
 }
 
