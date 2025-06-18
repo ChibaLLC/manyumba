@@ -1,8 +1,8 @@
 <script lang="ts">
-export const propertyType = ["apartment", "house", "commercial", "plot", "land"] as const
-export const listingType = ["rent", "sale"] as const
+export const propertyType = ["apartment", "house", "commercial", "plot", "land"] as const;
+export const listingType = ["rent", "sale"] as const;
 export type ListingType = (typeof listingType)[number];
-export type PropertyType = (typeof propertyType)[number]
+export type PropertyType = (typeof propertyType)[number];
 </script>
 <script setup lang="ts">
 import { z } from "zod/v4";
@@ -10,27 +10,29 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { BasicInfoData } from "./Details.vue";
 
-const listingType = ref<ListingType>("sale");
-const propertyType = ref<PropertyType>("house");
-
+const form = reactive<BasicInfoData>(<BasicInfoData>{});
 const homeType = ref<string>("");
-const homeTypes = ["Single Family", "Townhouse", "Condo", "Apartment", "Duplex", "Mobile Home", "Cabin", "Loft"] as const;
+const homeTypes = [
+  "Single Family",
+  "Townhouse",
+  "Condo",
+  "Apartment",
+  "Duplex",
+  "Mobile Home",
+  "Cabin",
+  "Loft",
+] as const;
 const landTypes = ["Residential", "Commercial", "Agricultural", "Industrial", "Recreational"] as const;
 
 const filteredTypes = computed(() => {
-  return propertyType.value === "house" ? homeTypes : landTypes;
+  return form.propertyType === "house" ? homeTypes : landTypes;
 });
 
 function next() {
   try {
-    // const validated = basicInfoSchema.parse(basicInfo);
-    // emits("next", validated);
+    emits("next", form);
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      $alert(error.message);
-    } else {
-      $alert("Please fill all required fields");
-    }
+    toast.error(error);
   }
 }
 
@@ -44,11 +46,11 @@ const emits = defineEmits<{
 }>();
 
 function setListingType(type: ListingType) {
-  listingType.value = type;
+  form.listingType = type;
 }
 
 function setPropertyType(type: PropertyType) {
-  propertyType.value = type;
+  form.propertyType = type;
 }
 </script>
 
@@ -63,14 +65,14 @@ function setPropertyType(type: PropertyType) {
       <h2 class="newton font-semibold text-lg mb-2">Lease Type</h2>
       <div class="flex gap-3">
         <Button
-          :class="listingType === 'sale' ? 'bg-navy text-white' : 'text-navy bg-sky-100 border-sky-200 border'"
+          :class="form.listingType === 'sale' ? 'bg-navy text-white' : 'text-navy bg-sky-100 border-sky-200 border'"
           @click="setListingType('sale')"
         >
           <Icon name="local:heart-home" class="mr-2" />
           Sale
         </Button>
         <Button
-          :class="listingType === 'rent' ? 'bg-navy text-white' : 'text-navy bg-sky-100 border-sky-200 border'"
+          :class="form.listingType === 'rent' ? 'bg-navy text-white' : 'text-navy bg-sky-100 border-sky-200 border'"
           @click="setListingType('rent')"
         >
           <Icon name="local:smile-home" class="mr-2" />
@@ -83,14 +85,14 @@ function setPropertyType(type: PropertyType) {
       <h2 class="newton font-semibold text-lg mb-2">Property Type</h2>
       <div class="flex gap-3">
         <Button
-          :class="propertyType === 'house' ? 'bg-navy text-white' : 'text-navy bg-sky-100 border-sky-200 border'"
+          :class="form.propertyType === 'house' ? 'bg-navy text-white' : 'text-navy bg-sky-100 border-sky-200 border'"
           @click="setPropertyType('house')"
         >
           <Icon name="local:shroom-home" class="mr-2" />
           Home
         </Button>
         <Button
-          :class="propertyType === 'land' ? 'bg-navy text-white' : 'text-navy bg-sky-100 border-sky-200 border'"
+          :class="form.propertyType === 'land' ? 'bg-navy text-white' : 'text-navy bg-sky-100 border-sky-200 border'"
           @click="setPropertyType('land')"
         >
           <Icon name="local:land" class="mr-2" />
@@ -100,7 +102,7 @@ function setPropertyType(type: PropertyType) {
     </div>
 
     <div class="mt-6">
-      <h2 class="newton font-semibold text-lg mb-2">{{ propertyType === "house" ? "Home" : "Land" }} Type</h2>
+      <h2 class="newton font-semibold text-lg mb-2">{{ form.propertyType === "house" ? "Home" : "Land" }} Type</h2>
       <div class="relative flex items-center mb-4">
         <span class="absolute left-3 text-gray-400">
           <Icon name="local:search" class="w-4 h-4" />

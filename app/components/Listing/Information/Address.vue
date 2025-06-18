@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { z } from "zod/v4/mini";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import useZodState from "~/composables/useZodState";
@@ -19,6 +18,7 @@ const emits = defineEmits<{
   next: [AddressData];
   back: [];
 }>();
+const addressInfo = reactive<AddressData>(<AddressData>{});
 
 function next() {
   const { error, data } = addressData.validate({

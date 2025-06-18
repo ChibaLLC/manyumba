@@ -74,6 +74,10 @@ function handleBasicInfo(basicInfoData: any) {
   listing.data.basicInfo = basicInfoData;
   steps.value++;
 }
+function handleInformationDetails(basicInfo: ListingData["basicInfo"]) {
+  data.basicInfo = basicInfo;
+  steps.value++;
+}
 
 function handleAddress(addressData: any) {
   listing.data.address = addressData;
@@ -138,6 +142,7 @@ function goBack() {
 
         <ListingInformationImages v-if="steps === 4" @next="handleImages" @back="goBack" />
 
+        <ListingInformationFeatures v-if="steps === 5" @next="handleFeatures" @back="goBack" />
         <ListingInformationFeatures v-if="steps === 5" @next="handleFeatures" @back="goBack" />
 
         <ListingInformationReview v-if="steps === 6" :data="listing.data" @submit="handleSubmit" @back="goBack" />
