@@ -37,7 +37,6 @@ const imageSchema = z.object({
   isFeatured: z.boolean(),
 });
 
-
 export const listing = useZodState({
   location: z.object({
     cood: coordSchema,
@@ -56,10 +55,9 @@ export const listing = useZodState({
     features: z.record(z.string(), z.boolean()),
     customFeatures: z.array(z.string()),
   }),
-})
+});
 
-
-export type ListingData = z.infer<typeof listing['schema']>
+export type ListingData = z.infer<(typeof listing)["schema"]>;
 </script>
 
 <script setup lang="ts">
@@ -140,7 +138,7 @@ function goBack() {
 
         <ListingInformationImages v-if="steps === 4" @next="handleImages" @back="goBack" />
 
-        <ListingInformationFeatures v-if="steps === 4" @next="handleFeatures" @back="goBack" />
+        <ListingInformationFeatures v-if="steps === 5" @next="handleFeatures" @back="goBack" />
 
         <ListingInformationReview v-if="steps === 6" :data="listing.data" @submit="handleSubmit" @back="goBack" />
       </div>

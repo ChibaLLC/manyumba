@@ -14,8 +14,8 @@ const listingType = ref<ListingType>("sale");
 const propertyType = ref<PropertyType>("house");
 
 const homeType = ref<string>("");
-const homeTypes = ["Single Family", "Townhouse", "Condo", "Apartment", "Duplex", "Mobile Home", "Cabin", "Loft"];
-const landTypes = ["Residential", "Commercial", "Agricultural", "Industrial", "Recreational"];
+const homeTypes = ["Single Family", "Townhouse", "Condo", "Apartment", "Duplex", "Mobile Home", "Cabin", "Loft"] as const;
+const landTypes = ["Residential", "Commercial", "Agricultural", "Industrial", "Recreational"] as const;
 
 const filteredTypes = computed(() => {
   return propertyType.value === "house" ? homeTypes : landTypes;
