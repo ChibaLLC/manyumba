@@ -1,83 +1,94 @@
 <script lang="ts">
-import { z } from "zod/v4";
+import { z } from "zod/v4/mini";
+import { listingType, propertyType } from "~/components/Listing/Information/Basic.vue";
 
-// Define the complete schema for the listing
-export const listingSchema = z.object({
+// Reusable coord object
+const coordSchema = z.object({
+  lat: z.number(),
+  lng: z.number(),
+});
+
+// Reusable basicInfo block
+const basicInfoSchema = z.object({
+  title: z.string().check(z.minLength(5)),
+  description: z.string().check(z.minLength(20)),
+  propertyType: z.enum(propertyType),
+  listingType: z.enum(listingType),
+  price: z.number().check(z.gt(0)),
+  bedrooms: z.optional(z.number().check(z.int())),
+  bathrooms: z.optional(z.number().check(z.int())),
+  area: z.optional(z.number().check(z.gt(0))),
+  yearBuilt: z.optional(z.number().check(z.int())),
+});
+
+// Reusable address block
+const addressSchema = z.object({
+  address: z.string().check(z.minLength(5)),
+  city: z.string().check(z.minLength(2)),
+  state: z.string().check(z.minLength(2)),
+  zipCode: z.string().check(z.minLength(3)),
+  country: z.string().check(z.minLength(2)),
+});
+
+// Image object schema
+const imageSchema = z.object({
+  file: z.instanceof(File),
+  preview: z.string(),
+  isFeatured: z.boolean(),
+});
+
+
+export const listing = useZodState({
   location: z.object({
-    cood: z.object({
-      lat: z.number(),
-      lng: z.number(),
-    }),
+    cood: coordSchema,
     isAccurate: z.boolean(),
   }),
-  basicInfo: z.object({
-    title: z.string().min(5, "Title must be at least 5 characters"),
-    description: z.string().min(20, "Description must be at least 20 characters"),
-    propertyType: z.enum(["apartment", "house", "commercial", "plot", "land"] as const),
-    listingType: z.enum(["rent", "sale"] as const),
-    price: z.number().positive("Price must be positive"),
-    bedrooms: z.number().int().optional(),
-    bathrooms: z.number().int().optional(),
-    area: z.number().positive("Area must be positive").optional(),
-    yearBuilt: z.number().int().optional(),
-  }),
-  address: z.object({
-    address: z.string().min(5, "Address must be at least 5 characters"),
-    city: z.string().min(2, "City must be at least 2 characters"),
-    state: z.string().min(2, "State must be at least 2 characters"),
-    zipCode: z.string().min(3, "Zip code must be at least 3 characters"),
-    country: z.string().min(2, "Country must be at least 2 characters"),
-  }),
+
+  basicInfo: basicInfoSchema,
+
+  address: addressSchema,
+
   images: z.object({
-    images: z
-      .array(
-        z.object({
-          file: z.instanceof(File),
-          preview: z.string(),
-          isFeatured: z.boolean(),
-        }),
-      )
-      .min(1, "At least one image is required"),
+    images: z.array(imageSchema).check(z.minLength(1)),
   }),
+
   features: z.object({
     features: z.record(z.string(), z.boolean()),
     customFeatures: z.array(z.string()),
   }),
-});
+})
 
-export type ListingData = z.infer<typeof listingSchema>;
+
+export type ListingData = z.infer<typeof listing['schema']>
 </script>
 
 <script setup lang="ts">
-import { Button } from "@/components/ui/button";
-
 const steps = ref(0);
-const data = reactive<Partial<ListingData>>({});
 
 const stepTitles = ["Location", "Basic Information", "Address", "Images", "Features", "Review"] as const;
 
 function handleLocation(locationData: any) {
-  data.location = locationData;
+  listing.data.location = locationData;
   steps.value++;
 }
 
 function handleBasicInfo(basicInfoData: any) {
-  data.basicInfo = basicInfoData;
+  listing.data.basicInfo = basicInfoData;
   steps.value++;
 }
 
 function handleAddress(addressData: any) {
-  data.address = addressData;
+  listing.data.address = addressData;
   steps.value++;
 }
 
 function handleImages(imagesData: any) {
-  data.images = imagesData;
+  listing.data.images = imagesData;
   steps.value++;
 }
 
 function handleFeatures(featuresData: any) {
-  data.features = featuresData;
+  listing.data.features = featuresData;
   steps.value++;
 }
 
@@ -120,7 +131,10 @@ function goBack() {
 
         <ListingInformationBasic v-if="steps === 1" @next="handleBasicInfo" @back="goBack" />
 
-        <ListingInformationDetails v-if="steps === 2" :propertyType="data.basicInfo?.propertyType" />
+        <ListingInformationDetails
+          v-if="listing.data.basicInfo?.propertyType && steps === 2"
+          :propertyType="listing.data.basicInfo?.propertyType"
+        />
 
         <ListingInformationAddress v-if="steps === 3" @next="handleAddress" @back="goBack" />
 
@@ -128,7 +142,7 @@ function goBack() {
 
         <ListingInformationFeatures v-if="steps === 4" @next="handleFeatures" @back="goBack" />
 
-        <ListingInformationReview v-if="steps === 6" :data="data" @submit="handleSubmit" @back="goBack" />
+        <ListingInformationReview v-if="steps === 6" :data="listing.data" @submit="handleSubmit" @back="goBack" />
       </div>
     </div>
   </section>

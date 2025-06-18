@@ -7,11 +7,11 @@ const basicInfoSchema = z.object({
   description: z.string().check(z.minLength(20, "Description must be at least 20 characters")),
   propertyType: z.enum(["apartment", "house", "commercial", "plot", "land"]),
   listingType: z.enum(["rent", "sale"]),
-  price: z.number().check(z.positive("Price must be positive")),
-  bedrooms: z.number().check(z.int()),
-  bathrooms: z.number().check(z.int()),
-  area: z.number().check(z.positive("Area must be positive")),
-  yearBuilt: z.number().check(z.int()),
+  price: z.optional(z.number().check(z.positive("Price must be positive"))),
+  bedrooms: z.optional(z.number().check(z.int())),
+  bathrooms: z.optional(z.number().check(z.int())),
+  area: z.optional(z.number().check(z.positive("Area must be positive"))),
+  yearBuilt: z.optional(z.number().check(z.int())),
 });
 
 export type BasicInfoData = z.infer<typeof basicInfoSchema>;
@@ -48,7 +48,7 @@ defineProps<{
           <label class="block text-sm font-medium mb-1">Price</label>
           <div class="relative">
             <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
-            <Input v-model.number="basicInfo.price" type="number" placeholder="0.00" class="w-full pl-8" />
+            <Input v-model="basicInfo.price" type="number" placeholder="0.00" class="w-full pl-8" />
           </div>
         </div>
       </div>
@@ -59,19 +59,19 @@ defineProps<{
       <div class="grid grid-cols-2 gap-4">
         <div>
           <label class="block text-sm font-medium mb-1">Bedrooms</label>
-          <Input v-model.number="basicInfo.bedrooms" type="number" placeholder="0" class="w-full" />
+          <Input v-model="basicInfo.bedrooms" type="number" placeholder="0" class="w-full" />
         </div>
         <div>
           <label class="block text-sm font-medium mb-1">Bathrooms</label>
-          <Input v-model.number="basicInfo.bathrooms" type="number" placeholder="0" class="w-full" />
+          <Input v-model="basicInfo.bathrooms" type="number" placeholder="0" class="w-full" />
         </div>
         <div>
           <label class="block text-sm font-medium mb-1">Area (sq ft)</label>
-          <Input v-model.number="basicInfo.area" type="number" placeholder="0" class="w-full" />
+          <Input v-model="basicInfo.area" type="number" placeholder="0" class="w-full" />
         </div>
         <div>
           <label class="block text-sm font-medium mb-1">Year Built</label>
-          <Input v-model.number="basicInfo.yearBuilt" type="number" placeholder="2023" class="w-full" />
+          <Input v-model="basicInfo.yearBuilt" type="number" placeholder="2023" class="w-full" />
         </div>
       </div>
     </div>

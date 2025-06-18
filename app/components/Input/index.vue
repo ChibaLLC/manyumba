@@ -3,7 +3,7 @@ defineOptions({
   inheritAttrs: false,
 });
 
-const model = defineModel<string>();
+const model = defineModel<number | string | undefined>();
 const focus = ref(false);
 const input = useTemplateRef("input");
 const icon = useTemplateRef("icon");
@@ -60,7 +60,7 @@ watch(
   { immediate: true }
 );
 
-const showIcon = computed(() => !focus.value && !model.value?.length);
+const showIcon = computed(() => !focus.value && !model.value?.toString()?.length);
 </script>
 <template>
   <div class="relative isolate">

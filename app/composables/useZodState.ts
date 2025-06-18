@@ -37,7 +37,7 @@ export function validate<T extends z.core.$ZodShape>(
   data: unknown,
   params?: ValidateParams & { flattenError?: boolean; prettifyError?: boolean },
 ) {
-  const result = safeParse(schema, data, params);
+  const result = safeParse(schema, data, params) as any;
   if (result.error) {
     if (params?.flattenError) {
       result.error = z.flattenError(result.error);

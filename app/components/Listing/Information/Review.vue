@@ -1,14 +1,9 @@
 <script setup lang="ts">
 import { Button } from "@/components/ui/button";
+import type { ListingData } from "~/pages/listings/new.vue";
 
 const props = defineProps<{
-  data: {
-    location: any;
-    basicInfo: any;
-    address: any;
-    images: any;
-    features: any;
-  };
+  data: Partial<ListingData>;
 }>();
 
 const emits = defineEmits<{

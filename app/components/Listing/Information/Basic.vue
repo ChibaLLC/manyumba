@@ -1,11 +1,14 @@
 <script lang="ts">
-export type PropertyType = "house" | "land";
-export type ListingType = "sale" | "rent";
+export const propertyType = ["apartment", "house", "commercial", "plot", "land"] as const
+export const listingType = ["rent", "sale"] as const
+export type ListingType = (typeof listingType)[number];
+export type PropertyType = (typeof propertyType)[number]
 </script>
 <script setup lang="ts">
 import { z } from "zod/v4";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import type { BasicInfoData } from "./Details.vue";
 
 const listingType = ref<ListingType>("sale");
 const propertyType = ref<PropertyType>("house");

@@ -1,4 +1,5 @@
-import { z } from "zod/v4";
+// FIXME: Maybe we shouldn't dump everything into one file, opt to co-locate
+import { z } from "zod/v4/mini";
 
 // Enums
 export const propertyTypeEnum = z.enum(["apartment", "house", "commercial", "plot", "land"]);
@@ -13,27 +14,68 @@ export const locationSchema = z.object({
   }),
   isAccurate: z.boolean(),
 });
-
 // Basic information schema
 export const basicInfoSchema = z.object({
-  title: z.string().min(5, "Title must be at least 5 characters"),
-  description: z.string().min(20, "Description must be at least 20 characters"),
+  title: z
+    .string()
+    .check(z.minLength(5))
+    .check(
+      // Custom error message is supported via an inline refine, since check() doesn't accept message directly
+      z.refine((value) => value.length >= 5, { error: "Title must be at least 5 characters" })
+    ),
+
+  description: z
+    .string()
+    .check(z.minLength(20))
+    .check(z.refine((value) => value.length >= 20, { error: "Description must be at least 20 characters" })),
+
   propertyType: propertyTypeEnum,
   listingType: listingTypeEnum,
-  price: z.number().positive("Price must be positive"),
-  bedrooms: z.number().int().optional(),
-  bathrooms: z.number().int().optional(),
-  area: z.number().positive("Area must be positive").optional(),
-  yearBuilt: z.number().int().optional(),
+
+  price: z
+    .number()
+    .check(z.gt(0))
+    .check(z.refine((value) => value > 0, { error: "Price must be positive" })),
+
+  bedrooms: z.optional(z.number().check(z.int())),
+  bathrooms: z.optional(z.number().check(z.int())),
+
+  area: z.optional(
+    z
+      .number()
+      .check(z.gt(0))
+      .check(z.refine((value) => value > 0, { error: "Area must be positive" }))
+  ),
+
+  yearBuilt: z.optional(z.number().check(z.int())),
 });
 
 // Address schema
 export const addressSchema = z.object({
-  address: z.string().min(5, "Address must be at least 5 characters"),
-  city: z.string().min(2, "City must be at least 2 characters"),
-  state: z.string().min(2, "State must be at least 2 characters"),
-  zipCode: z.string().min(3, "Zip code must be at least 3 characters"),
-  country: z.string().min(2, "Country must be at least 2 characters"),
+  address: z
+    .string()
+    .check(z.minLength(5))
+    .check(z.refine((value) => value.length >= 5, { error: "Address must be at least 5 characters" })),
+
+  city: z
+    .string()
+    .check(z.minLength(2))
+    .check(z.refine((value) => value.length >= 2, { error: "City must be at least 2 characters" })),
+
+  state: z
+    .string()
+    .check(z.minLength(2))
+    .check(z.refine((value) => value.length >= 2, { error: "State must be at least 2 characters" })),
+
+  zipCode: z
+    .string()
+    .check(z.minLength(3))
+    .check(z.refine((value) => value.length >= 3, { error: "Zip code must be at least 3 characters" })),
+
+  country: z
+    .string()
+    .check(z.minLength(2))
+    .check(z.refine((value) => value.length >= 2, { error: "Country must be at least 2 characters" })),
 });
 
 // Images schema
@@ -43,10 +85,10 @@ export const imagesSchema = z.object({
       z.object({
         file: z.instanceof(File),
         preview: z.string(),
-        isFeatured: z.boolean().default(false),
-      }),
+        isFeatured: z.optional(z.boolean()),
+      })
     )
-    .min(1, "At least one image is required"),
+    .check(z.minLength(1)),
 });
 
 // Features schema
