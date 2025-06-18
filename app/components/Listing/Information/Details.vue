@@ -1,40 +1,35 @@
-<script lang="ts">
-import { z } from "zod/v4/mini";
-import type { PropertyType } from "./Basic.vue";
-
-const basicInfoSchema = z.object({
-  title: z.string().check(z.minLength(5, "Title must be at least 5 characters")),
-  description: z.string().check(z.minLength(20, "Description must be at least 20 characters")),
-  propertyType: z.enum(["apartment", "house", "commercial", "plot", "land"]),
-  listingType: z.enum(["rent", "sale"]),
-  price: z.number().check(z.positive("Price must be positive")),
-  bedrooms: z.number().check(z.int()),
-  bathrooms: z.number().check(z.int()),
-  area: z.number().check(z.positive("Area must be positive")),
-  yearBuilt: z.number().check(z.int()),
-});
-
-export type BasicInfoData = z.infer<typeof basicInfoSchema>;
-</script>
 <script setup lang="ts">
 import { Textarea } from "@/components/ui/textarea";
+import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
+import type { BasicInfoData } from "~~/shared/schemas/listing";
+const props = defineProps<{
+  basicInfo: BasicInfoData;
+}>();
 
 const basicInfo = reactive<BasicInfoData>({
-  title: "",
-  description: "",
-  propertyType: "house",
-  listingType: "sale",
-  price: 0,
+  ...props.basicInfo,
 });
 
-defineProps<{
-  propertyType: PropertyType;
+const emits = defineEmits<{
+  back: [];
+  next: [BasicInfoData];
 }>();
+
+const next = () => {
+  emits("next", basicInfo);
+};
+const back = () => {
+  emits("back");
+};
 </script>
 <template>
-  <section>
+  <ListingContainer>
+    <div>
+      <h1 class="dm-serif-text text-4xl">Property Details</h1>
+      <p class="mulish">Property Details</p>
+    </div>
     <div class="mt-6">
-      <h2 class="newton font-semibold text-lg mb-2">Property Details</h2>
       <div class="space-y-4">
         <div>
           <label class="block text-sm font-medium mb-1">Title</label>
@@ -54,7 +49,7 @@ defineProps<{
       </div>
     </div>
 
-    <div class="mt-6" v-if="propertyType === 'house'">
+    <div class="mt-6" v-if="basicInfo.propertyType === 'house'">
       <h2 class="newton font-semibold text-lg mb-2">Home Features</h2>
       <div class="grid grid-cols-2 gap-4">
         <div>
@@ -75,5 +70,9 @@ defineProps<{
         </div>
       </div>
     </div>
-  </section>
+    <div class="mt-8 flex justify-between">
+      <Button variant="outline" @click="back">Back</Button>
+      <Button class="bg-navy text-white" @click="next">Next</Button>
+    </div>
+  </ListingContainer>
 </template>

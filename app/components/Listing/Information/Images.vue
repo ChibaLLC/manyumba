@@ -1,21 +1,7 @@
 <script setup lang="ts">
 import { z } from "zod/v4";
 import { Button } from "@/components/ui/button";
-
-// Define the schema for images
-const imagesSchema = z.object({
-  images: z
-    .array(
-      z.object({
-        file: z.instanceof(File),
-        preview: z.string(),
-        isFeatured: z.boolean().default(false),
-      }),
-    )
-    .min(1, "At least one image is required"),
-});
-
-export type ImagesData = z.infer<typeof imagesSchema>;
+import { imagesSchema, type ImagesData } from "~~/shared/schemas/listing";
 
 const imagesData = reactive<{
   images: Array<{
@@ -85,7 +71,7 @@ function next() {
     emits("next", validated);
   } catch (error) {
     if (error instanceof z.ZodError) {
-      $alert(error.errors[0].message);
+      $alert(error.error[0].message);
     } else {
       $alert("Please upload at least one image");
     }
@@ -111,7 +97,7 @@ function back() {
         @click="triggerFileInput"
         class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-navy transition-colors"
       >
-        <Icon name="local:upload" class="w-12 h-12 mx-auto text-gray-400" />
+        <Icon name="mdi:upload" class="w-12 h-12 mx-auto text-gray-400" />
         <p class="mt-2 text-sm text-gray-500">Click to upload or drag and drop</p>
         <p class="text-xs text-gray-400">PNG, JPG, GIF up to 10MB</p>
       </div>

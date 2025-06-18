@@ -1,36 +1,16 @@
 <script setup lang="ts">
-import { z } from "zod/v4/mini";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import useZodState from "~/composables/useZodState";
-
-// Define the schema for address information
-const address = useZodState({
-  address: z.string().check(z.minLength(5, "Address must be at least 5 characters")),
-  city: z.string().check(z.minLength(2, "City must be at least 2 characters")),
-  state: z.string().check(z.minLength(2, "State must be at least 2 characters")),
-  zipCode: z.string().check(z.minLength(3, "Zip code must be at least 3 characters")),
-  country: z.string().check(z.minLength(2, "Country must be at least 2 characters")),
-});
-
-export type AddressData = z.infer<(typeof address)["schema"]>;
+import type { AddressData } from "~~/shared/schemas/listing";
 
 const emits = defineEmits<{
   next: [AddressData];
   back: [];
 }>();
+const addressInfo = reactive<AddressData>(<AddressData>{});
 
 function next() {
-  const { success, data, error } = address.validate({
-    prettifyError: true,
-    flattenError: true,
-  });
-
-  if (success) {
-    emits("next", data);
-  } else {
-    console.log(error);
-  }
+  emits("next", addressInfo);
 }
 
 function back() {
