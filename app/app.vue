@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Toaster } from "vue-sonner";
+import "vue-sonner/style.css";
 </script>
 <template>
   <NuxtLayout>
@@ -11,7 +12,9 @@ import { Toaster } from "vue-sonner";
 <style>
 .page-enter-active,
 .page-leave-active {
-  transition: opacity 0.5s ease, transform 0.5s ease;
+  transition:
+    opacity 0.5s ease,
+    transform 0.5s ease;
   will-change: opacity, transform;
 }
 

@@ -3,14 +3,7 @@ import { z } from "zod/v4-mini";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-
-// Define the schema for features
-const featuresSchema = z.object({
-  features: z.record(z.string(), z.boolean()),
-  customFeatures: z.array(z.string()),
-});
-
-export type FeaturesData = z.infer<typeof featuresSchema>;
+import type { FeaturesData } from "~~/shared/schemas/listing";
 
 const featuresData = reactive<FeaturesData>({
   features: {
