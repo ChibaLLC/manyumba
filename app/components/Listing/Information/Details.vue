@@ -1,6 +1,5 @@
 <script lang="ts">
 import { z } from "zod/v4/mini";
-import type { PropertyType } from "./Basic.vue";
 
 const basicInfoSchema = z.object({
   title: z.string().check(z.minLength(5, "Title must be at least 5 characters")),
@@ -20,7 +19,7 @@ export type BasicInfoData = z.infer<typeof basicInfoSchema>;
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
-import type { BasicInfoData } from "~~/shared/schemas/listing";
+
 const props = defineProps<{
   basicInfo: BasicInfoData;
 }>();

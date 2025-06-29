@@ -56,22 +56,18 @@ export const addressSchema = z.object({
     .string()
     .check(z.minLength(5))
     .check(z.refine((value) => value.length >= 5, { error: "Address must be at least 5 characters" })),
-
   city: z
     .string()
     .check(z.minLength(2))
     .check(z.refine((value) => value.length >= 2, { error: "City must be at least 2 characters" })),
-
   state: z
     .string()
     .check(z.minLength(2))
     .check(z.refine((value) => value.length >= 2, { error: "State must be at least 2 characters" })),
-
   zipCode: z
     .string()
     .check(z.minLength(3))
     .check(z.refine((value) => value.length >= 3, { error: "Zip code must be at least 3 characters" })),
-
   country: z
     .string()
     .check(z.minLength(2))
