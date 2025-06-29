@@ -9,8 +9,9 @@ export async function getApproximateLocation(): Promise<LocationResult | undefin
   const { result: response, error } = await execute(
     (async function () {
       if (import.meta.server) {
+        const { getIpLocation } = await import("@@/server/utils/location");
         const event = useRequestEvent();
-        return await getIpLocation(event!);
+        return await getIpLocation(event);
       } else {
         // @ts-ignore Deep types
         return await $fetch("/api/ip-lookup");
@@ -146,6 +147,7 @@ export default async function useCoords<T extends LocationOptions>(options?: T):
         return undefined;
       }
 
+      // TODO: Block until user allows or cancels the dialog
       $alert("Please allow the website to get your location for correctness");
       return await getLocation({ aproximate: false, watch: options.watch });
     }

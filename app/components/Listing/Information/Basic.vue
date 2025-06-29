@@ -1,18 +1,12 @@
 <script lang="ts">
+import { z } from "zod/v4-mini";
+
 export const propertyType = ["apartment", "house", "commercial", "plot", "land"] as const;
 export const listingType = ["rent", "sale"] as const;
 export type ListingType = (typeof listingType)[number];
 export type PropertyType = (typeof propertyType)[number];
-</script>
-<script setup lang="ts">
-import { z } from "zod/v4";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import type { BasicInfoData } from "./Details.vue";
 
-const form = reactive<BasicInfoData>(<BasicInfoData>{});
-const homeType = ref<string>("");
-const homeTypes = [
+export const homeTypes = [
   "Single Family",
   "Townhouse",
   "Condo",
@@ -22,17 +16,37 @@ const homeTypes = [
   "Cabin",
   "Loft",
 ] as const;
-const landTypes = ["Residential", "Commercial", "Agricultural", "Industrial", "Recreational"] as const;
+export const landTypes = ["Residential", "Commercial", "Agricultural", "Industrial", "Recreational"] as const;
+
+export const { data, schema, validate } = useZodState({
+  assetType: z.enum(["apartment", "house", "commercial", "plot", "land"]),
+  listingType: z.enum(["rent", "sale"]),
+  propertyType: z.union([z.enum(homeTypes), z.enum(landTypes)]),
+});
+
+export type BasicInfoData = z.infer<typeof schema>;
+</script>
+<script setup lang="ts">
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { toast } from "vue-sonner";
+
+const homeType = ref<string>("");
 
 const filteredTypes = computed(() => {
-  return form.propertyType === "house" ? homeTypes : landTypes;
+  if (!data.assetType) {
+    return undefined;
+  }
+  return data.assetType === "house" ? homeTypes : landTypes;
 });
 
 function next() {
-  try {
-    emits("next", form);
-  } catch (error) {
-    toast.error(error);
+  const { error, data } = validate({ prettifyError: true });
+  if (!error) {
+    emits("next", data);
+  } else {
+    console.log(error);
+    toast.error(String(error));
   }
 }
 
@@ -46,11 +60,11 @@ const emits = defineEmits<{
 }>();
 
 function setListingType(type: ListingType) {
-  form.listingType = type;
+  data.listingType = type;
 }
 
 function setPropertyType(type: PropertyType) {
-  form.propertyType = type;
+  data.assetType = type;
 }
 </script>
 
@@ -65,14 +79,14 @@ function setPropertyType(type: PropertyType) {
       <h2 class="newton font-semibold text-lg mb-2">Lease Type</h2>
       <div class="flex gap-3">
         <Button
-          :class="form.listingType === 'sale' ? 'bg-navy text-white' : 'text-navy bg-sky-100 border-sky-200 border'"
+          :class="data.listingType === 'sale' ? 'bg-navy text-white' : 'text-navy bg-sky-100 border-sky-200 border'"
           @click="setListingType('sale')"
         >
           <Icon name="local:heart-home" class="mr-2" />
           Sale
         </Button>
         <Button
-          :class="form.listingType === 'rent' ? 'bg-navy text-white' : 'text-navy bg-sky-100 border-sky-200 border'"
+          :class="data.listingType === 'rent' ? 'bg-navy text-white' : 'text-navy bg-sky-100 border-sky-200 border'"
           @click="setListingType('rent')"
         >
           <Icon name="local:smile-home" class="mr-2" />
@@ -85,14 +99,14 @@ function setPropertyType(type: PropertyType) {
       <h2 class="newton font-semibold text-lg mb-2">Property Type</h2>
       <div class="flex gap-3">
         <Button
-          :class="form.propertyType === 'house' ? 'bg-navy text-white' : 'text-navy bg-sky-100 border-sky-200 border'"
+          :class="data.assetType === 'house' ? 'bg-navy text-white' : 'text-navy bg-sky-100 border-sky-200 border'"
           @click="setPropertyType('house')"
         >
           <Icon name="local:shroom-home" class="mr-2" />
           Home
         </Button>
         <Button
-          :class="form.propertyType === 'land' ? 'bg-navy text-white' : 'text-navy bg-sky-100 border-sky-200 border'"
+          :class="data.assetType === 'land' ? 'bg-navy text-white' : 'text-navy bg-sky-100 border-sky-200 border'"
           @click="setPropertyType('land')"
         >
           <Icon name="local:land" class="mr-2" />
@@ -101,8 +115,8 @@ function setPropertyType(type: PropertyType) {
       </div>
     </div>
 
-    <div class="mt-6">
-      <h2 class="newton font-semibold text-lg mb-2">{{ form.propertyType === "house" ? "Home" : "Land" }} Type</h2>
+    <div class="mt-6" v-if="filteredTypes">
+      <h2 class="newton font-semibold text-lg mb-2">{{ data.assetType === "house" ? "Home" : "Land" }} Type</h2>
       <div class="relative flex items-center mb-4">
         <span class="absolute left-3 text-gray-400">
           <Icon name="local:search" class="w-4 h-4" />
@@ -115,16 +129,18 @@ function setPropertyType(type: PropertyType) {
           class="bg-white rounded-lg border border-gray-300 w-full pl-9 pr-4 py-2 focus:border-transparent transition duration-200 ease-in-out hover:border-gray-400 placeholder-gray-400"
         />
       </div>
-      <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-        <Button
-          v-for="type in filteredTypes"
-          :key="type"
-          variant="outline"
-          :class="homeType === type ? 'bg-navy text-white' : 'bg-white'"
-          @click="homeType = type"
-        >
-          {{ type }}
-        </Button>
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-3 relative">
+        <TransitionGroup name="choices">
+          <Button
+            v-for="type in filteredTypes"
+            :key="type"
+            variant="outline"
+            :class="homeType === type ? 'bg-navy text-white' : 'bg-white'"
+            @click="homeType = type"
+          >
+            {{ type }}
+          </Button>
+        </TransitionGroup>
       </div>
     </div>
 
@@ -134,3 +150,23 @@ function setPropertyType(type: PropertyType) {
     </div>
   </ListingContainer>
 </template>
+<style scoped>
+/* TODO: Improve animation */
+.choices-enter-active,
+.choices-leave-active {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.choices-enter-from,
+.choices-leave-to {
+  opacity: 0;
+  transform: scale(0.95);
+  position: absolute;
+  height: 100%;
+  width: 100%;
+}
+.choices-enter-to,
+.choices-leave-from {
+  opacity: 1;
+  transform: scale(1);
+}
+</style>

@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import useZodState from "~/composables/useZodState";
+import { z } from "zod/v4-mini";
 
 // Define the schema for address information
 const addressData = useZodState({
