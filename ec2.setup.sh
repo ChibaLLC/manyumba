@@ -8,15 +8,16 @@ setup_steps() {
     sudo ufw enable
     sudo ufw status
 
-    sudo apt install nginx
+    # sudo apt install nginx
 
-    sudo apt-get remove certbot
-    sudo snap install --classic certbot
-    sudo certbot --nginx
-    sudo certbot renew --dry-run
+    # sudo apt-get remove certbot
+    # sudo snap install --classic certbot
+    # sudo certbot --nginx
+    # sudo certbot renew --dry-run
 
     sudo apt update -y && sudo apt upgrade -y
     sudo apt install docker.io -y
+    sudo apt install docker-compose
 
     read -p "Enter Repo Path e.g. ChibaLLC/manyumba: " path
     read -p "Enter your GitHub username: " username
