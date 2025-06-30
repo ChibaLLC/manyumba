@@ -1,0 +1,17 @@
+FROM node:22-alpine
+
+WORKDIR /app
+
+COPY package.json pnpm-lock.yaml /app/
+
+RUN corepack enable
+
+COPY . /app/
+
+RUN pnpm install
+
+RUN pnpm run build
+
+RUN pnpm prune
+
+CMD ["pnpm", "run", "start"]
