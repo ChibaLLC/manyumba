@@ -33,8 +33,8 @@ setup_steps() {
         git clone https://$username:$token@github.com/$path.git
         cd "$repo_name"
     fi
-    
-    docker compose up
+
+    echo "Setup done, now run with docker-compose up"
 }
 
 if [ "$(id -u)" -eq 0 ]; then
