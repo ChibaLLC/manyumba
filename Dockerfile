@@ -1,17 +1,19 @@
-FROM node:22-alpine
+# ---- Build Stage ----
+FROM node:22-alpine AS builder
 
 WORKDIR /app
 
-COPY package.json pnpm-lock.yaml /app/
-
+COPY package.json pnpm-lock.yaml ./
 RUN corepack enable
-
-COPY . /app/
-
 RUN pnpm install
 
+COPY . .
 RUN pnpm run build
 
-RUN pnpm prune
+FROM node:22-alpine AS runner
 
-CMD ["pnpm", "run", "start"]
+WORKDIR /app
+
+COPY --from=builder /app/.output ./.output
+
+CMD ["node", ".output/server/index.mjs"]

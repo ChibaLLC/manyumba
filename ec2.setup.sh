@@ -16,11 +16,12 @@ setup_steps() {
     sudo apt update -y && sudo apt upgrade -y
     sudo apt install docker.io -y
 
+    read -p "Enter Repo Path e.g. ChibaLLC/manyumba: " path
     read -p "Enter your GitHub username: " username
     read -s -p "Enter your GitHub access token: " token
     echo
 
-    git clone https://$username:$token@github.com/15996376CanadaInc/geel.git
+    git clone https://$username:$token@github.com/$path.git
 
     docker compose up
 }
