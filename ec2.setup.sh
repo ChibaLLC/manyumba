@@ -1,12 +1,12 @@
 setup_steps() {
-    sudo ufw defult deny incoming
-    sudo ufw default allow outgoing
-    sudo ufw allow OpenSSH
-    sudo ufw allow 80
-    sudo ufw allow 443
-    sudo ufw show added
-    sudo ufw enable
-    sudo ufw status
+    # sudo ufw defult deny incoming
+    # sudo ufw default allow outgoing
+    # sudo ufw allow OpenSSH
+    # sudo ufw allow 80
+    # sudo ufw allow 443
+    # sudo ufw show added
+    # sudo ufw enable
+    # sudo ufw status
 
     # sudo apt install nginx
 
