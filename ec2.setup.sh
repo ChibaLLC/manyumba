@@ -24,8 +24,16 @@ setup_steps() {
     read -s -p "Enter your GitHub access token: " token
     echo
 
-    git clone https://$username:$token@github.com/$path.git
-
+    repo_name=$(basename "$path")
+    if [ -d "$repo_name" ]; then
+        echo "Directory $repo_name exists. Pulling latest changes..."
+        cd "$repo_name"
+        git pull
+    else
+        git clone https://$username:$token@github.com/$path.git
+        cd "$repo_name"
+    fi
+    
     docker compose up
 }
 
