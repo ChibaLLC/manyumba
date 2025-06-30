@@ -8,6 +8,8 @@ setup_steps() {
     sudo ufw enable
     sudo ufw status
 
+    sudo apt install nginx
+
     sudo apt-get remove certbot
     sudo snap install --classic certbot
     sudo certbot --nginx
