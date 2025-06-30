@@ -16,13 +16,29 @@ setup_steps() {
     # sudo certbot renew --dry-run
 
     sudo apt update -y && sudo apt upgrade -y
-    sudo apt install docker.io -y
-    sudo apt install docker-compose
+
+    for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done
+    # Add Docker's official GPG key:
+    sudo apt-get update
+    sudo apt-get install ca-certificates curl
+    sudo install -m 0755 -d /etc/apt/keyrings
+    sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+    sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+    # Add the repository to Apt sources:
+    echo \
+        "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" |
+        sudo tee /etc/apt/sources.list.d/docker.list >/dev/null
+    sudo apt-get update
+    
+    sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
     read -p "Enter Repo Path e.g. ChibaLLC/manyumba: " path
     read -p "Enter your GitHub username: " username
     read -s -p "Enter your GitHub access token: " token
     echo
+
 
     repo_name=$(basename "$path")
     if [ -d "$repo_name" ]; then
@@ -34,7 +50,7 @@ setup_steps() {
         cd "$repo_name"
     fi
 
-    echo "Setup done, now run with docker-compose up"
+    echo "Setup done, now run with: sudo docker-compose up"
 }
 
 if [ "$(id -u)" -eq 0 ]; then
