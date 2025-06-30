@@ -1,24 +1,11 @@
 <script lang="ts">
 import { z } from "zod/v4/mini";
-import { listingType, propertyType } from "~/components/Listing/Information/Basic.vue";
+import { schema as basicInfoSchema } from "~/components/Listing/Information/Basic.vue";
 
 // Reusable coord object
 const coordSchema = z.object({
   lat: z.number(),
   lng: z.number(),
-});
-
-// Reusable basicInfo block
-const basicInfoSchema = z.object({
-  title: z.string().check(z.minLength(5)),
-  description: z.string().check(z.minLength(20)),
-  propertyType: z.enum(propertyType),
-  listingType: z.enum(listingType),
-  price: z.number().check(z.gt(0)),
-  bedrooms: z.optional(z.number().check(z.int())),
-  bathrooms: z.optional(z.number().check(z.int())),
-  area: z.optional(z.number().check(z.gt(0))),
-  yearBuilt: z.optional(z.number().check(z.int())),
 });
 
 // Reusable address block
@@ -37,7 +24,6 @@ const imageSchema = z.object({
   isFeatured: z.boolean(),
 });
 
-
 export const listing = useZodState({
   location: z.object({
     cood: coordSchema,
@@ -45,7 +31,6 @@ export const listing = useZodState({
   }),
 
   basicInfo: basicInfoSchema,
-
   address: addressSchema,
 
   images: z.object({
@@ -56,10 +41,9 @@ export const listing = useZodState({
     features: z.record(z.string(), z.boolean()),
     customFeatures: z.array(z.string()),
   }),
-})
+});
 
-
-export type ListingData = z.infer<typeof listing['schema']>
+export type ListingData = z.infer<(typeof listing)["schema"]>;
 </script>
 
 <script setup lang="ts">
@@ -129,18 +113,19 @@ function goBack() {
       <div class="h-full grid place-items-center grow w-full">
         <ListingLocation v-if="steps === 0" @location="handleLocation" />
 
-        <ListingInformationBasic v-if="steps === 1" @next="handleBasicInfo" @back="goBack" />
+        <ListingInformationBasic v-else-if="steps === 1" @next="handleBasicInfo" @back="goBack" />
 
         <ListingInformationDetails
-          v-if="listing.data.basicInfo?.propertyType && steps === 2"
-          :propertyType="listing.data.basicInfo?.propertyType"
+          v-else-if="steps === 2 && listing.data.basicInfo"
+          :basicInfo="listing.data.basicInfo"
         />
 
-        <ListingInformationAddress v-if="steps === 3" @next="handleAddress" @back="goBack" />
+        <ListingInformationAddress v-else-if="steps === 3" @next="handleAddress" @back="goBack" />
 
-        <ListingInformationImages v-if="steps === 4" @next="handleImages" @back="goBack" />
+        <ListingInformationImages v-else-if="steps === 4" @next="handleImages" @back="goBack" />
 
-        <ListingInformationFeatures v-if="steps === 4" @next="handleFeatures" @back="goBack" />
+        <ListingInformationFeatures v-else-if="steps === 5" @next="handleFeatures" @back="goBack" />
+        <ListingInformationFeatures v-else-if="steps === 5" @next="handleFeatures" @back="goBack" />
 
         <ListingInformationReview v-if="steps === 6" :data="listing.data" @submit="handleSubmit" @back="goBack" />
       </div>

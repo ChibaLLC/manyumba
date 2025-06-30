@@ -1,4 +1,4 @@
-import { z, safeParse } from "zod/v4/mini";
+import { z, safeParse } from "zod/v4-mini";
 
 type ZodSafeParseResult<T> =
   | { success: true; data: T; error: undefined }
@@ -18,24 +18,24 @@ export function validate<T extends z.core.$ZodShape>(
   data: unknown,
   params: ValidateParams & {
     flattenError: true;
-  },
+  }
 ): { success: false; error: FlattenedError } | { success: true; data: z.infer<typeof schema> };
 export function validate<T extends z.core.$ZodShape>(
   schema: z.core.$ZodObject<T>,
   data: unknown,
   params: ValidateParams & {
     prettifyError: true;
-  },
+  }
 ): { success: false; error: PrettifiedError } | { success: true; data: z.infer<typeof schema> };
 export function validate<T extends z.core.$ZodShape>(
   schema: z.core.$ZodObject<T>,
   data: unknown,
-  params?: ValidateParams,
+  params?: ValidateParams
 ): ZodSafeParseResult<z.infer<typeof schema>>;
 export function validate<T extends z.core.$ZodShape>(
   schema: z.core.$ZodObject<T>,
   data: unknown,
-  params?: ValidateParams & { flattenError?: boolean; prettifyError?: boolean },
+  params?: ValidateParams & { flattenError?: boolean; prettifyError?: boolean }
 ) {
   const result = safeParse(schema, data, params) as any;
   if (result.error) {
@@ -59,6 +59,6 @@ export default function <T extends z.core.$ZodShape>(shape: T) {
     },
     get schema() {
       return schema;
-    },
+    }
   };
 }

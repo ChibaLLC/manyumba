@@ -59,7 +59,11 @@ async function cleanIp(ip: string) {
   return cleanIp;
 }
 
-export async function getIpLocation(event: H3Event): Promise<IpapiResponse> {
+export async function getIpLocation(event?: H3Event): Promise<IpapiResponse> {
+  if (!event) {
+    event = useEvent();
+  }
+  
   // This will change in prod because of reverse proxy
   const ip = getRequestHeader(event, "x-forwarded-for") || event.node.req.socket.remoteAddress;
   if (!ip) {

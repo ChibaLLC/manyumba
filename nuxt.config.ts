@@ -1,7 +1,7 @@
 import tailwindcss from "@tailwindcss/vite";
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  compatibilityDate: "2025-06-01",
+  compatibilityDate: "2025-06-09",
   devtools: { enabled: true },
   modules: ["@nuxt/fonts", "@nuxt/icon", "@nuxtjs/i18n", "@nuxt/scripts"],
   future: {
@@ -16,10 +16,11 @@ export default defineNuxtConfig({
     ],
   },
   css: ["~/assets/css/tailwind.css", "~/assets/css/custom.scss"],
-  extends: ["github:kgarchie/nuxt-starter#5"],
+  extends: ["github:kgarchie/nuxt-starter#7"],
   nitro: {
     experimental: {
       websocket: true,
+      asyncContext: true,
     },
     imports: {
       dirs: ["./shared/utils", "./shared/types"],
