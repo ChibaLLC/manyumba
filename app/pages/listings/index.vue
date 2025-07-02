@@ -1,199 +1,431 @@
-<script setup lang="ts">
-import {
-  MapPinIcon,
-  CircleDollarSignIcon,
-  HomeIcon,
-  BedIcon,
-  ShowerHeadIcon,
-  SlidersHorizontalIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  ChevronDownIcon,
-  HeartIcon,
-  SquareIcon,
-} from "lucide-vue-next";
-import { ref } from "vue";
-
-// Define property data
-const properties = [
-  {
-    id: 1,
-    price: 50000,
-    type: "RENT",
-    beds: 2,
-    baths: 2,
-    area: 500,
-    location: "Nairobi - Kinoo, Rungiri",
-    images: ["https://www.kpmindustries.com/wp-content/uploads/2018/08/Placeholder-Map-Image.png"],
-  },
-  {
-    id: 2,
-    price: 5000000,
-    type: "SALE",
-    beds: 2,
-    baths: 2,
-    area: 500,
-    location: "Nairobi - Kinoo, Rungiri",
-
-    images: ["https://www.kpmindustries.com/wp-content/uploads/2018/08/Placeholder-Map-Image.png"],
-  },
-  {
-    id: 3,
-    price: 50000,
-    type: "RENT",
-    beds: 2,
-    baths: 2,
-    area: 500,
-    location: "Nairobi - Kinoo, Rungiri",
-
-    images: ["https://www.kpmindustries.com/wp-content/uploads/2018/08/Placeholder-Map-Image.png"],
-  },
-  {
-    id: 4,
-    price: 50000,
-    type: "RENT",
-    beds: 2,
-    baths: 2,
-    area: 500,
-    location: "Nairobi - Kinoo, Rungiri",
-
-    images: ["https://www.kpmindustries.com/wp-content/uploads/2018/08/Placeholder-Map-Image.png"],
-  },
-];
-
-// Format price with commas
-const formatPrice = (price: number): string => {
-  return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-};
-
-// Toggle favorite
-const favorites = ref<Set<number>>(new Set());
-const toggleFavorite = (id: number) => {
-  if (favorites.value.has(id)) {
-    favorites.value.delete(id);
-  } else {
-    favorites.value.add(id);
-  }
-};
-</script>
 <template>
-  <!-- Main Content -->
-  <main class="container mx-auto py-6 px-4">
-    <div class="flex flex-col lg:flex-row gap-6">
-      <!-- Left Column - Filters and Listings -->
-      <div class="w-full lg:w-1/2">
-        <!-- Filters -->
-        <div class="flex flex-wrap gap-2 mb-6">
-          <div class="bg-muted rounded-md flex items-center px-4 py-2">
-            <CircleDollarSignIcon class="h-4 w-4 mr-2" />
-            <span>Price</span>
-            <ChevronDownIcon class="h-4 w-4 ml-2" />
-          </div>
-
-          <div class="bg-muted rounded-md flex items-center px-4 py-2">
-            <HomeIcon class="h-4 w-4 mr-2" />
-            <span>Type</span>
-            <ChevronDownIcon class="h-4 w-4 ml-2" />
-          </div>
-
-          <div class="bg-muted rounded-md flex items-center px-4 py-2">
-            <BedIcon class="h-4 w-4 mr-2" />
-            <span>Beds</span>
-            <ChevronDownIcon class="h-4 w-4 ml-2" />
-          </div>
-
-          <div class="bg-muted rounded-md flex items-center px-4 py-2">
-            <ShowerHeadIcon class="h-4 w-4 mr-2" />
-            <span>Baths</span>
-            <ChevronDownIcon class="h-4 w-4 ml-2" />
-          </div>
-
-          <div class="bg-muted rounded-md flex items-center px-4 py-2">
-            <SlidersHorizontalIcon class="h-4 w-4" />
+  <div class="min-h-screen bg-gray-50">
+    <!-- Hero Section with Search -->
+    <section class="bg-gradient-to-r from-purple-600 to-blue-600 text-white py-12">
+      <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto text-center">
+          <h1 class="text-4xl font-bold mb-4">Find Your Perfect Property</h1>
+          <p class="text-xl mb-8">Discover amazing properties for rent and sale</p>
+          
+          <!-- Search Form -->
+          <div class="bg-white rounded-lg p-6 shadow-lg">
+            <form @submit.prevent="handleSearch" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div>
+                <Input
+                  v-model="searchQuery"
+                  placeholder="Search location, property type..."
+                  class="w-full"
+                />
+              </div>
+              <div>
+                <Select v-model="filters.listingType">
+                  <SelectTrigger>
+                    <SelectValue placeholder="Buy/Rent" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">All</SelectItem>
+                    <SelectItem value="sale">Buy</SelectItem>
+                    <SelectItem value="rent">Rent</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Select v-model="filters.propertyType">
+                  <SelectTrigger>
+                    <SelectValue placeholder="Property Type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">All Types</SelectItem>
+                    <SelectItem value="apartment">Apartment</SelectItem>
+                    <SelectItem value="house">House</SelectItem>
+                    <SelectItem value="commercial">Commercial</SelectItem>
+                    <SelectItem value="plot">Plot</SelectItem>
+                    <SelectItem value="land">Land</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <Button type="submit" class="w-full">
+                <Icon name="bxs:search" class="w-4 h-4 mr-2" />
+                Search
+              </Button>
+            </form>
           </div>
         </div>
+      </div>
+    </section>
 
-        <!-- Property Listings -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <!-- Property Card 1 -->
+    <!-- Filters and Results -->
+    <section class="container mx-auto px-4 py-8">
+      <div class="flex flex-col lg:flex-row gap-8">
+        <!-- Sidebar Filters -->
+        <aside class="lg:w-1/4">
+          <Card class="sticky top-4">
+            <CardHeader>
+              <CardTitle>Filters</CardTitle>
+            </CardHeader>
+            <CardContent class="space-y-6">
+              <!-- Price Range -->
+              <div>
+                <Label class="text-sm font-medium mb-3 block">Price Range</Label>
+                <div class="grid grid-cols-2 gap-2">
+                  <Input
+                    v-model.number="filters.minPrice"
+                    type="number"
+                    placeholder="Min"
+                    @input="debouncedFilter"
+                  />
+                  <Input
+                    v-model.number="filters.maxPrice"
+                    type="number"
+                    placeholder="Max"
+                    @input="debouncedFilter"
+                  />
+                </div>
+              </div>
+
+              <!-- Bedrooms -->
+              <div>
+                <Label class="text-sm font-medium mb-3 block">Bedrooms</Label>
+                <div class="grid grid-cols-5 gap-2">
+                  <Button
+                    v-for="num in [1,2,3,4,5]"
+                    :key="num"
+                    variant="outline"
+                    size="sm"
+                    :class="filters.minBedrooms === num ? 'bg-purple-100 border-purple-500' : ''"
+                    @click="toggleBedrooms(num)"
+                  >
+                    {{ num }}{{ num === 5 ? '+' : '' }}
+                  </Button>
+                </div>
+              </div>
+
+              <!-- Bathrooms -->
+              <div>
+                <Label class="text-sm font-medium mb-3 block">Bathrooms</Label>
+                <div class="grid grid-cols-4 gap-2">
+                  <Button
+                    v-for="num in [1,2,3,4]"
+                    :key="num"
+                    variant="outline"
+                    size="sm"
+                    :class="filters.minBathrooms === num ? 'bg-purple-100 border-purple-500' : ''"
+                    @click="toggleBathrooms(num)"
+                  >
+                    {{ num }}{{ num === 4 ? '+' : '' }}
+                  </Button>
+                </div>
+              </div>
+
+              <!-- Sort -->
+              <div>
+                <Label class="text-sm font-medium mb-3 block">Sort By</Label>
+                <Select v-model="filters.sortBy" @update:model-value="handleSort">
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sort by" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="created_at_desc">Newest First</SelectItem>
+                    <SelectItem value="created_at_asc">Oldest First</SelectItem>
+                    <SelectItem value="price_asc">Price: Low to High</SelectItem>
+                    <SelectItem value="price_desc">Price: High to Low</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <!-- Clear Filters -->
+              <Button variant="outline" class="w-full" @click="clearFilters">
+                Clear All Filters
+              </Button>
+            </CardContent>
+          </Card>
+        </aside>
+
+        <!-- Property Grid -->
+        <main class="lg:w-3/4">
+          <!-- Results Header -->
+          <div class="flex justify-between items-center mb-6">
+            <div>
+              <h2 class="text-2xl font-bold text-gray-900">Properties</h2>
+              <p class="text-gray-600" v-if="!pending">
+                {{ totalProperties }} properties found
+              </p>
+            </div>
+            
+            <!-- View Toggle -->
+            <div class="flex border rounded-lg">
+              <Button
+                variant="ghost"
+                size="sm"
+                :class="viewMode === 'grid' ? 'bg-gray-100' : ''"
+                @click="viewMode = 'grid'"
+              >
+                <Icon name="bxs:grid" class="w-4 h-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                :class="viewMode === 'list' ? 'bg-gray-100' : ''"
+                @click="viewMode = 'list'"
+              >
+                <Icon name="bxs:list-ul" class="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+
+          <!-- Loading State -->
+          <div v-if="pending && !properties.length" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <PropertyCardSkeleton v-for="i in 6" :key="i" />
+          </div>
+
+          <!-- Empty State -->
+          <div v-else-if="!properties.length && !pending" class="text-center py-12">
+            <Icon name="bxs:home" class="w-16 h-16 text-gray-400 mx-auto mb-4" />
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">No properties found</h3>
+            <p class="text-gray-600 mb-4">Try adjusting your search criteria</p>
+            <Button @click="clearFilters">Clear Filters</Button>
+          </div>
+
+          <!-- Properties Grid/List -->
           <div
-            v-for="property in properties"
-            :key="property.id"
-            class="bg-white border border-border rounded-md overflow-hidden"
+            v-else
+            :class="[
+              viewMode === 'grid' 
+                ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' 
+                : 'space-y-4'
+            ]"
           >
-            <div class="relative">
-              <img
-                src="https://www.kpmindustries.com/wp-content/uploads/2018/08/Placeholder-Map-Image.png"
-                alt="Property"
-                class="w-full h-48 object-cover"
-              />
+            <PropertyCard
+              v-for="property in properties"
+              :key="property.ulid"
+              :property="property"
+              :view-mode="viewMode"
+              @favorite="handleFavorite"
+            />
+          </div>
 
-              <div class="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-2">
-                <button class="bg-white rounded-full p-1 shadow-sm">
-                  <ChevronLeftIcon class="h-5 w-5" />
-                </button>
-                <button class="bg-white rounded-full p-1 shadow-sm">
-                  <ChevronRightIcon class="h-5 w-5" />
-                </button>
-              </div>
+          <!-- Load More / Infinite Scroll -->
+          <div ref="loadMoreTrigger" class="mt-8 text-center">
+            <div v-if="pending && properties.length" class="py-4">
+              <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto"></div>
+              <p class="mt-2 text-gray-600">Loading more properties...</p>
             </div>
-
-            <div class="p-4">
-              <div class="flex justify-between items-start mb-2">
-                <div>
-                  <span class="text-muted-foreground text-sm">KES</span>
-                  <span class="font-bold text-lg">50,000</span>
-                </div>
-                <div class="bg-gray-200 px-2 py-0.5 rounded text-xs font-medium">
-                  {{ property.type }}
-                </div>
-              </div>
-
-              <div class="flex gap-4 mb-3">
-                <div class="flex items-center">
-                  <BedIcon class="h-4 w-4 mr-1 text-muted-foreground" />
-                  <span class="text-sm">{{ property.beds }} bds</span>
-                </div>
-                <div class="flex items-center">
-                  <ShowerHeadIcon class="h-4 w-4 mr-1 text-muted-foreground" />
-                  <span class="text-sm">{{ property.baths }} ba</span>
-                </div>
-                <div class="flex items-center">
-                  <SquareIcon class="h-4 w-4 mr-1 text-muted-foreground" />
-                  <span class="text-sm">{{ property.area }} m²</span>
-                </div>
-              </div>
-
-              <div class="flex items-center mb-4">
-                <MapPinIcon class="h-4 w-4 mr-1 text-muted-foreground" />
-                <span class="text-sm text-muted-foreground">{{ property.location }}</span>
-              </div>
-
-              <div class="flex justify-between">
-                <NuxtLink
-                  to="/listing/1"
-                  class="bg-muted hover:bg-muted/80 px-4 py-2 rounded-md text-sm w-3/4 text-center"
-                >
-                  View Listing
-                </NuxtLink>
-                <button class="border border-muted rounded-md p-2">
-                  <HeartIcon class="h-5 w-5 text-muted-foreground" />
-                </button>
-              </div>
+            <div v-else-if="hasMore" class="py-4">
+              <Button @click="loadMore" variant="outline">
+                Load More Properties
+              </Button>
+            </div>
+            <div v-else-if="properties.length" class="py-4 text-gray-500">
+              <p>You've seen all available properties</p>
             </div>
           </div>
-        </div>
+        </main>
       </div>
-
-      <!-- Right Column - Map -->
-      <div class="w-full lg:w-1/2 max-h-screen bg-muted rounded-md overflow-hidden">
-        <!-- Map placeholder - In a real app, you would integrate with a maps API -->
-        <img
-          src="https://www.kpmindustries.com/wp-content/uploads/2018/08/Placeholder-Map-Image.png"
-          alt="Map"
-          class="w-full h-full object-cover"
-        />
-      </div>
-    </div>
-  </main>
+    </section>
+  </div>
 </template>
+
+<script setup lang="ts">
+import { debounce } from 'lodash-es';
+import type { PropertyWithRelations } from '~/server/db/types';
+
+// SEO
+useHead({
+  title: 'Property Listings - Find Your Perfect Home',
+  meta: [
+    { name: 'description', content: 'Browse our extensive collection of properties for rent and sale. Find your perfect home today.' },
+    { name: 'keywords', content: 'property, real estate, rent, buy, apartment, house, listings' }
+  ]
+});
+
+// Reactive state
+const searchQuery = ref('');
+const viewMode = ref<'grid' | 'list'>('grid');
+const properties = ref<PropertyWithRelations[]>([]);
+const pending = ref(false);
+const hasMore = ref(true);
+const totalProperties = ref(0);
+const currentPage = ref(1);
+
+// Filters
+const filters = reactive({
+  listingType: '',
+  propertyType: '',
+  minPrice: null as number | null,
+  maxPrice: null as number | null,
+  minBedrooms: null as number | null,
+  minBathrooms: null as number | null,
+  sortBy: 'created_at_desc'
+});
+
+// Load more trigger for infinite scroll
+const loadMoreTrigger = ref<HTMLElement>();
+
+// Intersection Observer for infinite scroll
+let observer: IntersectionObserver | null = null;
+
+// Computed query parameters
+const queryParams = computed(() => {
+  const params: any = {
+    page: currentPage.value,
+    limit: 12
+  };
+  
+  if (searchQuery.value) params.q = searchQuery.value;
+  if (filters.listingType) params.listingType = filters.listingType;
+  if (filters.propertyType) params.propertyType = [filters.propertyType];
+  if (filters.minPrice) params.minPrice = filters.minPrice;
+  if (filters.maxPrice) params.maxPrice = filters.maxPrice;
+  if (filters.minBedrooms) params.minBedrooms = filters.minBedrooms;
+  if (filters.minBathrooms) params.minBathrooms = filters.minBathrooms;
+  if (filters.sortBy) params.sortBy = filters.sortBy;
+  
+  return params;
+});
+
+// Fetch properties
+async function fetchProperties(append = false) {
+  if (pending.value) return;
+  
+  pending.value = true;
+  
+  try {
+    const endpoint = searchQuery.value ? '/api/properties/search' : '/api/properties';
+    const response = await $fetch(endpoint, {
+      query: queryParams.value
+    });
+    
+    if (append) {
+      properties.value.push(...response.data);
+    } else {
+      properties.value = response.data;
+    }
+    
+    totalProperties.value = response.pagination.total;
+    hasMore.value = response.pagination.hasMore;
+  } catch (error) {
+    console.error('Error fetching properties:', error);
+  } finally {
+    pending.value = false;
+  }
+}
+
+// Load more properties
+async function loadMore() {
+  if (!hasMore.value || pending.value) return;
+  
+  currentPage.value++;
+  await fetchProperties(true);
+}
+
+// Reset and fetch
+async function resetAndFetch() {
+  currentPage.value = 1;
+  properties.value = [];
+  await fetchProperties();
+}
+
+// Debounced filter function
+const debouncedFilter = debounce(resetAndFetch, 500);
+
+// Handle search
+function handleSearch() {
+  resetAndFetch();
+}
+
+// Handle sort
+function handleSort() {
+  resetAndFetch();
+}
+
+// Toggle functions
+function toggleBedrooms(num: number) {
+  filters.minBedrooms = filters.minBedrooms === num ? null : num;
+  debouncedFilter();
+}
+
+function toggleBathrooms(num: number) {
+  filters.minBathrooms = filters.minBathrooms === num ? null : num;
+  debouncedFilter();
+}
+
+// Clear filters
+function clearFilters() {
+  Object.assign(filters, {
+    listingType: '',
+    propertyType: '',
+    minPrice: null,
+    maxPrice: null,
+    minBedrooms: null,
+    minBathrooms: null,
+    sortBy: 'created_at_desc'
+  });
+  searchQuery.value = '';
+  resetAndFetch();
+}
+
+// Handle favorite
+function handleFavorite(propertyId: string, isFavorite: boolean) {
+  // Update local state
+  const property = properties.value.find(p => p.ulid === propertyId);
+  if (property) {
+    // property.isFavorite = isFavorite; // You'd need to add this field
+  }
+}
+
+// Setup intersection observer for infinite scroll
+function setupInfiniteScroll() {
+  if (loadMoreTrigger.value) {
+    observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && hasMore.value && !pending.value) {
+        loadMore();
+      }
+    }, {
+      threshold: 0.1
+    });
+    
+    observer.observe(loadMoreTrigger.value);
+  }
+}
+
+// Cleanup observer
+function cleanupObserver() {
+  if (observer) {
+    observer.disconnect();
+    observer = null;
+  }
+}
+
+// Lifecycle
+onMounted(() => {
+  fetchProperties();
+  setupInfiniteScroll();
+});
+
+onUnmounted(() => {
+  cleanupObserver();
+});
+
+// Watch for trigger element
+watch(loadMoreTrigger, (newValue) => {
+  cleanupObserver();
+  if (newValue) {
+    setupInfiniteScroll();
+  }
+});
+
+// Store view mode in localStorage
+watch(viewMode, (newMode) => {
+  if (process.client) {
+    localStorage.setItem('property-view-mode', newMode);
+  }
+});
+
+// Restore view mode from localStorage
+if (process.client) {
+  const savedViewMode = localStorage.getItem('property-view-mode');
+  if (savedViewMode === 'list' || savedViewMode === 'grid') {
+    viewMode.value = savedViewMode;
+  }
+}
+</script>
