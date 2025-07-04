@@ -88,7 +88,11 @@
             <Skeleton class="h-4 w-full" v-for="i in 3" :key="i" />
           </div>
           <div class="space-y-4" v-else>
-            <div class="flex items-center space-x-3 p-3 border rounded-lg" v-for="property in recentProperties" :key="property.ulid">
+            <div
+              class="flex items-center space-x-3 p-3 border rounded-lg"
+              v-for="property in recentProperties"
+              :key="property.ulid"
+            >
               <div class="w-12 h-12 bg-gray-200 rounded-lg"></div>
               <div class="flex-1">
                 <h4 class="font-medium">{{ property.title }}</h4>
@@ -143,43 +147,47 @@
 </template>
 
 <script setup lang="ts">
+import { Button } from "~/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
+import { Skeleton } from "~/components/ui/skeleton";
+
 // Define page meta
 definePageMeta({
-  layout: 'admin'
+  layout: "admin",
 });
 
 // Fetch dashboard stats
-const { data, pending, error } = await $fetch('/api/admin/dashboard-stats').catch(() => ({ 
-  data: { totalProperties: 0, totalUsers: 0, totalListings: 0 }, 
-  pending: false, 
-  error: null 
+const { data, pending, error } = await $fetch("/api/admin/dashboard-stats").catch(() => ({
+  data: { totalProperties: 0, totalUsers: 0, totalListings: 0 },
+  pending: false,
+  error: null,
 }));
 
 // Mock recent properties for now
 const recentProperties = [
   {
-    ulid: '1',
-    title: 'Modern Apartment in Downtown',
-    city: 'New York',
-    state: 'NY',
-    price: '3,500',
-    propertyType: 'apartment'
+    ulid: "1",
+    title: "Modern Apartment in Downtown",
+    city: "New York",
+    state: "NY",
+    price: "3,500",
+    propertyType: "apartment",
   },
   {
-    ulid: '2', 
-    title: 'Spacious Family House',
-    city: 'Los Angeles',
-    state: 'CA',
-    price: '5,200',
-    propertyType: 'house'
+    ulid: "2",
+    title: "Spacious Family House",
+    city: "Los Angeles",
+    state: "CA",
+    price: "5,200",
+    propertyType: "house",
   },
   {
-    ulid: '3',
-    title: 'Commercial Office Space', 
-    city: 'Chicago',
-    state: 'IL',
-    price: '8,000',
-    propertyType: 'commercial'
-  }
+    ulid: "3",
+    title: "Commercial Office Space",
+    city: "Chicago",
+    state: "IL",
+    price: "8,000",
+    propertyType: "commercial",
+  },
 ];
 </script>

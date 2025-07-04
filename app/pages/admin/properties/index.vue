@@ -26,12 +26,7 @@
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
             <Label for="search">Search</Label>
-            <Input
-              id="search"
-              v-model="filters.search"
-              placeholder="Search properties..."
-              @input="debouncedSearch"
-            />
+            <Input id="search" v-model="filters.search" placeholder="Search properties..." @input="debouncedSearch" />
           </div>
           <div>
             <Label for="status">Status</Label>
@@ -40,7 +35,7 @@
                 <SelectValue placeholder="All Status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Status</SelectItem>
+                <SelectItem :value="null">All Status</SelectItem>
                 <SelectItem value="published">Published</SelectItem>
                 <SelectItem value="draft">Draft</SelectItem>
                 <SelectItem value="archived">Archived</SelectItem>
@@ -54,7 +49,7 @@
                 <SelectValue placeholder="All Types" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Types</SelectItem>
+                <SelectItem :value="null">All Types</SelectItem>
                 <SelectItem value="apartment">Apartment</SelectItem>
                 <SelectItem value="house">House</SelectItem>
                 <SelectItem value="commercial">Commercial</SelectItem>
@@ -70,7 +65,7 @@
                 <SelectValue placeholder="All Listings" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Listings</SelectItem>
+                <SelectItem :value="null">All Listings</SelectItem>
                 <SelectItem value="rent">For Rent</SelectItem>
                 <SelectItem value="sale">For Sale</SelectItem>
               </SelectContent>
@@ -112,16 +107,14 @@
                 </TableCell>
               </TableRow>
               <TableRow v-else-if="!properties?.length">
-                <TableCell colspan="8" class="text-center py-8 text-gray-500">
-                  No properties found.
-                </TableCell>
+                <TableCell colspan="8" class="text-center py-8 text-gray-500"> No properties found. </TableCell>
               </TableRow>
               <TableRow v-else v-for="property in properties" :key="property.ulid">
                 <TableCell>
                   <div class="w-16 h-12 bg-gray-200 rounded-lg overflow-hidden">
-                    <img 
-                      v-if="property.images?.[0]?.imageUrl" 
-                      :src="property.images[0].imageUrl" 
+                    <img
+                      v-if="property.images?.[0]?.imageUrl"
+                      :src="property.images[0].imageUrl"
                       :alt="property.title"
                       class="w-full h-full object-cover"
                     />
@@ -183,25 +176,14 @@
     <!-- Pagination -->
     <div class="flex items-center justify-between" v-if="pagination && pagination.totalPages > 1">
       <div class="text-sm text-gray-600">
-        Showing {{ ((pagination.page - 1) * pagination.limit) + 1 }} to 
-        {{ Math.min(pagination.page * pagination.limit, pagination.total) }} of 
-        {{ pagination.total }} properties
+        Showing {{ (pagination.page - 1) * pagination.limit + 1 }} to
+        {{ Math.min(pagination.page * pagination.limit, pagination.total) }} of {{ pagination.total }} properties
       </div>
       <div class="flex space-x-2">
-        <Button 
-          variant="outline" 
-          size="sm" 
-          :disabled="pagination.page <= 1"
-          @click="changePage(pagination.page - 1)"
-        >
+        <Button variant="outline" size="sm" :disabled="pagination.page <= 1" @click="changePage(pagination.page - 1)">
           Previous
         </Button>
-        <Button 
-          variant="outline" 
-          size="sm" 
-          :disabled="!pagination.hasMore"
-          @click="changePage(pagination.page + 1)"
-        >
+        <Button variant="outline" size="sm" :disabled="!pagination.hasMore" @click="changePage(pagination.page + 1)">
           Next
         </Button>
       </div>
@@ -210,41 +192,52 @@
 </template>
 
 <script setup lang="ts">
-import { debounce } from 'lodash-es';
+import { debounce } from "lodash-es";
+import { Button } from "~/components/ui/button";
+import { Card, CardContent } from "~/components/ui/card";
+import { Label } from "~/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table";
+import { Input } from "~/components/ui/input";
 
 // Define page meta
 definePageMeta({
-  layout: 'admin'
+  layout: "admin",
 });
 
 // Reactive filters
 const filters = reactive({
-  search: '',
-  status: '',
-  propertyType: '',
-  listingType: '',
+  search: "",
+  status: "",
+  propertyType: "",
+  listingType: "",
   page: 1,
-  limit: 20
+  limit: 20,
 });
 
 // Computed query for API
 const queryParams = computed(() => {
   const params: any = {
     page: filters.page,
-    limit: filters.limit
+    limit: filters.limit,
   };
-  
+
   if (filters.search) params.search = filters.search;
   if (filters.propertyType) params.propertyType = [filters.propertyType];
   if (filters.listingType) params.listingType = filters.listingType;
-  
+
   return params;
 });
 
 // Fetch properties data
-const { data: response, pending, error, refresh } = await $fetch('/api/properties', {
+const {
+  data: response,
+  pending,
+  error,
+  refresh,
+} = await useFetch("/api/properties", {
   query: queryParams,
-  server: true
+  server: true,
 });
 
 const properties = computed(() => response.value?.data || []);
@@ -264,27 +257,27 @@ watch([() => filters.status, () => filters.propertyType, () => filters.listingTy
 
 // Helper functions
 function formatPrice(price: string | number): string {
-  return new Intl.NumberFormat('en-US').format(Number(price));
+  return new Intl.NumberFormat("en-US").format(Number(price));
 }
 
 function formatDate(dateString: string): string {
-  return new Date(dateString).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric'
+  return new Date(dateString).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
   });
 }
 
 function getStatusVariant(isPublished: boolean, isDeleted: boolean) {
-  if (isDeleted) return 'destructive';
-  if (isPublished) return 'default';
-  return 'secondary';
+  if (isDeleted) return "destructive";
+  if (isPublished) return "default";
+  return "secondary";
 }
 
 function getStatusText(isPublished: boolean, isDeleted: boolean): string {
-  if (isDeleted) return 'Deleted';
-  if (isPublished) return 'Published';
-  return 'Draft';
+  if (isDeleted) return "Deleted";
+  if (isPublished) return "Published";
+  return "Draft";
 }
 
 function changePage(page: number) {
@@ -297,16 +290,16 @@ function refreshData() {
 }
 
 async function deleteProperty(propertyId: string) {
-  if (!confirm('Are you sure you want to delete this property?')) return;
-  
+  if (!confirm("Are you sure you want to delete this property?")) return;
+
   try {
     await $fetch(`/api/admin/properties/${propertyId}`, {
-      method: 'DELETE'
+      method: "DELETE",
     });
     refresh();
   } catch (error) {
-    console.error('Error deleting property:', error);
-    alert('Failed to delete property');
+    console.error("Error deleting property:", error);
+    alert("Failed to delete property");
   }
 }
 </script>
