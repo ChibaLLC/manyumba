@@ -1,4 +1,4 @@
-import { getDashboardStats } from "~/server/db/queries";
+import { getDashboardStats } from "~~/server/db/queries";
 
 export default defineEventHandler(async (event) => {
   try {
@@ -12,16 +12,16 @@ export default defineEventHandler(async (event) => {
     // }
 
     const stats = await getDashboardStats();
-    
+
     return {
       success: true,
-      data: stats
+      data: stats,
     };
   } catch (error) {
-    console.error('Error fetching dashboard stats:', error);
+    console.error("Error fetching dashboard stats:", error);
     throw createError({
       statusCode: 500,
-      statusMessage: 'Failed to fetch dashboard statistics'
+      statusMessage: "Failed to fetch dashboard statistics",
     });
   }
 });

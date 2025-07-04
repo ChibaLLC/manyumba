@@ -1,22 +1,17 @@
 import { and, desc, eq, ilike, sql, count, asc, or, gte, lte, inArray } from "drizzle-orm";
 import db from "../index";
 import { properties, propertyImages, users, reviews, favorites } from "../schema";
-import type { 
-  Property, 
-  PropertyWithRelations, 
-  PropertyFilters, 
-  PaginationResult 
-} from "../types";
-import { getOrSetCache, invalidateCache, invalidateCachePattern, cacheKeys } from "~/server/utils/cache";
+import type { Property, PropertyWithRelations, PropertyFilters, PaginationResult } from "../types";
+import { getOrSetCache, invalidateCache, invalidateCachePattern, cacheKeys } from "~~/server/utils/cache";
 
 // Get all properties with filters and pagination (cached)
 export async function getProperties(filters: PropertyFilters = {}): Promise<PaginationResult<PropertyWithRelations>> {
   const cacheKey = cacheKeys.properties(filters);
-  
+
   return getOrSetCache(
     cacheKey,
     () => getPropertiesUncached(filters),
-    { ttl: 300 } // 5 minutes cache
+    { ttl: 300 }, // 5 minutes cache
   );
 }
 
@@ -37,16 +32,13 @@ async function getPropertiesUncached(filters: PropertyFilters = {}): Promise<Pag
     features,
     sortBy = "created_at_desc",
     page = 1,
-    limit = 20
+    limit = 20,
   } = filters;
 
   const offset = (page - 1) * limit;
 
   // Build where conditions
-  const conditions = [
-    eq(properties.isPublished, true),
-    eq(properties.isDeleted, false)
-  ];
+  const conditions = [eq(properties.isPublished, true), eq(properties.isDeleted, false)];
 
   if (propertyType?.length) {
     conditions.push(inArray(properties.propertyType, propertyType));
@@ -84,9 +76,7 @@ async function getPropertiesUncached(filters: PropertyFilters = {}): Promise<Pag
 
   // Handle features filtering using JSONB
   if (features?.length) {
-    const featureConditions = features.map(feature => 
-      sql`${properties.features} ? ${feature}`
-    );
+    const featureConditions = features.map((feature) => sql`${properties.features} ? ${feature}`);
     conditions.push(or(...featureConditions));
   }
 
@@ -130,24 +120,24 @@ async function getPropertiesUncached(filters: PropertyFilters = {}): Promise<Pag
         ulid: propertyImages.ulid,
         imageUrl: propertyImages.imageUrl,
         isFeatured: propertyImages.isFeatured,
-      }
+      },
     })
     .from(properties)
     .leftJoin(users, eq(properties.ownerUlid, users.ulid))
-    .leftJoin(propertyImages, and(
-      eq(properties.ulid, propertyImages.propertyUlid),
-      eq(propertyImages.isFeatured, true)
-    ))
+    .leftJoin(
+      propertyImages,
+      and(eq(properties.ulid, propertyImages.propertyUlid), eq(propertyImages.isFeatured, true)),
+    )
     .where(and(...conditions))
     .orderBy(orderBy)
     .limit(limit)
     .offset(offset);
 
   // Transform results
-  const data = result.map(row => ({
+  const data = result.map((row) => ({
     ...row.property,
     owner: row.owner,
-    images: row.featuredImage ? [row.featuredImage] : []
+    images: row.featuredImage ? [row.featuredImage] : [],
   }));
 
   return {
@@ -156,7 +146,7 @@ async function getPropertiesUncached(filters: PropertyFilters = {}): Promise<Pag
     page,
     limit,
     totalPages: Math.ceil(total / limit),
-    hasMore: page * limit < total
+    hasMore: page * limit < total,
   };
 }
 
@@ -165,10 +155,7 @@ export async function getPropertyById(ulid: string): Promise<PropertyWithRelatio
   const [property] = await db
     .select()
     .from(properties)
-    .where(and(
-      eq(properties.ulid, ulid),
-      eq(properties.isDeleted, false)
-    ))
+    .where(and(eq(properties.ulid, ulid), eq(properties.isDeleted, false)))
     .limit(1);
 
   if (!property) return null;
@@ -202,26 +189,23 @@ export async function getPropertyById(ulid: string): Promise<PropertyWithRelatio
         ulid: users.ulid,
         name: users.name,
         profileImage: users.profileImage,
-      }
+      },
     })
     .from(reviews)
     .leftJoin(users, eq(reviews.userUlid, users.ulid))
-    .where(and(
-      eq(reviews.propertyUlid, ulid),
-      eq(reviews.isApproved, true)
-    ))
+    .where(and(eq(reviews.propertyUlid, ulid), eq(reviews.isApproved, true)))
     .orderBy(desc(reviews.createdAt));
 
   return {
     ...property,
     owner,
     images,
-    reviews: propertyReviews.map(r => ({ ...r.review, user: r.user }))
+    reviews: propertyReviews.map((r) => ({ ...r.review, user: r.user })),
   };
 }
 
 // Create property
-export async function createProperty(data: Omit<Property, 'ulid' | 'createdAt' | 'updatedAt'>): Promise<Property> {
+export async function createProperty(data: Omit<Property, "ulid" | "createdAt" | "updatedAt">): Promise<Property> {
   const [property] = await db
     .insert(properties)
     .values({
@@ -232,7 +216,7 @@ export async function createProperty(data: Omit<Property, 'ulid' | 'createdAt' |
     .returning();
 
   // Invalidate relevant caches
-  await invalidateCachePattern('properties:*');
+  await invalidateCachePattern("properties:*");
   await invalidateCache(cacheKeys.dashboardStats());
   await invalidateCache(cacheKeys.userProperties(data.ownerUlid));
 
@@ -252,7 +236,7 @@ export async function updateProperty(ulid: string, data: Partial<Property>): Pro
 
   if (property) {
     // Invalidate relevant caches
-    await invalidateCachePattern('properties:*');
+    await invalidateCachePattern("properties:*");
     await invalidateCache(cacheKeys.property(ulid));
     await invalidateCache(cacheKeys.userProperties(property.ownerUlid));
     await invalidateCache(cacheKeys.dashboardStats());
@@ -265,7 +249,7 @@ export async function updateProperty(ulid: string, data: Partial<Property>): Pro
 export async function deleteProperty(ulid: string): Promise<boolean> {
   const [result] = await db
     .update(properties)
-    .set({ 
+    .set({
       isDeleted: true,
       updatedAt: new Date().toISOString(),
     })
@@ -274,7 +258,7 @@ export async function deleteProperty(ulid: string): Promise<boolean> {
 
   if (result) {
     // Invalidate relevant caches
-    await invalidateCachePattern('properties:*');
+    await invalidateCachePattern("properties:*");
     await invalidateCache(cacheKeys.property(ulid));
     await invalidateCache(cacheKeys.userProperties(result.ownerUlid));
     await invalidateCache(cacheKeys.dashboardStats());
@@ -286,7 +270,7 @@ export async function deleteProperty(ulid: string): Promise<boolean> {
 // Get user's properties
 export async function getUserProperties(userUlid: string, includeDeleted = false): Promise<PropertyWithRelations[]> {
   const conditions = [eq(properties.ownerUlid, userUlid)];
-  
+
   if (!includeDeleted) {
     conditions.push(eq(properties.isDeleted, false));
   }
@@ -298,19 +282,19 @@ export async function getUserProperties(userUlid: string, includeDeleted = false
         ulid: propertyImages.ulid,
         imageUrl: propertyImages.imageUrl,
         isFeatured: propertyImages.isFeatured,
-      }
+      },
     })
     .from(properties)
-    .leftJoin(propertyImages, and(
-      eq(properties.ulid, propertyImages.propertyUlid),
-      eq(propertyImages.isFeatured, true)
-    ))
+    .leftJoin(
+      propertyImages,
+      and(eq(properties.ulid, propertyImages.propertyUlid), eq(propertyImages.isFeatured, true)),
+    )
     .where(and(...conditions))
     .orderBy(desc(properties.createdAt));
 
-  return result.map(row => ({
+  return result.map((row) => ({
     ...row.property,
-    images: row.featuredImage ? [row.featuredImage] : []
+    images: row.featuredImage ? [row.featuredImage] : [],
   }));
 }
 
@@ -323,24 +307,20 @@ export async function getUserFavorites(userUlid: string): Promise<PropertyWithRe
         ulid: propertyImages.ulid,
         imageUrl: propertyImages.imageUrl,
         isFeatured: propertyImages.isFeatured,
-      }
+      },
     })
     .from(favorites)
     .innerJoin(properties, eq(favorites.propertyUlid, properties.ulid))
-    .leftJoin(propertyImages, and(
-      eq(properties.ulid, propertyImages.propertyUlid),
-      eq(propertyImages.isFeatured, true)
-    ))
-    .where(and(
-      eq(favorites.userUlid, userUlid),
-      eq(properties.isPublished, true),
-      eq(properties.isDeleted, false)
-    ))
+    .leftJoin(
+      propertyImages,
+      and(eq(properties.ulid, propertyImages.propertyUlid), eq(propertyImages.isFeatured, true)),
+    )
+    .where(and(eq(favorites.userUlid, userUlid), eq(properties.isPublished, true), eq(properties.isDeleted, false)))
     .orderBy(desc(favorites.createdAt));
 
-  return result.map(row => ({
+  return result.map((row) => ({
     ...row.property,
-    images: row.featuredImage ? [row.featuredImage] : []
+    images: row.featuredImage ? [row.featuredImage] : [],
   }));
 }
 
@@ -349,38 +329,28 @@ export async function toggleFavorite(userUlid: string, propertyUlid: string): Pr
   const [existing] = await db
     .select()
     .from(favorites)
-    .where(and(
-      eq(favorites.userUlid, userUlid),
-      eq(favorites.propertyUlid, propertyUlid)
-    ))
+    .where(and(eq(favorites.userUlid, userUlid), eq(favorites.propertyUlid, propertyUlid)))
     .limit(1);
 
   if (existing) {
-    await db
-      .delete(favorites)
-      .where(and(
-        eq(favorites.userUlid, userUlid),
-        eq(favorites.propertyUlid, propertyUlid)
-      ));
+    await db.delete(favorites).where(and(eq(favorites.userUlid, userUlid), eq(favorites.propertyUlid, propertyUlid)));
     return false; // Removed from favorites
   } else {
-    await db
-      .insert(favorites)
-      .values({
-        userUlid,
-        propertyUlid,
-        createdAt: new Date().toISOString(),
-      });
+    await db.insert(favorites).values({
+      userUlid,
+      propertyUlid,
+      createdAt: new Date().toISOString(),
+    });
     return true; // Added to favorites
   }
 }
 
 // Search properties (full-text search)
 export async function searchProperties(
-  searchTerm: string, 
-  filters: Omit<PropertyFilters, 'page' | 'limit'> = {},
+  searchTerm: string,
+  filters: Omit<PropertyFilters, "page" | "limit"> = {},
   page = 1,
-  limit = 20
+  limit = 20,
 ): Promise<PaginationResult<PropertyWithRelations>> {
   const searchConditions = [
     or(
@@ -388,8 +358,8 @@ export async function searchProperties(
       ilike(properties.description, `%${searchTerm}%`),
       ilike(properties.address, `%${searchTerm}%`),
       ilike(properties.city, `%${searchTerm}%`),
-      ilike(properties.state, `%${searchTerm}%`)
-    )
+      ilike(properties.state, `%${searchTerm}%`),
+    ),
   ];
 
   return getProperties({
