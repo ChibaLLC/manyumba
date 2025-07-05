@@ -19,7 +19,11 @@ const showIcon = computed(() => !focus.value && !model.value?.toString()?.length
       @blur="focus = false"
       @focus="focus = true"
       class="bg-white/80 backdrop-blur focus:outline-none"
-      style="box-shadow: 0px 2px 4px rgba(61, 90, 128, 0.15), inset 0px 2px 4px rgba(188, 190, 192, 0.15)"
+      style="
+        box-shadow:
+          0px 2px 4px rgba(61, 90, 128, 0.15),
+          inset 0px 2px 4px rgba(188, 190, 192, 0.15);
+      "
     />
   </div>
 </template>

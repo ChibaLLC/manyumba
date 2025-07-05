@@ -19,10 +19,7 @@ export const basicInfoSchema = z.object({
   title: z
     .string()
     .check(z.minLength(5))
-    .check(
-      // Custom error message is supported via an inline refine, since check() doesn't accept message directly
-      z.refine((value) => value.length >= 5, { error: "Title must be at least 5 characters" })
-    ),
+    .check(z.refine((value) => value.length >= 5, { error: "Title must be at least 5 characters" })),
 
   description: z
     .string()
@@ -44,7 +41,7 @@ export const basicInfoSchema = z.object({
     z
       .number()
       .check(z.gt(0))
-      .check(z.refine((value) => value > 0, { error: "Area must be positive" }))
+      .check(z.refine((value) => value > 0, { error: "Area must be positive" })),
   ),
 
   yearBuilt: z.optional(z.number().check(z.int())),
@@ -82,7 +79,7 @@ export const imagesSchema = z.object({
         file: z.instanceof(File),
         preview: z.string(),
         isFeatured: z.optional(z.boolean()),
-      })
+      }),
     )
     .check(z.minLength(1)),
 });
