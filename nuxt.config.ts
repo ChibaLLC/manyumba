@@ -42,6 +42,9 @@ export default defineNuxtConfig({
   },
   vite: {
     plugins: [tailwindcss()],
+    server: {
+      allowedHosts: ["dev.chiba.llc", "localhost"],
+    },
   },
   i18n: {
     defaultLocale: "en",

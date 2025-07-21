@@ -1,19 +1,13 @@
-# ---- Build Stage ----
-FROM node:22 AS builder
+FROM node:24 AS builder
 
-WORKDIR /app
+WORKDIR /
 
 COPY package.json pnpm-lock.yaml ./
 RUN corepack enable
+
 RUN pnpm install
 
 COPY . .
-RUN pnpm run build
+RUN pnpm nuxt prepare && pnpm run build && pnpm prune --prod
 
-FROM node:22-alpine AS runner
-
-WORKDIR /app
-
-COPY --from=builder /app/.output ./.output
-
-CMD ["node", ".output/server/index.mjs"]
+CMD ["node", "server/index.mjs"]

@@ -63,9 +63,14 @@ export async function getIpLocation(event?: H3Event): Promise<IpapiResponse> {
   if (!event) {
     event = useEvent();
   }
-  
-  // This will change in prod because of reverse proxy
-  const ip = getRequestHeader(event, "x-forwarded-for") || event.node.req.socket.remoteAddress;
+
+  if (typeof getRequestHeader === "undefined") {
+    const {getRequestHeader} = (await import("h3"));
+    var ip = getRequestHeader(event, "x-forwarded-for") || event.node.req.socket.remoteAddress;
+  } else {
+    // This will change in prod because of reverse proxy
+    var ip = getRequestHeader(event, "x-forwarded-for") || event.node.req.socket.remoteAddress;
+  }
   if (!ip) {
     throw createError({
       status: 500,
