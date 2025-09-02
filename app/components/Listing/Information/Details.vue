@@ -47,8 +47,8 @@ const back = () => {
 <template>
   <ListingContainer>
     <div>
-      <h1 class="dm-serif-text text-4xl">Property Details</h1>
-      <p class="mulish">Property Details</p>
+      <h1 class="font-dm-serif text-4xl">Property Details</h1>
+      <p class="font-mulish">Property Details</p>
     </div>
     <div class="mt-6">
       <div class="space-y-4">
@@ -71,7 +71,7 @@ const back = () => {
     </div>
 
     <div class="mt-6" v-if="basicInfo.assetType === 'house'">
-      <h2 class="newton font-semibold text-lg mb-2">Home Features</h2>
+      <h2 class="font-newton font-semibold text-lg mb-2">Home Features</h2>
       <div class="grid grid-cols-2 gap-4">
         <div>
           <label class="block text-sm font-medium mb-1">Bedrooms</label>

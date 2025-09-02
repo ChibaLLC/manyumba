@@ -46,7 +46,6 @@
     --sidebar-border: hsl(220 13% 91%);
     --sidebar-ring: hsl(217.2 91.2% 59.8%);
 
-    --navy: hsl(222, 47%, 11%);
     --sky-100: hsl(210, 40%, 96%);
     --sky-200: hsl(213, 27%, 74%);
   }
@@ -67,7 +66,7 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
 
-    --primary: 210 40% 98%;
+    --primary: var(--color-navy);
     --primary-foreground: 222.2 47.4% 11.2%;
 
     --secondary: 217.2 32.6% 17.5%;
@@ -105,6 +104,15 @@
     --color-navy: var(--navy);
     --color-sky-100: var(--sky-100);
     --color-sky-200: var(--sky-200);
+
+    --font-inter: "Inter", serif;
+    --font-mulish: "Mulish", serif;
+    --font-dm-serif: "DM Serif Text", serif;
+    --font-newton: "Neuton", serif;
+    --font-bona-nova: "Bona Nova", serif;
+    --font-inknut: "Inknut Antiqua", serif;
+
+    --text-nm: font-size: 16px;
   }
 
   * {

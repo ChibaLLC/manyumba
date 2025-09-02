@@ -44,8 +44,8 @@ function back() {
 <template>
   <ListingContainer>
     <div>
-      <h1 class="dm-serif-text text-4xl">Address Information</h1>
-      <p class="mulish">Enter the complete address of your property.</p>
+      <h1 class="font-dm-serif text-4xl">Address Information</h1>
+      <p class="font-mulish">Enter the complete address of your property.</p>
     </div>
 
     <div class="mt-6 space-y-4">

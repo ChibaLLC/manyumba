@@ -71,12 +71,12 @@ function setPropertyType(type: PropertyType) {
 <template>
   <ListingContainer>
     <div>
-      <h1 class="dm-serif-text text-4xl">Basic Information</h1>
-      <p class="mulish">Put in as much details as needed.</p>
+      <h1 class="font-dm-serif text-4xl">Basic Information</h1>
+      <p class="font-mulish">Put in as much details as needed.</p>
     </div>
 
     <div class="mt-6">
-      <h2 class="newton font-semibold text-lg mb-2">Lease Type</h2>
+      <h2 class="font-newton font-semibold text-lg mb-2">Lease Type</h2>
       <div class="flex gap-3">
         <Button
           :class="data.listingType === 'sale' ? 'bg-navy text-white' : 'text-navy bg-sky-100 border-sky-200 border'"
@@ -96,7 +96,7 @@ function setPropertyType(type: PropertyType) {
     </div>
 
     <div class="mt-6">
-      <h2 class="newton font-semibold text-lg mb-2">Property Type</h2>
+      <h2 class="font-newton font-semibold text-lg mb-2">Property Type</h2>
       <div class="flex gap-3">
         <Button
           :class="data.assetType === 'house' ? 'bg-navy text-white' : 'text-navy bg-sky-100 border-sky-200 border'"
@@ -116,7 +116,7 @@ function setPropertyType(type: PropertyType) {
     </div>
 
     <div class="mt-6" v-if="filteredTypes">
-      <h2 class="newton font-semibold text-lg mb-2">{{ data.assetType === "house" ? "Home" : "Land" }} Type</h2>
+      <h2 class="font-newton font-semibold text-lg mb-2">{{ data.assetType === "house" ? "Home" : "Land" }} Type</h2>
       <div class="relative flex items-center mb-4">
         <span class="absolute left-3 text-gray-400">
           <Icon name="local:search" class="w-4 h-4" />

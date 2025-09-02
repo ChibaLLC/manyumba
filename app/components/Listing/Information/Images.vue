@@ -86,8 +86,8 @@ function back() {
 <template>
   <ListingContainer>
     <div>
-      <h1 class="dm-serif-text text-4xl">Property Images</h1>
-      <p class="mulish">Upload high-quality images of your property. The first image will be the featured image.</p>
+      <h1 class="font-dm-serif text-4xl">Property Images</h1>
+      <p class="font-mulish">Upload high-quality images of your property. The first image will be the featured image.</p>
     </div>
 
     <div class="mt-6">
@@ -95,7 +95,7 @@ function back() {
 
       <div
         @click="triggerFileInput"
-        class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-navy transition-colors"
+        class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pofont-inter hover:border-navy transition-colors"
       >
         <Icon name="mdi:upload" class="w-12 h-12 mx-auto text-gray-400" />
         <p class="mt-2 text-sm text-gray-500">Click to upload or drag and drop</p>
@@ -103,7 +103,7 @@ function back() {
       </div>
 
       <div v-if="imagesData.images.length > 0" class="mt-6">
-        <h3 class="newton font-semibold text-lg mb-2">Uploaded Images</h3>
+        <h3 class="font-newton font-semibold text-lg mb-2">Uploaded Images</h3>
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           <div
             v-for="(image, index) in imagesData.images"

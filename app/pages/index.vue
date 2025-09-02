@@ -27,7 +27,7 @@ function variant(expected: typeof query.lease) {
           </Button>
         </div>
         <InputLocation
-          class="w-[600px] h-14 rounded-lg focus:outline-none focus:ring-1 ring-purple-400 px-4 text-16 mulish lg:w-[700px]"
+          class="w-[600px] h-14 rounded-lg focus:outline-none focus:ring-1 ring-purple-400 px-4 text-nm font-mulish lg:w-[700px]"
           placeholder="Enter a city, town or location to search"
           @keydown.enter="navigateTo('./listing')"
         />

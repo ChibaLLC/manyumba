@@ -56,12 +56,12 @@ function back() {
 <template>
   <ListingContainer>
     <div>
-      <h1 class="dm-serif-text text-4xl">Property Features</h1>
-      <p class="mulish">Select all the features that apply to your property.</p>
+      <h1 class="font-dm-serif text-4xl">Property Features</h1>
+      <p class="font-mulish">Select all the features that apply to your property.</p>
     </div>
 
     <div class="mt-6">
-      <h2 class="newton font-semibold text-lg mb-2">Common Features</h2>
+      <h2 class="font-newton font-semibold text-lg mb-2">Common Features</h2>
       <div class="grid grid-cols-2 md:grid-cols-3 gap-y-3">
         <div v-for="(value, feature) in featuresData.features" :key="feature" class="flex items-center space-x-2">
           <Checkbox :id="feature" v-model:checked="featuresData.features[feature]" />
@@ -73,7 +73,7 @@ function back() {
     </div>
 
     <div class="mt-6">
-      <h2 class="newton font-semibold text-lg mb-2">Custom Features</h2>
+      <h2 class="font-newton font-semibold text-lg mb-2">Custom Features</h2>
       <div class="flex items-center space-x-2">
         <Input v-model="newFeature" placeholder="Add custom feature" class="flex-1" @keyup.enter="addCustomFeature" />
         <Button @click="addCustomFeature">Add</Button>
