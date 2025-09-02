@@ -1,5 +1,5 @@
 <script lang="ts">
-import { z } from "zod/v4-mini";
+import { toJSONSchema, z } from "zod/v4-mini";
 
 export const propertyType = ["apartment", "house", "commercial", "plot", "land"] as const;
 export const listingType = ["rent", "sale"] as const;
@@ -41,11 +41,12 @@ const filteredTypes = computed(() => {
 });
 
 function next() {
-  const { error, data } = validate({ prettifyError: true });
+  const { error, data: validated } = validate({ prettifyError: true });
   if (!error) {
-    emits("next", data);
+    emits("next", validated);
   } else {
     console.log(error);
+    console.log(data)
     toast.error(String(error));
   }
 }
@@ -64,6 +65,8 @@ function setListingType(type: ListingType) {
 }
 
 function setPropertyType(type: PropertyType) {
+  console.log(type)
+  console.info(toJSONSchema(schema))
   data.assetType = type;
 }
 </script>
