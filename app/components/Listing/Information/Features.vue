@@ -64,8 +64,8 @@ function back() {
     <div class="mt-6">
       <h2 class="font-newton font-semibold text-lg mb-2">Common Features</h2>
       <div class="grid grid-cols-2 md:grid-cols-3 gap-y-3">
-        <div v-for="(value, feature) in featuresData.features" :key="feature" class="flex items-center space-x-2">
-          <Checkbox :id="feature" v-model:checked="featuresData.features?.[feature]" />
+        <div v-for="(_, feature) in featuresData.features" :key="feature" class="flex items-center space-x-2">
+          <Checkbox v-if="featuresData.features" :id="feature" v-model:checked="featuresData.features[feature]" />
           <label :for="feature" class="text-sm font-medium leading-none cursor-pointer">
             {{ feature }}
           </label>
