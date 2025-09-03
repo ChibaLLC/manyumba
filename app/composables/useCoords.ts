@@ -9,7 +9,7 @@ export async function getApproximateLocation(): Promise<LocationResult | undefin
   const { result: response, error } = await execute(
     (async function () {
       if (import.meta.server) {
-        const { getIpLocation } = await import("@@/server/utils/location");
+        const { getIpLocation } = await import("@@/shared/utils/location");
         const event = useRequestEvent();
         return await getIpLocation(event);
       } else {
