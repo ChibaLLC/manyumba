@@ -1,17 +1,26 @@
+<script lang="ts">
+export const {
+  schema: imagesSchema,
+  data: imagesData,
+  validate,
+} = useZodState({
+  images: z
+    .array(
+      z.object({
+        file: z.instanceof(File),
+        preview: z.string(),
+        isFeatured: z.optional(z.boolean()),
+      })
+    )
+    .check(z.minLength(1)),
+});
+
+type ImagesData = z.infer<typeof imagesSchema>;
+</script>
 <script setup lang="ts">
 import { z } from "zod/v4";
 import { Button } from "@/components/ui/button";
-import { imagesSchema, type ImagesData } from "~~/shared/schemas/listing";
-
-const imagesData = reactive<{
-  images: Array<{
-    file: File;
-    preview: string;
-    isFeatured: boolean;
-  }>;
-}>({
-  images: [],
-});
+import { Trash, Star } from "lucide-vue-next";
 
 const fileInput = ref<HTMLInputElement | null>(null);
 
@@ -32,6 +41,10 @@ function handleFileUpload(event: Event) {
     const reader = new FileReader();
     reader.onload = (e) => {
       const preview = e.target?.result as string;
+      if (!imagesData.images) {
+        imagesData.images = [];
+      }
+
       imagesData.images.push({
         file,
         preview,
@@ -46,16 +59,26 @@ function handleFileUpload(event: Event) {
 }
 
 function removeImage(index: number) {
-  const wasFeature = imagesData.images[index].isFeatured;
+  if (!imagesData.images?.length) {
+    $alert.warning("No image to remove");
+    return;
+  }
+
+  const wasFeature = imagesData.images[index]?.isFeatured;
   imagesData.images.splice(index, 1);
 
   // If we removed the featured image, set the first image as featured
   if (wasFeature && imagesData.images.length > 0) {
-    imagesData.images[0].isFeatured = true;
+    imagesData.images[0]!.isFeatured = true;
   }
 }
 
 function setFeatured(index: number) {
+  if (!imagesData.images?.length) {
+    $alert.warning("No images in set");
+    return;
+  }
+
   imagesData.images.forEach((img, i) => {
     img.isFeatured = i === index;
   });
@@ -66,16 +89,16 @@ function triggerFileInput() {
 }
 
 function next() {
-  try {
-    const validated = imagesSchema.parse(imagesData);
-    emits("next", validated);
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      $alert(error.error[0].message);
-    } else {
-      $alert("Please upload at least one image");
-    }
+  const { error, data } = validate({
+    prettifyError: true,
+  });
+
+  if (error) {
+    $alert.error(String(error));
+    return;
   }
+
+  emits("next", data);
 }
 
 function back() {
@@ -87,7 +110,9 @@ function back() {
   <ListingContainer>
     <div>
       <h1 class="font-dm-serif text-4xl">Property Images</h1>
-      <p class="font-mulish">Upload high-quality images of your property. The first image will be the featured image.</p>
+      <p class="font-mulish">
+        Upload high-quality images of your property. The first image will be the featured image.
+      </p>
     </div>
 
     <div class="mt-6">
@@ -102,7 +127,7 @@ function back() {
         <p class="text-xs text-gray-400">PNG, JPG, GIF up to 10MB</p>
       </div>
 
-      <div v-if="imagesData.images.length > 0" class="mt-6">
+      <div v-if="imagesData.images && imagesData.images.length > 0" class="mt-6">
         <h3 class="font-newton font-semibold text-lg mb-2">Uploaded Images</h3>
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           <div
@@ -112,19 +137,23 @@ function back() {
           >
             <img :src="image.preview" :alt="`Property image ${index + 1}`" class="w-full h-32 object-cover" />
             <div
-              class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all flex items-center justify-center opacity-0 group-hover:opacity-100"
+              class="absolute inset-0 bg-black/30 bg-opacity-0 group-hover:bg-opacity-40 transition-all flex items-center justify-center opacity-0 group-hover:opacity-100 backdrop-blur-xs"
             >
-              <Button variant="destructive" size="icon" class="w-8 h-8 rounded-full" @click.stop="removeImage(index)">
-                <Icon name="local:trash" class="w-4 h-4" />
-              </Button>
               <Button
-                variant="default"
+                variant="destructive"
                 size="icon"
-                class="w-8 h-8 rounded-full ml-2"
-                :class="image.isFeatured ? 'bg-yellow-500' : 'bg-white text-navy'"
-                @click.stop="setFeatured(index)"
+                class="w-8 h-8 rounded-full text-white hover:text-red-500"
+                @click.stop="removeImage(index)"
               >
-                <Icon name="local:star" class="w-4 h-4" />
+                <Trash class="w-4 h-4" />
+              </Button>
+              <Button variant="default" size="icon" class="w-8 h-8 rounded-full ml-2" @click.stop="setFeatured(index)">
+                <Star
+                  class="w-4 h-4 text-white"
+                  :class="{
+                    'text-yellow-500 fill-yellow-500': image.isFeatured,
+                  }"
+                />
               </Button>
             </div>
             <div

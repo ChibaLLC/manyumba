@@ -118,6 +118,8 @@ function goBack() {
         <ListingInformationDetails
           v-else-if="steps === 2 && listing.data.basicInfo"
           :basicInfo="listing.data.basicInfo"
+          @back="goBack"
+          @next="handleFeatures"
         />
 
         <ListingInformationAddress v-else-if="steps === 3" @next="handleAddress" @back="goBack" />

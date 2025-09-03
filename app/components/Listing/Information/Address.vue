@@ -19,17 +19,15 @@ const emits = defineEmits<{
   next: [AddressData];
   back: [];
 }>();
-const addressInfo = reactive<AddressData>(<AddressData>{});
-
 function next() {
   const { error, data } = addressData.validate({
     prettifyError: true,
-    flattenError: true,
+    breaks: true
   });
 
   if (error) {
     console.log(error);
-    $alert(String(error));
+    $alert.error(String(error));
     return;
   }
 

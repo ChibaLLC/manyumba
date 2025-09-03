@@ -4,11 +4,12 @@
 	"type": "module",
 	"scripts": {
 		"build": "nuxt build",
+		"cleanup": "pnpm dlx nuxt cleanup",
 		"dev": "nuxt dev",
 		"generate": "nuxt generate",
 		"preview": "nuxt preview",
 		"postinstall": "nuxt prepare",
-		"cleanup": "pnpm dlx nuxt cleanup"
+		"test": "vitest run --testTimeout 10000"
 	},
 	"dependencies": {
 		"@nuxt/fonts": "0.11.4",

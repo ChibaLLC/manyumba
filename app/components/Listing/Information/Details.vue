@@ -36,7 +36,7 @@ const next = () => {
     emits("next", data);
   } else {
     console.error(error);
-    toast(String(error));
+    toast.error(String(error));
   }
 };
 
@@ -63,14 +63,14 @@ const back = () => {
         <div>
           <label class="block text-sm font-medium mb-1">Price</label>
           <div class="relative">
-            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
-            <Input v-model="data.price" type="number" placeholder="0.00" class="w-full pl-8" />
+            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">KES</span>
+            <Input v-model="data.price" type="number" placeholder="0.00" class="w-full pl-[42px]" />
           </div>
         </div>
       </div>
     </div>
 
-    <div class="mt-6" v-if="basicInfo.assetType === 'house'">
+    <div class="mt-6" v-if="basicInfo.propertyType === 'home'">
       <h2 class="font-newton font-semibold text-lg mb-2">Home Features</h2>
       <div class="grid grid-cols-2 gap-4">
         <div>
