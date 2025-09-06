@@ -5,18 +5,34 @@ services:
       dockerfile: Dockerfile
     env_file:
       - ".env"
+    environment:
+      - DB_NAME=${DB_NAME:-master}
+      - DB_PASSWORD=${DB_PASSWORD:-__default}
+      - DB_USER=postgres
+      - DB_HOST=db
+      - DB_PORT=5432
+    ports:
+      - "${PORT:-80}:${PORT:-3000}"
     labels:
       - com.centurylinklabs.watchtower.enable="true"
-
-  nginx:
-    container_name: nginx
-    build:
-      context: ./nginx
-      dockerfile: Dockerfile
-    ports:
-      - "80:80"
     depends_on:
-      - web
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:latest
+    environment:
+      - POSTGRES_DB=${DB_NAME:-master}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-__default}
+      - POSTGRES_USER=${DB_USER:-postgres}
+      - PGDATA=/data/pgdata
+    volumes:
+      - ./postgres-data:/data/pgdata
+    healthcheck:
+      interval: 5s
+      timeout: 10s
+      retries: 10
+      test: pg_isready -h localhost -U $$POSTGRES_USER
 
   watchtower:
     image: containrrr/watchtower
@@ -24,4 +40,3 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     command:
       - --label-enable
-      - --interval 30
