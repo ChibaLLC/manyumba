@@ -13,3 +13,6 @@ services:
     extends:
       file: docker-compose.base.yml
       service: watchtower
+
+volumes:
+  postgres_data:

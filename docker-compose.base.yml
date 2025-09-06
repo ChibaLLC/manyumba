@@ -24,7 +24,7 @@ services:
       - POSTGRES_USER=${DB_USER:-postgres}
       - PGDATA=/data/pgdata
     volumes:
-      - ./postgres-data:/data/pgdata
+      - postgres_data:/data/pgdata
     healthcheck:
       interval: 5s
       timeout: 10s
@@ -37,3 +37,6 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     command:
       - --label-enable
+
+volumes:
+  postgres_data:
