@@ -4,6 +4,7 @@ services:
       file: docker-compose.base.yml
       service: web
     image: ghcr.io/chiballc/manyumba:sha256-8348ca2bc9b6c584bf4625447ef30fb0d572ee3c3fcbc4d073e5dd5fab6ff3d6
+    
   db:
     extends:
       file: docker-compose.base.yml
