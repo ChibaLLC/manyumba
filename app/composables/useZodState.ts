@@ -7,11 +7,16 @@ type ZodSafeParseResult<T> =
 type FlattenedError = ReturnType<typeof z.flattenError>;
 type PrettifiedError = ReturnType<typeof z.prettifyError>;
 
-type ValidateParams = Partial<z.core.ParseContext<z.core.$ZodIssue>>;
+type ValidateParams = Partial<z.core.ParseContext<z.core.$ZodIssue>> &
+  OneOf<[{ prettifyError?: boolean; breaks?: boolean }, { flattenError?: boolean }]>;
 
 export type ZInfer<T extends z.core.$ZodShape> = {
   [K in keyof T]: T[K] extends z.core.$ZodType<any, any> ? z.infer<T[K]> : never;
 };
+
+function replaceNewlinesWithSymbol(text: string) {
+  return text.replace(/\n/g, "⏎\u00A0");
+}
 
 export function validate<T extends z.core.$ZodShape>(
   schema: z.core.$ZodObject<T>,
@@ -25,6 +30,7 @@ export function validate<T extends z.core.$ZodShape>(
   data: unknown,
   params: ValidateParams & {
     prettifyError: true;
+    breaks?: boolean;
   }
 ): { success: false; error: PrettifiedError } | { success: true; data: z.infer<typeof schema> };
 export function validate<T extends z.core.$ZodShape>(
@@ -35,7 +41,7 @@ export function validate<T extends z.core.$ZodShape>(
 export function validate<T extends z.core.$ZodShape>(
   schema: z.core.$ZodObject<T>,
   data: unknown,
-  params?: ValidateParams & { flattenError?: boolean; prettifyError?: boolean }
+  params?: ValidateParams
 ) {
   const result = safeParse(schema, data, params) as any;
   if (result.error) {
@@ -43,6 +49,10 @@ export function validate<T extends z.core.$ZodShape>(
       result.error = z.flattenError(result.error);
     } else if (params?.prettifyError) {
       result.error = z.prettifyError(result.error);
+
+      if (params.breaks) {
+        result.error = replaceNewlinesWithSymbol(result.error);
+      }
     }
   }
   return result;
@@ -54,11 +64,11 @@ export default function <T extends z.core.$ZodShape>(shape: T) {
 
   return {
     data,
-    validate(params?: ValidateParams & { flattenError?: boolean; prettifyError?: boolean }) {
+    validate(params?: ValidateParams) {
       return validate(schema, data, params);
     },
     get schema() {
       return schema;
-    }
+    },
   };
 }

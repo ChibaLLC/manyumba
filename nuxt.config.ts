@@ -1,5 +1,7 @@
 import tailwindcss from "@tailwindcss/vite";
 // https://nuxt.com/docs/api/configuration/nuxt-config
+
+const ignoredComponents = ["ui", "__tests__", "*.test.*", "*.spec.*", "*.utils.*", "*.json"] as const;
 export default defineNuxtConfig({
   compatibilityDate: "2025-06-09",
   devtools: { enabled: true },
@@ -10,24 +12,24 @@ export default defineNuxtConfig({
   components: {
     dirs: [
       {
-        path: "@/components",
-        ignore: ["ui"],
+        path: "pages",
+        pattern: "**/components/**",
+        pathPrefix: false,
+        ignore: ignoredComponents as unknown as string[],
+      },
+      {
+        path: "components",
+        ignore: ignoredComponents as unknown as string[],
       },
     ],
   },
   css: ["~/assets/css/tailwind.css", "~/assets/css/custom.scss"],
-  extends: ["github:kgarchie/nuxt-starter#7"],
+  extends: ["github:kgarchie/nuxt-starter#9"],
   nitro: {
     experimental: {
       websocket: true,
       asyncContext: true,
     },
-    imports: {
-      dirs: ["./shared/utils", "./shared/types"],
-    },
-  },
-  imports: {
-    dirs: ["../shared/types", "../shared/utils"],
   },
   icon: {
     size: "24px",
@@ -42,6 +44,9 @@ export default defineNuxtConfig({
   },
   vite: {
     plugins: [tailwindcss()],
+    server: {
+      allowedHosts: ["dev.chiba.llc", "localhost"],
+    },
   },
   i18n: {
     defaultLocale: "en",

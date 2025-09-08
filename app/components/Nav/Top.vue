@@ -4,10 +4,10 @@
     style="box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.1)"
   >
     <ul class="flex items-center gap-6">
-      <li class="logo inknut">
+      <li class="logo font-inknut">
         <NuxtLink to="/">Manyumba</NuxtLink>
       </li>
-      <li class="mulish">Payments</li>
+      <li class="font-mulish">Payments</li>
     </ul>
     <ul class="flex gap-6 justify-between items-center">
       <li>
