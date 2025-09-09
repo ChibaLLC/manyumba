@@ -3,8 +3,10 @@ services:
     extends:
       file: docker-compose.base.yml
       service: web
-    image: ghcr.io/chiballc/manyumba
-    
+    build:
+      context: .
+      dockerfile: Dockerfile
+
   db:
     extends:
       file: docker-compose.base.yml

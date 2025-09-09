@@ -1,11 +1,10 @@
 <script lang="ts">
 import { z } from "zod/v4-mini";
 
-export const propertyType = ["apartment", "house", "commercial", "plot", "land"] as const;
+export const propertyType = ["home", "land"] as const;
 export const listingType = ["rent", "sale"] as const;
 export type ListingType = (typeof listingType)[number];
 export type PropertyType = (typeof propertyType)[number];
-
 export const homeTypes = [
   "Single Family",
   "Townhouse",
@@ -17,11 +16,12 @@ export const homeTypes = [
   "Loft",
 ] as const;
 export const landTypes = ["Residential", "Commercial", "Agricultural", "Industrial", "Recreational"] as const;
+export type AssetType = (typeof homeTypes)[number] | (typeof landTypes)[number];
 
 export const { data, schema, validate } = useZodState({
-  assetType: z.enum(["apartment", "house", "commercial", "plot", "land"]),
-  listingType: z.enum(["rent", "sale"]),
-  propertyType: z.union([z.enum(homeTypes), z.enum(landTypes)]),
+  assetType: z.union([z.enum(homeTypes), z.enum(landTypes)]),
+  listingType: z.enum(listingType),
+  propertyType: z.enum(propertyType),
 });
 
 export type BasicInfoData = z.infer<typeof schema>;
@@ -31,21 +31,33 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "vue-sonner";
 
-const homeType = ref<string>("");
+const assetTypeSearch = ref<string>();
 
-const filteredTypes = computed(() => {
-  if (!data.assetType) {
+const filteredAssetTypes = computed(() => {
+  if (!data.propertyType) {
     return undefined;
   }
-  return data.assetType === "house" ? homeTypes : landTypes;
+  const properties = data.propertyType === "home" ? homeTypes : landTypes;
+  if (!assetTypeSearch.value?.trim()) {
+    return properties;
+  }
+
+  return properties.filter((p) => {
+    if(!assetTypeSearch.value) {
+      return false
+    }
+
+    return p.toLocaleLowerCase().includes(assetTypeSearch.value.trim().toLocaleLowerCase())
+  });
 });
 
 function next() {
-  const { error, data } = validate({ prettifyError: true });
+  const { error, data: validated } = validate({ prettifyError: true });
   if (!error) {
-    emits("next", data);
+    emits("next", validated);
   } else {
     console.log(error);
+    console.log(data);
     toast.error(String(error));
   }
 }
@@ -64,6 +76,10 @@ function setListingType(type: ListingType) {
 }
 
 function setPropertyType(type: PropertyType) {
+  data.propertyType = type;
+}
+
+function setAssetType(type: AssetType) {
   data.assetType = type;
 }
 </script>
@@ -71,22 +87,28 @@ function setPropertyType(type: PropertyType) {
 <template>
   <ListingContainer>
     <div>
-      <h1 class="dm-serif-text text-4xl">Basic Information</h1>
-      <p class="mulish">Put in as much details as needed.</p>
+      <h1 class="font-dm-serif text-4xl">Basic Information</h1>
+      <p class="font-mulish">Put in as much details as needed.</p>
     </div>
 
     <div class="mt-6">
-      <h2 class="newton font-semibold text-lg mb-2">Lease Type</h2>
+      <h2 class="font-newton font-semibold text-lg mb-2">Lease Type</h2>
       <div class="flex gap-3">
         <Button
-          :class="data.listingType === 'sale' ? 'bg-navy text-white' : 'text-navy bg-sky-100 border-sky-200 border'"
+          class="text-navy bg-sky-100 border-sky-200 border"
+          :class="{
+            'bg-navy text-white': data.listingType === 'sale',
+          }"
           @click="setListingType('sale')"
         >
           <Icon name="local:heart-home" class="mr-2" />
           Sale
         </Button>
         <Button
-          :class="data.listingType === 'rent' ? 'bg-navy text-white' : 'text-navy bg-sky-100 border-sky-200 border'"
+          class="text-navy bg-sky-100 border-sky-200 border"
+          :class="{
+            'bg-navy text-white': data.listingType === 'rent',
+          }"
           @click="setListingType('rent')"
         >
           <Icon name="local:smile-home" class="mr-2" />
@@ -96,18 +118,24 @@ function setPropertyType(type: PropertyType) {
     </div>
 
     <div class="mt-6">
-      <h2 class="newton font-semibold text-lg mb-2">Property Type</h2>
+      <h2 class="font-newton font-semibold text-lg mb-2">Property Type</h2>
       <div class="flex gap-3">
         <Button
-          :class="data.assetType === 'house' ? 'bg-navy text-white' : 'text-navy bg-sky-100 border-sky-200 border'"
-          @click="setPropertyType('house')"
+          class="text-navy bg-sky-100 border-sky-200 border"
+          :class="{
+            'bg-navy text-white': data.propertyType === 'home',
+          }"
+          @click="setPropertyType('home')"
         >
           <Icon name="local:shroom-home" class="mr-2" />
           Home
         </Button>
         <Button
-          :class="data.assetType === 'land' ? 'bg-navy text-white' : 'text-navy bg-sky-100 border-sky-200 border'"
+          class="text-navy bg-sky-100 border-sky-200 border plop"
           @click="setPropertyType('land')"
+          :class="{
+            'bg-navy text-white': data.propertyType === 'land',
+          }"
         >
           <Icon name="local:land" class="mr-2" />
           Land
@@ -115,28 +143,32 @@ function setPropertyType(type: PropertyType) {
       </div>
     </div>
 
-    <div class="mt-6" v-if="filteredTypes">
-      <h2 class="newton font-semibold text-lg mb-2">{{ data.assetType === "house" ? "Home" : "Land" }} Type</h2>
+    <div class="mt-6" v-if="filteredAssetTypes">
+      <h2 class="font-newton font-semibold text-lg mb-2">{{ data.propertyType === "home" ? "Home" : "Land" }} Type</h2>
       <div class="relative flex items-center mb-4">
         <span class="absolute left-3 text-gray-400">
           <Icon name="local:search" class="w-4 h-4" />
         </span>
         <Input
-          v-model="homeType"
+          v-model="assetTypeSearch"
           type="search"
           placeholder="Search..."
           aria-label="Search"
           class="bg-white rounded-lg border border-gray-300 w-full pl-9 pr-4 py-2 focus:border-transparent transition duration-200 ease-in-out hover:border-gray-400 placeholder-gray-400"
+          autocomplete="off"
         />
       </div>
-      <div class="grid grid-cols-2 md:grid-cols-3 gap-3 relative">
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-3 relative" v-if="filteredAssetTypes">
         <TransitionGroup name="choices">
           <Button
-            v-for="type in filteredTypes"
+            v-for="type of filteredAssetTypes"
             :key="type"
             variant="outline"
-            :class="homeType === type ? 'bg-navy text-white' : 'bg-white'"
-            @click="homeType = type"
+            class="bg-white"
+            :class="{
+              'bg-navy text-white': data.assetType === type,
+            }"
+            @click="setAssetType(type)"
           >
             {{ type }}
           </Button>

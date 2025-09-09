@@ -50,8 +50,8 @@ const selectedFeatures = computed(() => {
 <template>
   <ListingContainer>
     <div>
-      <h1 class="dm-serif-text text-4xl">Review Your Listing</h1>
-      <p class="mulish">Please review all information before submitting.</p>
+      <h1 class="font-dm-serif text-4xl">Review Your Listing</h1>
+      <p class="font-mulish">Please review all information before submitting.</p>
     </div>
 
     <div class="mt-6 space-y-8">
@@ -96,7 +96,7 @@ const selectedFeatures = computed(() => {
 
       <!-- Property Details -->
       <div>
-        <h3 class="newton font-semibold text-lg mb-2">Property Details</h3>
+        <h3 class="font-newton font-semibold text-lg mb-2">Property Details</h3>
         <div class="bg-gray-50 rounded-lg p-4 grid grid-cols-2 gap-4">
           <div>
             <p class="text-sm text-gray-500">Property Type</p>
@@ -115,7 +115,7 @@ const selectedFeatures = computed(() => {
 
       <!-- Location -->
       <div>
-        <h3 class="newton font-semibold text-lg mb-2">Location</h3>
+        <h3 class="font-newton font-semibold text-lg mb-2">Location</h3>
         <div class="bg-gray-50 rounded-lg p-4">
           <p>{{ data.address?.address || "No address provided" }}</p>
           <p>{{ data.address?.city || "" }}, {{ data.address?.state || "" }} {{ data.address?.zipCode || "" }}</p>
@@ -125,7 +125,7 @@ const selectedFeatures = computed(() => {
 
       <!-- Features -->
       <div v-if="selectedFeatures.length > 0">
-        <h3 class="newton font-semibold text-lg mb-2">Features</h3>
+        <h3 class="font-newton font-semibold text-lg mb-2">Features</h3>
         <div class="flex flex-wrap gap-2">
           <span
             v-for="(feature, index) in selectedFeatures"
@@ -139,7 +139,7 @@ const selectedFeatures = computed(() => {
 
       <!-- Images -->
       <div v-if="data.images?.images?.length">
-        <h3 class="newton font-semibold text-lg mb-2">Images ({{ data.images.images.length }})</h3>
+        <h3 class="font-newton font-semibold text-lg mb-2">Images ({{ data.images.images.length }})</h3>
         <div class="grid grid-cols-3 md:grid-cols-4 gap-2">
           <div
             v-for="(image, index) in data.images.images.slice(0, 8)"
