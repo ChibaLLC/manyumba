@@ -44,8 +44,8 @@ export default defineNuxtConfig({
   },
   vite: {
     plugins: [tailwindcss()],
-    server: {
-      allowedHosts: ["dev.chiba.llc", "localhost"],
+    build: {
+      sourcemap: false,
     },
   },
   i18n: {
