@@ -1,0 +1,52 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "tasks": {
+    "build": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "dist/**",
+        ".output/**",
+        ".nuxt/**"
+      ],
+      "env": [
+        "DATABASE_URL",
+        "DB_PASSWORD",
+        "DB_NAME",
+        "DB_USER"
+      ]
+    },
+    "generate": {
+      "dependsOn": [
+        "^generate"
+      ],
+      "outputs": [
+        "dist/**",
+        ".output/**",
+        ".nuxt/**"
+      ]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "dev:prepare": {
+      "cache": false,
+      "outputs": [
+        "dist/**",
+        ".output/**",
+        ".nuxt/**"
+      ]
+    },
+    "lint": {
+      "cache": true
+    },
+    "lint:fix": {},
+    "test": {},
+    "release": {},
+    "typecheck": {
+      "cache": true
+    }
+  }
+}
