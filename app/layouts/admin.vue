@@ -1,180 +1,135 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
-    <SidebarProvider>
-      <Sidebar class="fixed left-0 top-0 z-40 h-screen w-64 bg-white shadow-lg">
-        <SidebarContent>
-          <SidebarHeader class="p-4 border-b">
-            <h1 class="text-xl font-bold text-gray-800">Manyumba Admin</h1>
-          </SidebarHeader>
+  <UPage class="min-h-screen bg-gray-50">
+    <!-- Sidebar -->
+    <UAside
+      class="fixed left-0 top-0 z-40 h-screen w-64 border-r bg-white shadow-lg"
+      collapsible
+    >
+      <div class="p-4 border-b">
+        <h1 class="text-xl font-bold text-gray-800">Manyumba Admin</h1>
+      </div>
 
-          <div class="p-4">
-            <SidebarMenu>
-              <!-- Dashboard -->
-              <SidebarMenuItem>
-                <SidebarMenuButton as-child>
-                  <NuxtLink to="/admin" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100">
-                    <Icon name="bxs:dashboard" class="w-5 h-5 text-gray-600" />
-                    <span>Dashboard</span>
-                  </NuxtLink>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+      <UNavigationMenu
+        :links="navLinks"
+        class="p-4"
+        :active="route.path"
+        orientation="vertical"
+      />
 
-              <!-- Properties -->
-              <SidebarMenuItem>
-                <SidebarMenuButton as-child>
-                  <NuxtLink to="/admin/properties" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100">
-                    <Icon name="bxs:building-house" class="w-5 h-5 text-gray-600" />
-                    <span>Properties</span>
-                  </NuxtLink>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-
-              <!-- Users -->
-              <SidebarMenuItem>
-                <SidebarMenuButton as-child>
-                  <NuxtLink to="/admin/users" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100">
-                    <Icon name="bxs:user" class="w-5 h-5 text-gray-600" />
-                    <span>Users</span>
-                  </NuxtLink>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-
-              <!-- Appointments -->
-              <SidebarMenuItem>
-                <SidebarMenuButton as-child>
-                  <NuxtLink
-                    to="/admin/appointments"
-                    class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100"
-                  >
-                    <Icon name="bxs:calendar" class="w-5 h-5 text-gray-600" />
-                    <span>Appointments</span>
-                  </NuxtLink>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-
-              <!-- Reviews -->
-              <SidebarMenuItem>
-                <SidebarMenuButton as-child>
-                  <NuxtLink to="/admin/reviews" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100">
-                    <Icon name="bxs:star" class="w-5 h-5 text-gray-600" />
-                    <span>Reviews</span>
-                  </NuxtLink>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-
-              <!-- Messages -->
-              <SidebarMenuItem>
-                <SidebarMenuButton as-child>
-                  <NuxtLink to="/admin/messages" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100">
-                    <Icon name="bxs:message" class="w-5 h-5 text-gray-600" />
-                    <span>Messages</span>
-                  </NuxtLink>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-
-              <!-- Analytics -->
-              <SidebarMenuItem>
-                <SidebarMenuButton as-child>
-                  <NuxtLink to="/admin/analytics" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100">
-                    <Icon name="bxs:bar-chart-alt-2" class="w-5 h-5 text-gray-600" />
-                    <span>Analytics</span>
-                  </NuxtLink>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-
-              <!-- Settings -->
-              <SidebarMenuItem>
-                <SidebarMenuButton as-child>
-                  <NuxtLink to="/admin/settings" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100">
-                    <Icon name="bxs:cog" class="w-5 h-5 text-gray-600" />
-                    <span>Settings</span>
-                  </NuxtLink>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
+      <div class="p-4 border-t mt-auto">
+        <div class="flex items-center gap-3">
+          <UAvatar size="sm" color="primary">
+            <Icon name="bxs:user" class="w-4 h-4 text-white" />
+          </UAvatar>
+          <div class="flex-1">
+            <p class="text-sm font-medium text-gray-800">Admin User</p>
+            <p class="text-xs text-gray-500">Administrator</p>
           </div>
-
-          <SidebarFooter class="p-4 border-t">
-            <div class="flex items-center space-x-3">
-              <div class="w-8 h-8 rounded-full bg-purple-500 flex items-center justify-center">
-                <Icon name="bxs:user" class="w-4 h-4 text-white" />
-              </div>
-              <div class="flex-1">
-                <p class="text-sm font-medium text-gray-800">Admin User</p>
-                <p class="text-xs text-gray-500">Administrator</p>
-              </div>
-              <Button variant="ghost" size="sm" @click="logout">
-                <Icon name="bxs:log-out" class="w-4 h-4" />
-              </Button>
-            </div>
-          </SidebarFooter>
-        </SidebarContent>
-      </Sidebar>
-      <SidebarInset>
-        <div>
-          <!-- Top Bar -->
-          <header class="bg-white shadow-sm border-b px-6 py-4">
-            <div class="flex items-center justify-between">
-              <div>
-                <h2 class="text-2xl font-semibold text-gray-800">{{ pageTitle }}</h2>
-                <p class="text-sm text-gray-600 mt-1">{{ pageDescription }}</p>
-              </div>
-
-              <div class="flex items-center space-x-4">
-                <!-- Notifications -->
-                <Button variant="ghost" size="sm" class="relative">
-                  <Icon name="bxs:bell" class="w-5 h-5" />
-                  <span class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-                </Button>
-
-                <!-- Quick Actions -->
-                <Button as-child>
-                  <NuxtLink to="/listings/new">
-                    <Icon name="bxs:plus" class="w-4 h-4 mr-2" />
-                    Add Property
-                  </NuxtLink>
-                </Button>
-              </div>
-            </div>
-          </header>
-
-          <!-- Page Content -->
-          <main class="p-6">
-            <slot />
-          </main>
+          <UButton
+            color="secondary"
+            variant="ghost"
+            size="sm"
+            @click="logout"
+            icon="bxs:log-out"
+          />
         </div>
-      </SidebarInset>
-    </SidebarProvider>
-    <!-- Navigation Sidebar -->
+      </div>
+    </UAside>
 
     <!-- Main Content -->
-  </div>
+    <UPageBody class="ml-64">
+      <!-- Top Bar -->
+      <header class="bg-white shadow-sm border-b px-6 py-4 flex items-center justify-between">
+        <div>
+          <h2 class="text-2xl font-semibold text-gray-800">{{ pageTitle }}</h2>
+          <p class="text-sm text-gray-600 mt-1">{{ pageDescription }}</p>
+        </div>
+
+        <div class="flex items-center gap-4">
+          <!-- Notifications -->
+          <UButton
+            color="secondary"
+            variant="ghost"
+            icon="bxs:bell"
+            size="sm"
+            class="relative"
+          >
+            <span
+              class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"
+            ></span>
+          </UButton>
+
+          <!-- Add Property -->
+          <UButton to="/listings/new" icon="bxs:plus" color="primary">
+            Add Property
+          </UButton>
+        </div>
+      </header>
+
+      <!-- Page Slot -->
+      <main class="p-6">
+        <slot />
+      </main>
+    </UPageBody>
+  </UPage>
 </template>
 
 <script setup lang="ts">
-import { Button } from "~/components/ui/button";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarInset,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarProvider,
-} from "~/components/ui/sidebar";
+import { computed } from "vue";
+import { useRoute, navigateTo } from "#imports";
 
 // Layout meta
-definePageMeta({
-  layout: false,
-});
+definePageMeta({ layout: false });
 
-// Reactive page title
 const route = useRoute();
+
+// Sidebar navigation links
+const navLinks = [
+  {
+    label: "Dashboard",
+    icon: "bxs:dashboard",
+    to: "/admin",
+  },
+  {
+    label: "Properties",
+    icon: "bxs:building-house",
+    to: "/admin/properties",
+  },
+  {
+    label: "Users",
+    icon: "bxs:user",
+    to: "/admin/users",
+  },
+  {
+    label: "Appointments",
+    icon: "bxs:calendar",
+    to: "/admin/appointments",
+  },
+  {
+    label: "Reviews",
+    icon: "bxs:star",
+    to: "/admin/reviews",
+  },
+  {
+    label: "Messages",
+    icon: "bxs:message",
+    to: "/admin/messages",
+  },
+  {
+    label: "Analytics",
+    icon: "bxs:bar-chart-alt-2",
+    to: "/admin/analytics",
+  },
+  {
+    label: "Settings",
+    icon: "bxs:cog",
+    to: "/admin/settings",
+  },
+];
+
 const pageTitle = computed(() => {
-  const pathSegments = route.path.split("/").filter(Boolean);
-  const lastSegment = pathSegments[pathSegments.length - 1];
+  const segments = route.path.split("/").filter(Boolean);
+  const lastSegment = segments[segments.length - 1];
   return lastSegment ? lastSegment.charAt(0).toUpperCase() + lastSegment.slice(1) : "Dashboard";
 });
 
@@ -190,25 +145,20 @@ const pageDescription = computed(() => {
     settings: "Configure system settings",
   };
 
-  const pathSegments = route.path.split("/").filter(Boolean);
-  const lastSegment = pathSegments[pathSegments.length - 1];
+  const segments = route.path.split("/").filter(Boolean);
+  const lastSegment = segments[segments.length - 1]!;
   return descriptions[lastSegment] || "Manage your property platform";
 });
 
-// Authentication check (you'll need to implement this)
-const isAuthenticated = ref(true); // Mock authentication
-const isAdmin = ref(true); // Mock admin check
+const isAuthenticated = ref(true);
+const isAdmin = ref(true);
 
-// Redirect if not authenticated or not admin
 if (!isAuthenticated.value || !isAdmin.value) {
   // await navigateTo('/login');
 }
 
 function logout() {
-  // Implement logout logic
   console.log("Logging out...");
   // await navigateTo('/login');
 }
 </script>
-
-<style scoped></style>

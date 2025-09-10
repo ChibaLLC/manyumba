@@ -24,7 +24,7 @@
         <div v-if="property.images?.length" class="relative h-full">
           <!-- Main Image -->
           <NuxtImg
-            :src="selectedImage?.imageUrl || property.images[0]?.imageUrl"
+            :src="selectedImage?.imageUrl || property.images?.[0]?.imageUrl"
             :alt="property.title"
             class="w-full h-full object-cover"
             sizes="sm:100vw md:100vw lg:100vw"

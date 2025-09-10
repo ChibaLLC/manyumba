@@ -5,7 +5,7 @@ const ignoredComponents = ["ui", "__tests__", "*.test.*", "*.spec.*", "*.utils.*
 export default defineNuxtConfig({
   compatibilityDate: "2025-06-09",
   devtools: { enabled: true },
-  modules: ["@nuxt/fonts", "@nuxt/icon", "@nuxtjs/i18n", "@nuxt/scripts", "@nuxt/image"],
+  modules: ["@nuxt/fonts", "@nuxt/icon", "@nuxtjs/i18n", "@nuxt/scripts", "@nuxt/image", "@nuxt/ui"],
   future: {
     compatibilityVersion: 4,
   },
@@ -44,8 +44,13 @@ export default defineNuxtConfig({
   },
   vite: {
     plugins: [tailwindcss()],
+<<<<<<< HEAD
     server: {
       allowedHosts: ["dev.chiba.llc", "localhost"],
+=======
+    build: {
+      sourcemap: false,
+>>>>>>> main
     },
   },
   i18n: {
@@ -64,5 +69,8 @@ export default defineNuxtConfig({
         },
       },
     },
+  },
+  ui: {
+    colorMode: false,
   },
 });

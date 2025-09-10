@@ -85,7 +85,7 @@
         </CardHeader>
         <CardContent>
           <div class="space-y-4" v-if="pending">
-            <Skeleton class="h-4 w-full" v-for="i in 3" :key="i" />
+            <USkeleton class="h-4 w-full" v-for="i in 3" :key="i" />
           </div>
           <div class="space-y-4" v-else>
             <div
@@ -149,7 +149,6 @@
 <script setup lang="ts">
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
-import { Skeleton } from "~/components/ui/skeleton";
 
 // Define page meta
 definePageMeta({
@@ -157,11 +156,7 @@ definePageMeta({
 });
 
 // Fetch dashboard stats
-const { data, pending, error } = await $fetch("/api/admin/dashboard-stats").catch(() => ({
-  data: { totalProperties: 0, totalUsers: 0, totalListings: 0 },
-  pending: false,
-  error: null,
-}));
+const { data, pending } = await useFetch("/api/admin/dashboard-stats");
 
 // Mock recent properties for now
 const recentProperties = [
