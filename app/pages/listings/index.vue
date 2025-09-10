@@ -69,13 +69,13 @@
                 <Label class="text-sm font-medium mb-3 block">Price Range</Label>
                 <div class="grid grid-cols-2 gap-2">
                   <Input
-                    v-model.number="filters.minPrice"
+                    v-model="filters.minPrice"
                     type="number"
                     placeholder="Min"
                     @input="debouncedFilter"
                   />
                   <Input
-                    v-model.number="filters.maxPrice"
+                    v-model="filters.maxPrice"
                     type="number"
                     placeholder="Max"
                     @input="debouncedFilter"
@@ -226,8 +226,7 @@
 </template>
 
 <script setup lang="ts">
-import { debounce } from 'lodash-es';
-import type { PropertyWithRelations } from '~/server/db/types';
+import type { PropertyWithRelations } from '~~/server/db/types';
 
 // SEO
 useHead({
@@ -377,7 +376,7 @@ function handleFavorite(propertyId: string, isFavorite: boolean) {
 function setupInfiniteScroll() {
   if (loadMoreTrigger.value) {
     observer = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting && hasMore.value && !pending.value) {
+      if (entries[0]?.isIntersecting && hasMore.value && !pending.value) {
         loadMore();
       }
     }, {
