@@ -27,8 +27,6 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
-      # ❌ Remove extra tagging, only keep latest
       - name: Extract metadata for Docker
         id: meta
         uses: docker/metadata-action@v5
@@ -52,43 +50,33 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           platforms: linux/amd64
 
-      - name: Clean up old package versions
-        run: |
-          echo "Cleaning up old images, keeping only the latest..."
+      # - name: Clean up old images
+      #   env:
+      #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     OWNER: ChibaLLC
+      #     REPO: manyumba
+      #     PACKAGE: manyumba
+      #   run: |
+      #     echo "Cleaning up old images, keeping only the latest..."
 
-          OWNER="${GITHUB_REPOSITORY_OWNER}"
-          REPO="${IMAGE_NAME#*/}"
+      #     # Fetch package versions
+      #     versions=$(gh api "/users/${OWNER}/packages/container/${PACKAGE}/versions" --jq '.[].id')
 
-          # Get all versions, newest first
-          VERSIONS=$(gh api \
-            -H "Accept: application/vnd.github+json" \
-            /orgs/$OWNER/packages/container/$REPO/versions \
-            --jq '.[].id')
+      #     echo "Found versions:"
+      #     echo "$versions"
 
-          if [[ -z "$VERSIONS" ]]; then
-            echo "❌ No versions found for $OWNER/$REPO"
-            exit 0
-          fi
+      #     # Keep the first (latest) version and delete the rest
+      #     count=0
+      #     for id in $versions; do
+      #       if [ $count -eq 0 ]; then
+      #         echo "Keeping latest version: $id"
+      #       else
+      #         echo "Deleting old version: $id"
+      #         gh api \
+      #           --method DELETE \
+      #           "/users/${OWNER}/packages/container/${PACKAGE}/versions/${id}" || true
+      #       fi
+      #       count=$((count+1))
+      #     done
 
-          echo "Found versions:"
-          echo "$VERSIONS"
-          echo
-
-          LATEST_VERSION=$(echo "$VERSIONS" | head -n 1)
-          echo "Keeping latest version ID: $LATEST_VERSION"
-          echo
-
-          for VERSION_ID in $VERSIONS; do
-            if [[ "$VERSION_ID" == "$LATEST_VERSION" ]]; then
-              echo "Skipping latest version: $VERSION_ID"
-              continue
-            fi
-
-            echo "Deleting old version: $VERSION_ID"
-            gh api \
-              --method DELETE \
-              -H "Accept: application/vnd.github+json" \
-              /orgs/$OWNER/packages/container/$REPO/versions/$VERSION_ID
-          done
-
-          echo "✅ Cleanup complete! Only the latest remains."
+      #     echo "✅ Cleanup complete! Only the latest remains."
