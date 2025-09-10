@@ -71,7 +71,7 @@ const fetchSuggestions = debounce(async (value?: string) => {
   }
   loading.value = true;
 
-  if (value === data.value?.suggestions[0]?.placePrediction.structuredFormat.mainText.text) {
+  if (value === data.value?.suggestions[0]?.placePrediction?.structuredFormat?.mainText?.text) {
     loading.value = false;
     return;
   }
@@ -107,20 +107,20 @@ watch(input, fetchSuggestions);
 function enterSubmit() {
   const prediction = data.value?.suggestions[0];
   if (prediction) {
-    input.value = prediction.placePrediction.structuredFormat.mainText.text;
+    input.value = prediction?.placePrediction?.structuredFormat?.mainText?.text;
     emitPlaceCoords(prediction.placePrediction.placeId);
   }
 }
 </script>
 
 <template>
-  <div class="relative">
+  <div class="relative w-64">
     <UInputMenu
       :items="
         data?.suggestions?.map((s) => ({
-          label: s.placePrediction.structuredFormat.mainText.text,
+          label: s?.placePrediction?.structuredFormat?.mainText.text,
           id: s.placePrediction.placeId,
-          description: s.placePrediction.structuredFormat.secondaryText.text,
+          description: s?.placePrediction?.structuredFormat?.secondaryText?.text,
         })) || []
       "
       placeholder="Search location..."
@@ -133,7 +133,7 @@ function enterSubmit() {
         (id) => {
           const selected = data?.suggestions.find((s) => s.placePrediction.placeId === id);
           if (selected) {
-            input = selected.placePrediction.structuredFormat.mainText.text;
+            input = selected?.placePrediction?.structuredFormat?.mainText?.text;
             emitPlaceCoords(selected.placePrediction.placeId);
           }
         }
