@@ -10,11 +10,6 @@ services:
       - DB_PORT=5432
     ports:
       - "${PORT:-80}:${PORT:-3000}"
-<<<<<<< HEAD
-    labels:
-      - com.centurylinklabs.watchtower.enable="true"
-=======
->>>>>>> main
     depends_on:
       db:
         condition: service_healthy
@@ -34,15 +29,5 @@ services:
       retries: 10
       test: pg_isready -h localhost -U $$POSTGRES_USER
 
-<<<<<<< HEAD
-  watchtower:
-    image: containrrr/watchtower
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    command:
-      - --label-enable
-
-=======
->>>>>>> main
 volumes:
   postgres_data:
