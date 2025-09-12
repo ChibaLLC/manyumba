@@ -43,7 +43,7 @@ export default defineNuxtConfig({
     mode: "svg",
   },
   vite: {
-    plugins: [tailwindcss()],
+    plugins: [tailwindcss() as any],
     build: {
       sourcemap: false,
     },

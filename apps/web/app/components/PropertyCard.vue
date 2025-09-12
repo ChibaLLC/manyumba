@@ -132,7 +132,7 @@
 </template>
 
 <script setup lang="ts">
-import type { PropertyWithRelations } from '~/server/db/types';
+import type { PropertyWithRelations } from '~~/server/db/types';
 
 interface Props {
   property: PropertyWithRelations;

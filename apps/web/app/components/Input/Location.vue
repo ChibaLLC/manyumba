@@ -1,5 +1,7 @@
 <script lang="ts">
 import { computedAsync } from "@vueuse/core";
+import clsx from "clsx";
+import type { ClassNameValue } from "tailwind-merge";
 
 export type SuggestionResponse = {
   suggestions: Array<{
@@ -31,7 +33,15 @@ const data = shallowRef<SuggestionResponse>();
 const loading = ref(false);
 
 const emits = defineEmits<{ coordinates: [LocationCoods] }>();
-const props = defineProps<{ initialLocation?: LocationCoods }>();
+const props = defineProps<{
+  initialLocation?: LocationCoods;
+  ui?: {
+    container?: ClassNameValue;
+    input?: ClassNameValue;
+    leadingIcon?: ClassNameValue;
+    empty?: ClassNameValue;
+  };
+}>();
 
 async function getPlaceCoordinates(placeID: string): Promise<LocationCoods | undefined> {
   const { result, error } = await execute(
@@ -40,7 +50,7 @@ async function getPlaceCoordinates(placeID: string): Promise<LocationCoods | und
         "X-Goog-Api-Key": config.public.google.maps.key,
         "X-Goog-FieldMask": "location",
       },
-    })
+    }),
   );
   if (error) {
     $alert("A Google Maps error occurred");
@@ -91,7 +101,7 @@ const fetchSuggestions = debounce(async (value?: string) => {
             }
           : undefined,
       } satisfies SuggestionRequest,
-    })
+    }),
   );
 
   loading.value = false;
@@ -114,7 +124,7 @@ function enterSubmit() {
 </script>
 
 <template>
-  <div class="relative w-64">
+  <div class="relative" :class="ui?.container">
     <UInputMenu
       :items="
         data?.suggestions?.map((s) => ({
@@ -140,14 +150,18 @@ function enterSubmit() {
       "
       @keydown.enter.prevent="enterSubmit"
       class="w-full"
-      @input="(val: Event) => {
-        input = (val.target as HTMLInputElement).value;
-      }"
+      @input="
+        (val: Event) => {
+          input = (val.target as HTMLInputElement).value;
+        }
+      "
       :ui="{
         item: 'cursor-pointer hover:bg-gray-100',
         group: 'bg-white shadow-md rounded-md w-full p-2',
         content: 'max-h-60 overflow-y-auto',
-        base: 'pl-6 bg-white/80 backdrop-blur focus:outline-none input',
+        base: clsx('pl-6 bg-white/80 backdrop-blur focus:outline-none input', ui?.input),
+        leadingIcon: ui?.leadingIcon,
+        empty: clsx('w-full p-2 min-w-40', ui?.empty),
       }"
     >
       <template #item="{ item }">

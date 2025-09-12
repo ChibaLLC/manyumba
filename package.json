@@ -2,8 +2,9 @@
   "name": "manyumba",
   "private": true,
   "scripts": {
-    "dev": "npx dotenv -e .env && turbo dev --filter=docs --filter=web",
+    "dev": "turbo dev --filter=docs --filter=web",
     "build": "turbo build",
+    "cleanup": "turbo cleanup",
     "lint": "turbo lint",
     "lint:fix": "turbo lint:fix",
     "typecheck": "turbo typecheck",
@@ -18,7 +19,7 @@
     "turbo": "^2.5.6",
     "typescript": "5.9.2"
   },
-  "packageManager": "pnpm@9.0.0",
+  "packageManager": "pnpm@10.15.1",
   "engines": {
     "node": ">=18"
   }
