@@ -1,23 +1,27 @@
-FROM node:22-alpine AS builder
-
+# ---------- Base Stage ----------
+FROM node:24-alpine AS base
 WORKDIR /app
-
 RUN corepack enable
 
-COPY package.json pnpm-*.yaml ./
+FROM base AS deps
+
+COPY ../../package.json ../../pnpm-lock.yaml ../../pnpm-workspace.yaml ../../turbo.json ./
 
 RUN pnpm install --frozen-lockfile
 
-COPY . .
+# ---------- Build Stage ----------
+FROM deps AS builder
 
-RUN pnpm nuxt prepare && pnpm run build
+COPY ../../apps/web ./apps/web
+COPY ../../packages ./packages
 
-FROM node:22-alpine AS runner
+RUN pnpm turbo run build --filter=web
 
+FROM node:24-alpine AS runner
 WORKDIR /app
 
-COPY --from=builder /app/.output ./.output
+COPY --from=builder /app/apps/web/.output .
+# Nuxt 3 default output directory
 
 EXPOSE 3000
-
-CMD ["node", ".output/server/index.mjs"]
+CMD ["node", "server/index.mjs"]
