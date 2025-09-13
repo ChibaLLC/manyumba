@@ -1,26 +1,38 @@
-# ---------- Base Stage ----------
 FROM node:24-alpine AS base
 WORKDIR /app
 RUN corepack enable
 
 FROM base AS deps
+WORKDIR /app
 
-COPY ../../package.json ../../pnpm-*.yaml ../../../turbo.json ./
+COPY package.json pnpm-*.yaml turbo.json ./
+
+COPY apps/web/package.json ./apps/web/package.json
+
+COPY packages/*/package.json ./packages/
 
 RUN pnpm install --frozen-lockfile
 
-# ---------- Build Stage ----------
 FROM deps AS builder
+WORKDIR /app
 
-# COPY ../../apps/web ./apps/web
-# COPY ../../packages ./packages
+COPY apps/web ./apps/web
+COPY packages ./packages
 
-# RUN pnpm turbo run build --filter=web
+RUN pnpm turbo build --filter=web
 
-# FROM node:24-alpine AS runner
-# WORKDIR /app
+FROM node:24-alpine AS runner
+WORKDIR /app
 
-# COPY --from=builder /app/apps/web/.output .
+RUN addgroup --system --gid 1001 nuxt
+RUN adduser --system --uid 1001 web
 
-# EXPOSE 3000
+COPY --from=builder --chown=web:nuxt /app/apps/web/.output ./
+
+USER web
+
+EXPOSE 3000
+ENV PORT=3000
+ENV NODE_ENV=production
+
 CMD ["node", "server/index.mjs"]
