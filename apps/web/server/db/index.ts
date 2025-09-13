@@ -12,7 +12,7 @@ export type DBCredentials = {
   port: number;
 };
 
-function getCredentials(): DBCredentials {
+export function getCredentials(): DBCredentials {
   if (process.env.DATABASE_URL) {
     const credentials = new URL(process.env.DATABASE_URL);
     return {

@@ -19,6 +19,7 @@ WORKDIR /app
 COPY apps/docs ./apps/docs
 COPY packages ./packages
 
+ENV NODE_OPTIONS=--max-old-space-size=4096
 RUN pnpm turbo build --filter=docs
 
 FROM node:24-alpine AS runner

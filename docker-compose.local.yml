@@ -1,0 +1,29 @@
+services:
+  web:
+    extends:
+      file: docker-compose.base.yml
+      service: web
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+
+  docs:
+    extends:
+      file: docker-compose.base.yml
+      service: docs
+    build:
+      context: .
+      dockerfile: apps/docs/Dockerfile
+
+  db:
+    extends:
+      file: docker-compose.base.yml
+      service: db
+
+  nginx:
+    extends:
+      file: docker-compose.base.yml
+      service: nginx
+
+volumes:
+  postgres_data:
