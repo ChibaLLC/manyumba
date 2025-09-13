@@ -12,7 +12,8 @@
     "build:docs": "turbo build --filter=docs",
     "build:web": "turbo build --filter=web",
     "dev:docs": "turbo dev --filter=docs",
-    "dev:web": "turbo dev --filter=web"
+    "dev:web": "turbo dev --filter=web",
+    "test": "turbo test"
   },
   "devDependencies": {
     "prettier": "^3.6.2",
@@ -21,6 +22,6 @@
   },
   "packageManager": "pnpm@10.15.1",
   "engines": {
-    "node": ">=18"
+    "node": ">=24"
   }
 }

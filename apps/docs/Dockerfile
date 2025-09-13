@@ -1,23 +1,39 @@
-FROM node:22-alpine AS builder
-
+FROM node:24-alpine AS base
 WORKDIR /app
-
 RUN corepack enable
 
-COPY package.json pnpm-*.yaml ./
+FROM base AS deps
+WORKDIR /app
+
+COPY package.json pnpm-*.yaml turbo.json ./
+
+COPY apps/docs/package.json ./apps/docs/package.json
+
+COPY packages/*/package.json ./packages/
 
 RUN pnpm install --frozen-lockfile
 
-COPY . .
-
-RUN pnpm nuxt prepare && pnpm run build
-
-FROM node:22-alpine AS runner
-
+FROM deps AS builder
 WORKDIR /app
 
-COPY --from=builder /app/.output ./.output
+COPY apps/docs ./apps/docs
+COPY packages ./packages
+
+ENV NODE_OPTIONS=--max-old-space-size=4096
+RUN pnpm turbo build --filter=docs
+
+FROM node:24-alpine AS runner
+WORKDIR /app
+
+RUN addgroup --system --gid 1001 nuxt
+RUN adduser --system --uid 1001 web
+
+COPY --from=builder --chown=web:nuxt /app/apps/docs/.output ./
+
+USER web
 
 EXPOSE 3000
+ENV PORT=3000
+ENV NODE_ENV=production
 
-CMD ["node", ".output/server/index.mjs"]
+CMD ["node", "server/index.mjs"]

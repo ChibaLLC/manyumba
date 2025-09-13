@@ -5,17 +5,25 @@ services:
       service: web
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: apps/web/Dockerfile
+
+  docs:
+    extends:
+      file: docker-compose.base.yml
+      service: docs
+    build:
+      context: .
+      dockerfile: apps/docs/Dockerfile
 
   db:
     extends:
       file: docker-compose.base.yml
       service: db
 
-  watchtower:
+  nginx:
     extends:
       file: docker-compose.base.yml
-      service: watchtower
+      service: nginx
 
 volumes:
   postgres_data:

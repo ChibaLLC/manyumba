@@ -11,10 +11,13 @@ export default defineNuxtConfig({
 		preview: {
 			api: "https://api.nuxt.studio",
 			gitInfo: {
-				name: "geel-content",
-				owner: "AllanBosire",
-				url: "https://github.com/AllanBosire/geel-content",
+				name: "manyumba-docs",
+				owner: "PrimalDjinn",
+				url: "https://github.com/ChibaLLC/manyumba",
 			},
+		},
+		experimental: {
+			sqliteConnector: "native",
 		},
 	},
 	mdc: {
@@ -28,7 +31,7 @@ export default defineNuxtConfig({
 	},
 	app: {
 		head: {
-			link: [{ rel: "icon", type: "image/svg+xml", href: "/finueva.svg" }],
+			// link: [{ rel: "icon", type: "image/svg+xml", href: "/finueva.svg" }],
 		},
 	},
 	icon: {
@@ -48,12 +51,12 @@ export default defineNuxtConfig({
 		},
 	},
 	site: {
-		url: "https://finueva.com",
-		name: "Finueva",
+		url: "https://manyumba.sutit.org",
+		name: "Manyumba",
 	},
 	$development: {
 		site: {
-			url: "http://localhost:3000",
+			url: "http://localhost:4000",
 			name: "Developing Awesome Website",
 		},
 	},

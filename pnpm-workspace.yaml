@@ -1,3 +1,15 @@
 packages:
-  - "apps/*"
-  - "packages/*"
+  - apps/*
+  - packages/*
+
+ignoredBuiltDependencies:
+  - better-sqlite3
+
+onlyBuiltDependencies:
+  - '@parcel/watcher'
+  - '@tailwindcss/oxide'
+  - bcrypt
+  - esbuild
+  - sharp
+  - unrs-resolver
+  - vue-demi

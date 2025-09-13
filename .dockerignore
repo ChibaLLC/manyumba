@@ -141,6 +141,17 @@ dist
 
 */dist/
 */.output/
-.data
+**/.data
 
 .turbo
+
+**/.env
+**/.env.*
+**/!.env.example
+**/!.env.docker.example
+
+**/postgres-data
+
+**/node_modules
+**/node_modules
+**/.output
