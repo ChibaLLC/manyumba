@@ -159,9 +159,9 @@ function enterSubmit() {
         item: 'cursor-pointer hover:bg-gray-100',
         group: 'bg-white shadow-md rounded-md w-full p-2',
         content: 'max-h-60 overflow-y-auto',
-        base: clsx('pl-6 bg-white/80 backdrop-blur focus:outline-none input', ui?.input),
+        base: clsx('bg-white/80 backdrop-blur focus:outline-none input', ui?.input),
         leadingIcon: ui?.leadingIcon,
-        empty: clsx('w-full p-2 min-w-40', ui?.empty),
+        empty: clsx('w-full p-2', ui?.empty),
       }"
     >
       <template #item="{ item }">
@@ -170,6 +170,7 @@ function enterSubmit() {
           <span class="text-xs text-gray-500">{{ item.description }}</span>
         </div>
       </template>
+      <template #empty> start typing to search </template>
     </UInputMenu>
   </div>
 </template>

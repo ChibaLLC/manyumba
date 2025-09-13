@@ -1,26 +1,16 @@
 <script lang="ts">
 export const {
-  schema: imagesSchema,
   data: imagesData,
   validate,
-} = useZodState({
-  images: z
-    .array(
-      z.object({
-        file: z.instanceof(File),
-        preview: z.string(),
-        isFeatured: z.optional(z.boolean()),
-      })
-    )
-    .check(z.minLength(1)),
-});
+} = useZodState(ImagesSchema);
 
-type ImagesData = z.infer<typeof imagesSchema>;
+
 </script>
 <script setup lang="ts">
-import { z } from "zod/v4";
 import { Button } from "@/components/ui/button";
 import { Trash, Star } from "lucide-vue-next";
+import { ImagesSchema } from "utils";
+import type { ImagesData } from "types";
 
 const fileInput = ref<HTMLInputElement | null>(null);
 

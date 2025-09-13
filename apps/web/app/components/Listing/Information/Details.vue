@@ -1,27 +1,15 @@
 <script lang="ts">
-import { z } from "zod/v4/mini";
-import type { BasicInfoData } from "./Basic.vue";
-import { toast } from "vue-sonner";
+import { DetailsSchema } from "utils";
+import type { BasicInfoData, DetailedInfoData } from "types";
 
-const { data, schema, validate } = useZodState({
-  title: z.string().check(z.minLength(5, "Title must be at least 5 characters")),
-  description: z.string().check(z.minLength(20, "Description must be at least 20 characters")),
-
-  price: z.optional(z.number().check(z.positive("Price must be positive"))),
-  bedrooms: z.optional(z.number().check(z.int())),
-  bathrooms: z.optional(z.number().check(z.int())),
-  area: z.optional(z.number().check(z.positive("Area must be positive"))),
-  yearBuilt: z.optional(z.number().check(z.int())),
-});
-
-export type DetailedInfoData = z.infer<typeof schema>;
+const { data, validate } = useZodState(DetailsSchema);
 </script>
 <script setup lang="ts">
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 
-const props = defineProps<{
+defineProps<{
   basicInfo: BasicInfoData;
 }>();
 
@@ -36,7 +24,7 @@ const next = () => {
     emits("next", data);
   } else {
     console.error(error);
-    toast.error(String(error));
+    $alert.error(String(error));
   }
 };
 
@@ -48,7 +36,7 @@ const back = () => {
   <ListingContainer>
     <div>
       <h1 class="font-dm-serif text-4xl">Property Details</h1>
-      <p class="font-mulish">Property Details</p>
+      <p class="font-mulish">Property Details</p> 
     </div>
     <div class="mt-6">
       <div class="space-y-4">

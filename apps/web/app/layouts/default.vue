@@ -1,4 +1,8 @@
 <template>
-	<NavTop />
-	<slot />
+  <UMain>
+    <NavTop />
+    <UContainer>
+      <slot />
+    </UContainer>
+  </UMain>
 </template>

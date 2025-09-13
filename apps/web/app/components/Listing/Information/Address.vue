@@ -2,18 +2,11 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import useZodState from "~/composables/useZodState";
-import { z } from "zod/v4-mini";
+import { AddressSchema } from "utils";
+import type { AddressData } from "types";
 
 // Define the schema for address information
-const addressData = useZodState({
-  address: z.string().check(z.minLength(5, "Address must be at least 5 characters")),
-  city: z.string().check(z.minLength(2, "City must be at least 2 characters")),
-  state: z.string().check(z.minLength(2, "State must be at least 2 characters")),
-  zipCode: z.string().check(z.minLength(3, "Zip code must be at least 3 characters")),
-  country: z.string().check(z.minLength(2, "Country must be at least 2 characters")),
-});
-
-export type AddressData = z.infer<(typeof addressData)["schema"]>;
+const addressData = useZodState(AddressSchema);
 
 const emits = defineEmits<{
   next: [AddressData];
@@ -22,7 +15,7 @@ const emits = defineEmits<{
 function next() {
   const { error, data } = addressData.validate({
     prettifyError: true,
-    breaks: true
+    breaks: true,
   });
 
   if (error) {

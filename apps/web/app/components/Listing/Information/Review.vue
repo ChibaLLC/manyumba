@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Button } from "@/components/ui/button";
-import type { ListingData } from "~/pages/listings/new.vue";
+import type { ListingData } from "types";
 
 const props = defineProps<{
   data: Partial<ListingData>;
@@ -20,7 +20,7 @@ async function submit() {
     await new Promise((resolve) => setTimeout(resolve, 1500)); // Simulate API call
     emits("submit");
   } catch (error) {
-    $alert("Failed to submit listing. Please try again.");
+    $alert.error("Failed to submit listing. Please try again.");
   } finally {
     isSubmitting.value = false;
   }
@@ -31,8 +31,8 @@ function back() {
 }
 
 const featuredImage = computed(() => {
-  if (!props.data.images?.images?.length) return null;
-  return props.data.images.images.find((img: any) => img.isFeatured) || props.data.images.images[0];
+  if (!props.data.images?.length) return null;
+  return props.data.images.find((img: any) => img.isFeatured) || props.data.images[0];
 });
 
 const selectedFeatures = computed(() => {
@@ -64,33 +64,33 @@ const selectedFeatures = computed(() => {
         <div class="p-6">
           <div class="flex justify-between items-start">
             <div>
-              <h2 class="text-2xl font-bold">{{ data.basicInfo?.title || "No Title" }}</h2>
+              <h2 class="text-2xl font-bold">{{ data.meta?.detail?.title || "No Title" }}</h2>
               <p class="text-gray-500">{{ data.address?.address || "No Address" }}, {{ data.address?.city || "" }}</p>
             </div>
             <div class="text-right">
-              <p class="text-2xl font-bold text-navy">${{ data.basicInfo?.price?.toLocaleString() || "0" }}</p>
+              <p class="text-2xl font-bold text-navy">${{ data.meta?.detail?.price?.toLocaleString() || "0" }}</p>
               <p class="text-sm text-gray-500">
-                {{ data.basicInfo?.listingType === "rent" ? "For Rent" : "For Sale" }}
+                {{ data.meta?.basic?.listingType === "rent" ? "For Rent" : "For Sale" }}
               </p>
             </div>
           </div>
 
           <div class="mt-4 flex items-center gap-4 text-sm text-gray-600">
-            <div v-if="data.basicInfo?.bedrooms" class="flex items-center">
+            <div v-if="data.meta?.detail?.bedrooms" class="flex items-center">
               <Icon name="local:bed" class="w-5 h-5 mr-1" />
-              {{ data.basicInfo.bedrooms }} Beds
+              {{ data.meta?.detail.bedrooms }} Beds
             </div>
-            <div v-if="data.basicInfo?.bathrooms" class="flex items-center">
+            <div v-if="data.meta?.detail?.bathrooms" class="flex items-center">
               <Icon name="local:bath" class="w-5 h-5 mr-1" />
-              {{ data.basicInfo.bathrooms }} Baths
+              {{ data.meta?.detail.bathrooms }} Baths
             </div>
-            <div v-if="data.basicInfo?.area" class="flex items-center">
+            <div v-if="data.meta?.detail?.area" class="flex items-center">
               <Icon name="local:ruler" class="w-5 h-5 mr-1" />
-              {{ data.basicInfo.area }} sq ft
+              {{ data.meta?.detail.area }} sq ft
             </div>
           </div>
 
-          <p class="mt-4 text-gray-600 line-clamp-3">{{ data.basicInfo?.description || "No description provided." }}</p>
+          <p class="mt-4 text-gray-600 line-clamp-3">{{ data.meta?.detail?.description || "No description provided." }}</p>
         </div>
       </div>
 
@@ -100,15 +100,15 @@ const selectedFeatures = computed(() => {
         <div class="bg-gray-50 rounded-lg p-4 grid grid-cols-2 gap-4">
           <div>
             <p class="text-sm text-gray-500">Property Type</p>
-            <p class="font-medium">{{ data.basicInfo?.propertyType || "Not specified" }}</p>
+            <p class="font-medium">{{ data.meta?.basic?.propertyType || "Not specified" }}</p>
           </div>
           <div>
             <p class="text-sm text-gray-500">Listing Type</p>
-            <p class="font-medium">{{ data.basicInfo?.listingType === "rent" ? "For Rent" : "For Sale" }}</p>
+            <p class="font-medium">{{ data.meta?.basic?.listingType === "rent" ? "For Rent" : "For Sale" }}</p>
           </div>
-          <div v-if="data.basicInfo?.yearBuilt">
+          <div v-if="data.meta?.detail?.yearBuilt">
             <p class="text-sm text-gray-500">Year Built</p>
-            <p class="font-medium">{{ data.basicInfo.yearBuilt }}</p>
+            <p class="font-medium">{{ data.meta?.detail.yearBuilt }}</p>
           </div>
         </div>
       </div>
@@ -138,11 +138,11 @@ const selectedFeatures = computed(() => {
       </div>
 
       <!-- Images -->
-      <div v-if="data.images?.images?.length">
-        <h3 class="font-newton font-semibold text-lg mb-2">Images ({{ data.images.images.length }})</h3>
+      <div v-if="data.images?.length">
+        <h3 class="font-newton font-semibold text-lg mb-2">Images ({{ data.images.length }})</h3>
         <div class="grid grid-cols-3 md:grid-cols-4 gap-2">
           <div
-            v-for="(image, index) in data.images.images.slice(0, 8)"
+            v-for="(image, index) in data.images.slice(0, 8)"
             :key="index"
             class="relative aspect-square rounded-lg overflow-hidden"
           >
@@ -155,10 +155,10 @@ const selectedFeatures = computed(() => {
             </div>
           </div>
           <div
-            v-if="data.images.images.length > 8"
+            v-if="data.images.length > 8"
             class="relative aspect-square rounded-lg overflow-hidden bg-gray-200 flex items-center justify-center"
           >
-            <span class="text-lg font-bold text-gray-600">+{{ data.images.images.length - 8 }}</span>
+            <span class="text-lg font-bold text-gray-600">+{{ data.images.length - 8 }}</span>
           </div>
         </div>
       </div>

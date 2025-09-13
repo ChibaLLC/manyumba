@@ -5,7 +5,7 @@ const ignoredComponents = ["ui", "__tests__", "*.test.*", "*.spec.*", "*.utils.*
 export default defineNuxtConfig({
   compatibilityDate: "2025-06-09",
   devtools: { enabled: true },
-  modules: ["@nuxt/fonts", "@nuxt/icon", "@nuxtjs/i18n", "@nuxt/scripts", "@nuxt/image", "@nuxt/ui"],
+  modules: ["@nuxt/ui", "@nuxt/fonts", "@nuxt/icon", "@nuxtjs/i18n", "@nuxt/scripts", "@nuxt/image"],
   future: {
     compatibilityVersion: 4,
   },

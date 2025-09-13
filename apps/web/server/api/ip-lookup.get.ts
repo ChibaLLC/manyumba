@@ -6,6 +6,6 @@ export default defineCachedEventHandler(
     getKey(event) {
       return useIP(event);
     },
-    maxAge: toMilliSeconds(24, "hr"),
+    maxAge: 400,
   }
 );

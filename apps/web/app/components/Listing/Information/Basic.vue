@@ -1,34 +1,11 @@
 <script lang="ts">
-import { z } from "zod/v4-mini";
-
-export const propertyType = ["home", "land"] as const;
-export const listingType = ["rent", "sale"] as const;
-export type ListingType = (typeof listingType)[number];
-export type PropertyType = (typeof propertyType)[number];
-export const homeTypes = [
-  "Single Family",
-  "Townhouse",
-  "Condo",
-  "Apartment",
-  "Duplex",
-  "Mobile Home",
-  "Cabin",
-  "Loft",
-] as const;
-export const landTypes = ["Residential", "Commercial", "Agricultural", "Industrial", "Recreational"] as const;
-export type AssetType = (typeof homeTypes)[number] | (typeof landTypes)[number];
-
-export const { data, schema, validate } = useZodState({
-  assetType: z.union([z.enum(homeTypes), z.enum(landTypes)]),
-  listingType: z.enum(listingType),
-  propertyType: z.enum(propertyType),
-});
-
-export type BasicInfoData = z.infer<typeof schema>;
+export const { data, validate } = useZodState(BasicSchema);
 </script>
 <script setup lang="ts">
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { BasicSchema, homeTypes, landTypes } from "utils";
+import type { AssetType, BasicInfoData, ListingType, PropertyType } from "types";
 import { toast } from "vue-sonner";
 
 const assetTypeSearch = ref<string>();
@@ -43,11 +20,11 @@ const filteredAssetTypes = computed(() => {
   }
 
   return properties.filter((p) => {
-    if(!assetTypeSearch.value) {
-      return false
+    if (!assetTypeSearch.value) {
+      return false;
     }
 
-    return p.toLocaleLowerCase().includes(assetTypeSearch.value.trim().toLocaleLowerCase())
+    return p.toLocaleLowerCase().includes(assetTypeSearch.value.trim().toLocaleLowerCase());
   });
 });
 

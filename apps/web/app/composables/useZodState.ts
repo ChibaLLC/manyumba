@@ -58,17 +58,13 @@ export function validate<T extends z.core.$ZodShape>(
   return result;
 }
 
-export default function <T extends z.core.$ZodShape>(shape: T) {
-  const schema = z.object(shape);
+export default function <T extends z.core.$ZodShape>(schema: z.core.$ZodObject<T>) {
   const data = reactive<Partial<z.infer<typeof schema>>>({});
 
   return {
     data,
     validate(params?: ValidateParams) {
       return validate(schema, data, params);
-    },
-    get schema() {
-      return schema;
     },
   };
 }

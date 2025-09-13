@@ -1,20 +1,12 @@
 <script lang="ts">
-import { z } from "zod/v4-mini";
-export const {
-  schema: featuresSchema,
-  data: featuresData,
-  validate,
-} = useZodState({
-  features: z.record(z.string(), z.boolean()),
-  customFeatures: z.array(z.string()),
-});
-
-type FeaturesData = z.infer<typeof featuresSchema>;
+export const { data: featuresData, validate } = useZodState(FeaturesSchema);
 </script>
 <script setup lang="ts">
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import type { FeaturesData } from "types";
+import { FeaturesSchema } from "utils";
 
 const newFeature = ref("");
 
@@ -41,7 +33,9 @@ function removeCustomFeature(index: number) {
 }
 
 function next() {
-  const { error, data } = validate();
+  const { error, data } = validate({
+    prettifyError: true,
+  });
   if (error) {
     $alert.error(String(error));
     return;
@@ -51,6 +45,32 @@ function next() {
 
 function back() {
   emits("back");
+}
+
+const commonFeatures = reactive({
+  "Air Conditioning": false,
+  Balcony: false,
+  Dishwasher: false,
+  Fireplace: false,
+  Garden: false,
+  Gym: false,
+  Parking: false,
+  Pool: false,
+  "Security System": false,
+  "Washer/Dryer": false,
+});
+
+function updateFeature(key: string, value: boolean) {
+  if (featuresData.features) {
+    if (value === false) {
+      delete featuresData.features[key];
+      return;
+    }
+
+    featuresData.features[key] = value;
+  } else {
+    featuresData.features = { [key]: value };
+  }
 }
 </script>
 
@@ -64,8 +84,12 @@ function back() {
     <div class="mt-6">
       <h2 class="font-newton font-semibold text-lg mb-2">Common Features</h2>
       <div class="grid grid-cols-2 md:grid-cols-3 gap-y-3">
-        <div v-for="(_, feature) in featuresData.features" :key="feature" class="flex items-center space-x-2">
-          <Checkbox v-if="featuresData.features" :id="feature" v-model:checked="featuresData.features[feature]" />
+        <div v-for="(_, feature) in commonFeatures" :key="feature" class="flex items-center space-x-2">
+          <Checkbox
+            :id="feature"
+            v-model:checked="commonFeatures[feature]"
+            @update:model-value="updateFeature(feature, Boolish($event))"
+          />
           <label :for="feature" class="text-sm font-medium leading-none cursor-pointer">
             {{ feature }}
           </label>
@@ -84,11 +108,11 @@ function back() {
         <div
           v-for="(feature, index) in featuresData.customFeatures"
           :key="index"
-          class="flex items-center justify-between py-2 px-3 bg-sky-50 rounded-md mb-2"
+          class="flex items-center justify-between py-2 px-3 border-1 border-gray-200 bg-gray-100 rounded-md mb-2"
         >
           <span>{{ feature }}</span>
           <Button variant="ghost" size="icon" class="h-8 w-8 text-red-500" @click="removeCustomFeature(index)">
-            <Icon name="local:x" class="w-4 h-4" />
+            <Icon name="i-lucide-x" class="w-4 h-4" />
           </Button>
         </div>
       </div>

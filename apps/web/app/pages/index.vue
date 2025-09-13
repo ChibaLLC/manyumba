@@ -31,7 +31,8 @@ function variant(expected: typeof query.lease) {
           placeholder="Enter a city, town or location to search"
           @keydown.enter="navigateTo('./listings')"
           :ui="{
-            input: 'py-3'
+            input: 'py-3',
+            leadingIcon: 'absolute'
           }"
         />
       </div>

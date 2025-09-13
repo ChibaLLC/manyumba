@@ -14,22 +14,22 @@ button:active {
     }
 
     30% {
-        transform: scale(0.96) translateX(0);
+        transform: scale(0.98) translateX(0);
         /* small shrink */
     }
 
     50% {
-        transform: scale(1.02) translateX(-1px);
+        transform: scale(1.02) translateX(-0.5px);
         /* overshoot + tiny shake left */
     }
 
     70% {
-        transform: scale(1.01) translateX(1px);
+        transform: scale(1.01) translateX(0.8px);
         /* tiny shake right */
     }
 
     85% {
-        transform: scale(1) translateX(-0.5px);
+        transform: scale(1) translateX(-0.25px);
         /* settle shake */
     }
 

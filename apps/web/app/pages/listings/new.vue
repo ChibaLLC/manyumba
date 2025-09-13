@@ -1,55 +1,15 @@
 <script lang="ts">
-import { z } from "zod/v4/mini";
-import { schema as basicInfoSchema } from "~/components/Listing/Information/Basic.vue";
 
-// Reusable coord object
-const coordSchema = z.object({
-  lat: z.number(),
-  lng: z.number(),
-});
-
-// Reusable address block
-const addressSchema = z.object({
-  address: z.string().check(z.minLength(5)),
-  city: z.string().check(z.minLength(2)),
-  state: z.string().check(z.minLength(2)),
-  zipCode: z.string().check(z.minLength(3)),
-  country: z.string().check(z.minLength(2)),
-});
-
-// Image object schema
-const imageSchema = z.object({
-  file: z.instanceof(File),
-  preview: z.string(),
-  isFeatured: z.boolean(),
-});
-
-export const listing = useZodState({
-  location: z.object({
-    cood: coordSchema,
-    isAccurate: z.boolean(),
-  }),
-
-  basicInfo: basicInfoSchema,
-  address: addressSchema,
-
-  images: z.object({
-    images: z.array(imageSchema).check(z.minLength(1)),
-  }),
-
-  features: z.object({
-    features: z.record(z.string(), z.boolean()),
-    customFeatures: z.array(z.string()),
-  }),
-});
-
-export type ListingData = z.infer<(typeof listing)["schema"]>;
 </script>
 
 <script setup lang="ts">
+import { ListingSchema } from 'utils';
+
 const steps = ref(0);
 
 const stepTitles = ["Location", "Basic Information", "Address", "Images", "Features", "Review"] as const;
+
+const listing = useZodState(ListingSchema);
 
 function handleLocation(locationData: any) {
   listing.data.location = locationData;
@@ -98,13 +58,13 @@ function goBack() {
       <!-- Progress Bar -->
       <div class="mb-8">
         <div class="flex justify-between mb-2">
-          <span class="text-sm font-medium">Step {{ steps + 1 }} of {{ stepTitles.length }}</span>
+          <span class="text-sm font-medium">Step {{ steps + 1 }} of {{ stepTitles.length + 1 }}</span>
           <span class="text-sm font-medium">{{ stepTitles[steps] }}</span>
         </div>
         <div class="w-full bg-gray-200 rounded-full h-2.5">
           <div
             class="bg-navy h-2.5 rounded-full transition-all duration-300"
-            :style="{ width: `${((steps + 1) / stepTitles.length) * 100}%` }"
+            :style="{ width: `${(steps / stepTitles.length) * 100}%` }"
           ></div>
         </div>
       </div>
@@ -116,8 +76,8 @@ function goBack() {
         <ListingInformationBasic v-else-if="steps === 1" @next="handleBasicInfo" @back="goBack" />
 
         <ListingInformationDetails
-          v-else-if="steps === 2 && listing.data.basicInfo"
-          :basicInfo="listing.data.basicInfo"
+          v-else-if="steps === 2 && listing.data.meta?.basic"
+          :basicInfo="listing.data.meta.basic"
           @back="goBack"
           @next="handleFeatures"
         />
