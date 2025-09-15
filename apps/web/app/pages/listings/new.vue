@@ -1,7 +1,3 @@
-<script lang="ts">
-
-</script>
-
 <script setup lang="ts">
 import { ListingSchema } from 'utils';
 
@@ -51,7 +47,7 @@ function goBack() {
 </script>
 
 <template>
-  <section class="min-h-screen bg-gray-50 py-8">
+  <section class="fullscreen bg-gray-50 py-8">
     <div class="container mx-auto px-4">
       <Title>New Listing</Title>
 

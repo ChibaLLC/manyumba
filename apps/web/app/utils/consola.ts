@@ -1,4 +1,4 @@
-import { createConsola, type ConsolaReporter, type LogObject } from "consola/browser";
+import { createConsola, type ConsolaReporter, type LogObject, consola } from "consola/browser";
 
 export default function createLogger() {
   const reporters: ConsolaReporter[] = [

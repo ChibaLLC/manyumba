@@ -1,7 +1,6 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
 
-@custom-variant dark (&:is(.dark *));
 @plugin 'tailwindcss-animate';
 
 @layer base {
