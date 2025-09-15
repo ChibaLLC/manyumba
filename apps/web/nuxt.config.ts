@@ -13,13 +13,14 @@ export default defineNuxtConfig({
     dirs: [
       {
         path: "pages",
-        pattern: "**/components/**",
+        pattern: ["**/components/**", "**/_views/**"],
         pathPrefix: false,
         ignore: ignoredComponents as unknown as string[],
       },
       {
         path: "components",
         ignore: ignoredComponents as unknown as string[],
+        pathPrefix: false,
       },
     ],
   },
@@ -67,5 +68,8 @@ export default defineNuxtConfig({
   },
   ui: {
     colorMode: false,
+  },
+  pages: {
+    pattern: ["**/*.vue", "!**/components/**", "!**/_views/**"],
   },
 });

@@ -73,23 +73,23 @@ function goBack() {
       <div class="h-full grid place-items-center grow w-full">
         <ListingLocation v-if="steps === 0" @location="handleLocation" />
 
-        <ListingInformationBasic v-else-if="steps === 1" @next="handleBasicInfo" @back="goBack" />
+        <ListingBasic v-else-if="steps === 1" @next="handleBasicInfo" @back="goBack" />
 
-        <ListingInformationDetails
+        <ListingDetails
           v-else-if="steps === 2 && listing.data.meta?.basic"
           :basicInfo="listing.data.meta.basic"
           @back="goBack"
           @next="handleFeatures"
         />
 
-        <ListingInformationAddress v-else-if="steps === 3" @next="handleAddress" @back="goBack" />
+        <ListingAddress v-else-if="steps === 3" @next="handleAddress" @back="goBack" />
 
-        <ListingInformationImages v-else-if="steps === 4" @next="handleImages" @back="goBack" />
+        <ListingImages v-else-if="steps === 4" @next="handleImages" @back="goBack" />
 
-        <ListingInformationFeatures v-else-if="steps === 5" @next="handleFeatures" @back="goBack" />
-        <ListingInformationFeatures v-else-if="steps === 5" @next="handleFeatures" @back="goBack" />
+        <ListingFeatures v-else-if="steps === 5" @next="handleFeatures" @back="goBack" />
+        <ListingFeatures v-else-if="steps === 5" @next="handleFeatures" @back="goBack" />
 
-        <ListingInformationReview v-if="steps === 6" :data="listing.data" @submit="handleSubmit" @back="goBack" />
+        <ListingReview v-if="steps === 6" :data="listing.data" @submit="handleSubmit" @back="goBack" />
       </div>
     </div>
   </section>
