@@ -5,7 +5,7 @@ RUN corepack enable
 FROM base AS deps
 WORKDIR /app
 
-COPY package.json pnpm-*.yaml turbo.json ./
+COPY package.json pnpm-*.yaml turbo.json .npmrc ./
 
 COPY apps/web/package.json ./apps/web/package.json
 
