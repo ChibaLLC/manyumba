@@ -2,6 +2,7 @@ import createLogger from "@/utils/consola";
 import type { ConsolaInstance } from "consola";
 
 declare global {
+  // @ts-ignore
   var consola: ConsolaInstance;
 }
 
