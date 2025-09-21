@@ -1,31 +1,22 @@
 <script lang="ts">
-export const {
-  data: imagesData,
-  validate,
-} = useZodState(ImagesSchema);
-
-
+export const { data: imagesData, validate } = useZodState(ImagesSchema);
 </script>
 <script setup lang="ts">
 import { Button } from "@/components/ui/button";
 import { Trash, Star } from "lucide-vue-next";
-import { ImagesSchema } from "utils";
+import { ImagesSchema, pasteKeydownListener, pasteEventListener, dropItemListener, blobToFile } from "utils";
 import type { ImagesData } from "types";
+import { onKeyDown } from "@vueuse/core";
 
-const fileInput = ref<HTMLInputElement | null>(null);
+const fileInput = useTemplateRef("fileInput");
 
 const emits = defineEmits<{
   next: [ImagesData];
   back: [];
 }>();
 
-function handleFileUpload(event: Event) {
-  const target = event.target as HTMLInputElement;
-  if (!target.files) return;
-
-  const files = Array.from(target.files);
-
-  files.forEach((file) => {
+function handleFiles(files: IterableKind<File> | FileList) {
+  for (const file of files) {
     if (!file.type.startsWith("image/")) return;
 
     const reader = new FileReader();
@@ -38,11 +29,18 @@ function handleFileUpload(event: Event) {
       imagesData.images.push({
         file,
         preview,
-        isFeatured: imagesData.images.length === 0, // First image is featured by default
+        isFeatured: imagesData.images.length === 0,
       });
     };
     reader.readAsDataURL(file);
-  });
+  }
+}
+
+function handleFileUpload(event: Event) {
+  const target = event.target as HTMLInputElement;
+  if (!target.files) return;
+
+  handleFiles(target.files)
 
   // Reset input
   if (fileInput.value) fileInput.value.value = "";
@@ -94,10 +92,35 @@ function next() {
 function back() {
   emits("back");
 }
+
+function handleBlob(blobs: Blob[] | File[]) {
+  handleFiles(blobs.map(blobToFile))
+}
+
+onKeyDown(["Control", "Meta", "V", "v"], (e) => {
+  if (!e.ctrlKey || !e.metaKey) {
+    return;
+  }
+
+  if (e.ctrlKey && e.metaKey) {
+    return;
+  }
+
+  pasteKeydownListener(e, handleBlob);
+});
+
+const onPaste = (e: ClipboardEvent) => pasteEventListener(e, handleBlob);
+
+onMounted(() => {
+  window.addEventListener("paste", onPaste);
+});
+onUnmounted(() => {
+  window.removeEventListener("paste", onPaste);
+});
 </script>
 
 <template>
-  <ListingContainer>
+  <ListingContainer @dragover.prevent @drop.prevent="(e: DragEvent) => dropItemListener(e, handleBlob)">
     <div>
       <h1 class="font-dm-serif text-4xl">Property Images</h1>
       <p class="font-mulish">
@@ -113,7 +136,7 @@ function back() {
         class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pofont-inter hover:border-navy transition-colors"
       >
         <Icon name="mdi:upload" class="w-12 h-12 mx-auto text-gray-400" />
-        <p class="mt-2 text-sm text-gray-500">Click to upload or drag and drop</p>
+        <p class="mt-2 text-sm text-gray-500">Click, paste, drag or drop to add images</p>
         <p class="text-xs text-gray-400">PNG, JPG, GIF up to 10MB</p>
       </div>
 

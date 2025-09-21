@@ -10,7 +10,7 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 
 defineProps<{
-  basicInfo: BasicInfoData;
+  basicInfo: BasicInfoData | undefined;
 }>();
 
 const emits = defineEmits<{
@@ -58,7 +58,7 @@ const back = () => {
       </div>
     </div>
 
-    <div class="mt-6" v-if="basicInfo.propertyType === 'home'">
+    <div class="mt-6" v-if="basicInfo?.propertyType === 'home'">
       <h2 class="font-newton font-semibold text-lg mb-2">Home Features</h2>
       <div class="grid grid-cols-2 gap-4">
         <div>

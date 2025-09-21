@@ -27,7 +27,7 @@ export const DetailsSchema = z.object({
 
 export const FeaturesSchema = z.object({
   features: z.record(z.string(), z.boolean()),
-  customFeatures: z.array(z.string()),
+  customFeatures: z.optional(z.array(z.string())),
 });
 
 export const ImagesSchema = z.object({
