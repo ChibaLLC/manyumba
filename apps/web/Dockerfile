@@ -5,11 +5,7 @@ RUN corepack enable
 FROM base AS deps
 WORKDIR /app
 
-COPY package.json pnpm-*.yaml turbo.json ./
-
-COPY apps/web/package.json ./apps/web/package.json
-
-COPY packages/*/package.json ./packages/
+COPY . .
 
 RUN pnpm install --frozen-lockfile
 
