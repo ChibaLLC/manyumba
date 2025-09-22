@@ -72,9 +72,9 @@ function setAssetType(type: AssetType) {
       <h2 class="font-newton font-semibold text-lg mb-2">Lease Type</h2>
       <div class="flex gap-3">
         <Button
-          class="text-navy bg-sky-100 border-sky-200 border"
+          class="text-navy bg-sky-100 border-sky-200 border hover:bg-sky-200/15"
           :class="{
-            'bg-navy text-white': data.listingType === 'sale',
+            'bg-navy text-white  hover:bg-navy/80': data.listingType === 'sale',
           }"
           @click="setListingType('sale')"
         >
@@ -82,9 +82,9 @@ function setAssetType(type: AssetType) {
           Sale
         </Button>
         <Button
-          class="text-navy bg-sky-100 border-sky-200 border"
+          class="text-navy bg-sky-100 border-sky-200 border hover:bg-sky-200/15"
           :class="{
-            'bg-navy text-white': data.listingType === 'rent',
+            'bg-navy text-white  hover:bg-navy/80': data.listingType === 'rent',
           }"
           @click="setListingType('rent')"
         >
@@ -98,9 +98,9 @@ function setAssetType(type: AssetType) {
       <h2 class="font-newton font-semibold text-lg mb-2">Property Type</h2>
       <div class="flex gap-3">
         <Button
-          class="text-navy bg-sky-100 border-sky-200 border"
+          class="text-navy bg-sky-100 border-sky-200 border hover:bg-sky-200/15"
           :class="{
-            'bg-navy text-white': data.propertyType === 'home',
+            'bg-navy text-white hover:bg-navy/80': data.propertyType === 'home',
           }"
           @click="setPropertyType('home')"
         >
@@ -108,10 +108,10 @@ function setAssetType(type: AssetType) {
           Home
         </Button>
         <Button
-          class="text-navy bg-sky-100 border-sky-200 border plop"
+          class="text-navy bg-sky-100 border-sky-200 border hover:bg-sky-200/15"
           @click="setPropertyType('land')"
           :class="{
-            'bg-navy text-white': data.propertyType === 'land',
+            'bg-navy text-white  hover:bg-navy/80': data.propertyType === 'land',
           }"
         >
           <Icon name="local:land" class="mr-2" />
@@ -155,7 +155,7 @@ function setAssetType(type: AssetType) {
 
     <div class="mt-8 flex justify-between">
       <Button variant="outline" @click="back">Back</Button>
-      <Button class="bg-navy text-white" @click="next">Next</Button>
+      <Button class="bg-navy text-white hover:bg-navy/90" @click="next">Next</Button>
     </div>
   </ListingContainer>
 </template>

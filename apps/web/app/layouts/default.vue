@@ -1,8 +1,8 @@
 <template>
   <UMain>
     <NavTop />
-    <UContainer>
+    <section class="main">
       <slot />
-    </UContainer>
+    </section>
   </UMain>
 </template>

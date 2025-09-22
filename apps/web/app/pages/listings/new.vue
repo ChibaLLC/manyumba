@@ -1,9 +1,6 @@
-<script lang="ts">
-
-</script>
-
 <script setup lang="ts">
-import { ListingSchema } from 'utils';
+import type { BasicInfoData, DetailedInfoData } from "types";
+import { ListingSchema } from "utils";
 
 const steps = ref(0);
 
@@ -11,13 +8,27 @@ const stepTitles = ["Location", "Basic Information", "Address", "Images", "Featu
 
 const listing = useZodState(ListingSchema);
 
-function handleLocation(locationData: any) {
-  listing.data.location = locationData;
+function handleLocation(locationData: LocationCoods) {
+  listing.data.location = {
+    lat: locationData.cood.lat,
+    lng: locationData.cood.lng,
+  };
   steps.value++;
 }
 
 function handleBasicInfo(basicInfoData: any) {
-  listing.data.basicInfo = basicInfoData;
+  if (!listing.data) {
+    listing.data = {};
+  }
+
+  if (!listing.data.meta) {
+    listing.data.meta = {
+      basic: {} as BasicInfoData,
+      detail: {} as DetailedInfoData,
+    };
+  }
+
+  listing.data.meta.basic = basicInfoData;
   steps.value++;
 }
 
@@ -40,7 +51,7 @@ function handleSubmit() {
   // Here you would handle the final submission
   navigateTo("/listings");
   // Show success message
-  $alert("Listing created successfully!");
+  $alert.success("Listing created successfully!");
 }
 
 function goBack() {
@@ -51,7 +62,7 @@ function goBack() {
 </script>
 
 <template>
-  <section class="min-h-screen bg-gray-50 py-8">
+  <section class="fullscreen bg-gray-50 py-8">
     <div class="container mx-auto px-4">
       <Title>New Listing</Title>
 
@@ -69,15 +80,14 @@ function goBack() {
         </div>
       </div>
 
-      <!-- Step Components -->
       <div class="h-full grid place-items-center grow w-full">
         <ListingLocation v-if="steps === 0" @location="handleLocation" />
 
         <ListingBasic v-else-if="steps === 1" @next="handleBasicInfo" @back="goBack" />
 
         <ListingDetails
-          v-else-if="steps === 2 && listing.data.meta?.basic"
-          :basicInfo="listing.data.meta.basic"
+          v-else-if="steps === 2"
+          :basicInfo="listing.data.meta?.basic"
           @back="goBack"
           @next="handleFeatures"
         />
