@@ -1,0 +1,3 @@
+<template>
+  <ListingView />
+</template>

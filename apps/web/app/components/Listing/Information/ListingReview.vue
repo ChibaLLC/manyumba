@@ -1,0 +1,178 @@
+<script setup lang="ts">
+import { Button } from "@/components/ui/button";
+import type { ListingData } from "types";
+
+const props = defineProps<{
+  data: Partial<ListingData>;
+}>();
+
+const emits = defineEmits<{
+  submit: [];
+  back: [];
+}>();
+
+const isSubmitting = ref(false);
+
+async function submit() {
+  isSubmitting.value = true;
+  try {
+    // Here you would submit the data to your API
+    await new Promise((resolve) => setTimeout(resolve, 1500)); // Simulate API call
+    emits("submit");
+  } catch (error) {
+    $alert.error("Failed to submit listing. Please try again.");
+  } finally {
+    isSubmitting.value = false;
+  }
+}
+
+function back() {
+  emits("back");
+}
+
+const featuredImage = computed(() => {
+  if (!props.data.images?.length) return null;
+  return props.data.images.find((img: any) => img.isFeatured) || props.data.images[0];
+});
+
+const selectedFeatures = computed(() => {
+  if (!props.data.features) return [];
+
+  const features = [];
+  for (const [key, value] of Object.entries(props.data.features.features)) {
+    if (value) features.push(key);
+  }
+
+  return [...features, ...props.data.features.customFeatures];
+});
+</script>
+
+<template>
+  <ListingContainer>
+    <div>
+      <h1 class="font-dm-serif text-4xl">Review Your Listing</h1>
+      <p class="font-mulish">Please review all information before submitting.</p>
+    </div>
+
+    <div class="mt-6 space-y-8">
+      <!-- Property Preview -->
+      <div class="bg-white rounded-xl shadow-sm overflow-hidden border">
+        <div v-if="featuredImage" class="h-64 overflow-hidden">
+          <img :src="featuredImage.preview" alt="Property featured image" class="w-full h-full object-cover" />
+        </div>
+
+        <div class="p-6">
+          <div class="flex justify-between items-start">
+            <div>
+              <h2 class="text-2xl font-bold">{{ data.meta?.detail?.title || "No Title" }}</h2>
+              <p class="text-gray-500">{{ data.address?.address || "No Address" }}, {{ data.address?.city || "" }}</p>
+            </div>
+            <div class="text-right">
+              <p class="text-2xl font-bold text-navy">${{ data.meta?.detail?.price?.toLocaleString() || "0" }}</p>
+              <p class="text-sm text-gray-500">
+                {{ data.meta?.basic?.listingType === "rent" ? "For Rent" : "For Sale" }}
+              </p>
+            </div>
+          </div>
+
+          <div class="mt-4 flex items-center gap-4 text-sm text-gray-600">
+            <div v-if="data.meta?.detail?.bedrooms" class="flex items-center">
+              <Icon name="local:bed" class="w-5 h-5 mr-1" />
+              {{ data.meta?.detail.bedrooms }} Beds
+            </div>
+            <div v-if="data.meta?.detail?.bathrooms" class="flex items-center">
+              <Icon name="local:bath" class="w-5 h-5 mr-1" />
+              {{ data.meta?.detail.bathrooms }} Baths
+            </div>
+            <div v-if="data.meta?.detail?.area" class="flex items-center">
+              <Icon name="local:ruler" class="w-5 h-5 mr-1" />
+              {{ data.meta?.detail.area }} sq ft
+            </div>
+          </div>
+
+          <p class="mt-4 text-gray-600 line-clamp-3">{{ data.meta?.detail?.description || "No description provided." }}</p>
+        </div>
+      </div>
+
+      <!-- Property Details -->
+      <div>
+        <h3 class="font-newton font-semibold text-lg mb-2">Property Details</h3>
+        <div class="bg-gray-50 rounded-lg p-4 grid grid-cols-2 gap-4">
+          <div>
+            <p class="text-sm text-gray-500">Property Type</p>
+            <p class="font-medium">{{ data.meta?.basic?.propertyType || "Not specified" }}</p>
+          </div>
+          <div>
+            <p class="text-sm text-gray-500">Listing Type</p>
+            <p class="font-medium">{{ data.meta?.basic?.listingType === "rent" ? "For Rent" : "For Sale" }}</p>
+          </div>
+          <div v-if="data.meta?.detail?.yearBuilt">
+            <p class="text-sm text-gray-500">Year Built</p>
+            <p class="font-medium">{{ data.meta?.detail.yearBuilt }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Location -->
+      <div>
+        <h3 class="font-newton font-semibold text-lg mb-2">Location</h3>
+        <div class="bg-gray-50 rounded-lg p-4">
+          <p>{{ data.address?.address || "No address provided" }}</p>
+          <p>{{ data.address?.city || "" }}, {{ data.address?.state || "" }} {{ data.address?.zipCode || "" }}</p>
+          <p>{{ data.address?.country || "" }}</p>
+        </div>
+      </div>
+
+      <!-- Features -->
+      <div v-if="selectedFeatures.length > 0">
+        <h3 class="font-newton font-semibold text-lg mb-2">Features</h3>
+        <div class="flex flex-wrap gap-2">
+          <span
+            v-for="(feature, index) in selectedFeatures"
+            :key="index"
+            class="bg-sky-100 text-navy px-3 py-1 rounded-full text-sm"
+          >
+            {{ feature }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Images -->
+      <div v-if="data.images?.length">
+        <h3 class="font-newton font-semibold text-lg mb-2">Images ({{ data.images.length }})</h3>
+        <div class="grid grid-cols-3 md:grid-cols-4 gap-2">
+          <div
+            v-for="(image, index) in data.images.slice(0, 8)"
+            :key="index"
+            class="relative aspect-square rounded-lg overflow-hidden"
+          >
+            <img :src="image.preview" :alt="`Property image ${index + 1}`" class="w-full h-full object-cover" />
+            <div
+              v-if="image.isFeatured"
+              class="absolute top-1 right-1 bg-yellow-500 text-white text-xs px-1.5 py-0.5 rounded-full"
+            >
+              Featured
+            </div>
+          </div>
+          <div
+            v-if="data.images.length > 8"
+            class="relative aspect-square rounded-lg overflow-hidden bg-gray-200 flex items-center justify-center"
+          >
+            <span class="text-lg font-bold text-gray-600">+{{ data.images.length - 8 }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-8 flex justify-between">
+      <Button variant="outline" @click="back" :disabled="isSubmitting">Back</Button>
+      <Button class="bg-navy text-white" @click="submit" :disabled="isSubmitting">
+        <span v-if="isSubmitting" class="flex items-center">
+          <Icon name="local:spinner" class="animate-spin mr-2 w-4 h-4" />
+          Submitting...
+        </span>
+        <span v-else>Submit Listing</span>
+      </Button>
+    </div>
+  </ListingContainer>
+</template>

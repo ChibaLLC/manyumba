@@ -1,4 +1,0 @@
-<template>
-	<NavTop />
-	<slot />
-</template>

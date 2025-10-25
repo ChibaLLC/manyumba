@@ -1,114 +1,128 @@
 name: Create and publish a Docker image
 
 on:
-  push:
-    branches: ["main"]
+    workflow_dispatch:
 
 env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+    REGISTRY: ghcr.io
+    WEB_IMAGE_NAME: ${{ github.repository }}_web
+    DOCS_IMAGE_NAME: ${{ github.repository }}_docs
 
 jobs:
-  build-and-push-image:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-      attestations: write
-      id-token: write
+    build-and-push-image:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            packages: write
+            attestations: write
+            id-token: write
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
 
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+            - name: Log in to GitHub Container Registry
+              uses: docker/login-action@v3
+              with:
+                  registry: ${{ env.REGISTRY }}
+                  username: ${{ github.actor }}
+                  password: ${{ secrets.GITHUB_TOKEN }}
+            - name: Extract metadata for Docker Web Image
+              id: meta_web
+              uses: docker/metadata-action@v5
+              with:
+                  images: ${{ env.REGISTRY }}/${{ env.WEB_IMAGE_NAME }}
+                  tags: type=raw,value=latest
 
-      # ❌ Remove extra tagging, only keep latest
-      - name: Extract metadata for Docker
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-<<<<<<< HEAD
-          tags: |
-            type=raw,value=latest
-            type=sha
+            - name: Extract metadata for Docker Docs Image
+              id: meta_docs
+              uses: docker/metadata-action@v5
+              with:
+                  images: ${{ env.REGISTRY }}/${{ env.DOCS_IMAGE_NAME }}
+                  tags: type=raw,value=latest
 
+            - name: Set up QEMU
+              uses: docker/setup-qemu-action@v3
 
-      # Enable QEMU to build for multiple architectures
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v3
 
-      # Enable Buildx to create multi-arch images
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+            - name: Build and push Web Docker Image
+              id: push_web
+              uses: docker/build-push-action@v5
+              with:
+                  context: .
+                  push: true
+                  platforms: linux/amd64
+                  tags: ${{ steps.meta_web.outputs.tags }}
+                  labels: ${{ steps.meta_web.outputs.labels }}
+                  file: apps/web/Dockerfile
 
-      # This step uses the `docker/build-push-action` action to build the image, based on your repository's `Dockerfile`. If the build succeeds, it pushes the image to GitHub Packages.
-      # It uses the `context` parameter to define the build's context as the set of files located in the specified path. For more information, see [Usage](https://github.com/docker/build-push-action#usage) in the README of the `docker/build-push-action` repository.
-      # It uses the `tags` and `labels` parameters to tag and label the image with the output from the "meta" step.
-      - name: Build and push Docker image
-=======
-          tags: type=raw,value=latest
+            - name: Wait for 5 seconds
+              run: sleep 5
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+            - name: Build and push Docs Docker Image
+              id: push_docs
+              uses: docker/build-push-action@v5
+              with:
+                  context: .
+                  push: true
+                  platforms: linux/amd64
+                  tags: ${{ steps.meta_docs.outputs.tags }}
+                  labels: ${{ steps.meta_docs.outputs.labels }}
+                  file: apps/docs/Dockerfile
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+            # - name: Clean up old images
+            #   env:
+            #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            #     OWNER: ChibaLLC
+            #     REPO: manyumba
+            #     PACKAGE: manyumba
+            #   run: |
+            #     echo "Cleaning up old images, keeping only the latest..."
 
-      - name: Build and push Docker image (only latest)
->>>>>>> main
-        id: push
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          platforms: linux/amd64
+            #     # Fetch package versions
+            #     versions=$(gh api "/users/${OWNER}/packages/container/${PACKAGE}/versions" --jq '.[].id')
 
-      - name: Clean up old package versions
-        run: |
-          echo "Cleaning up old images, keeping only the latest..."
+            #     echo "Found versions:"
+            #     echo "$versions"
 
-          OWNER="${GITHUB_REPOSITORY_OWNER}"
-          REPO="${IMAGE_NAME#*/}"
+            #     # Keep the first (latest) version and delete the rest
+            #     count=0
+            #     for id in $versions; do
+            #       if [ $count -eq 0 ]; then
+            #         echo "Keeping latest version: $id"
+            #       else
+            #         echo "Deleting old version: $id"
+            #         gh api \
+            #           --method DELETE \
+            #           "/users/${OWNER}/packages/container/${PACKAGE}/versions/${id}" || true
+            #       fi
+            #       count=$((count+1))
+            #     done
 
-          # Get all versions, newest first
-          VERSIONS=$(gh api \
-            -H "Accept: application/vnd.github+json" \
-            /orgs/$OWNER/packages/container/$REPO/versions \
-            --jq '.[].id')
+            #     echo "✅ Cleanup complete! Only the latest remains."
+            # - name: Image details
+            #   run: |
+            #       echo "Web Image: ${{ steps.push_web.outputs.image }}"
+            #       echo "Docs Image: ${{ steps.push_docs.outputs.image }}"
+            #       echo "Tags: ${{ steps.meta.outputs.tags }}"
+            #       echo "Labels: ${{ steps.meta.outputs.labels }}"
+            - name: Image details
+              run: |
+                  echo "Web Image: ${{ steps.push_web.outputs.imageid }}"
+                  echo "Docs Image: ${{ steps.push_docs.outputs.imageid }}"
+                  echo "Web Tags: ${{ steps.meta_web.outputs.tags }}"
+                  echo "Web Labels: ${{ steps.meta_web.outputs.labels }}"
+                  echo "Docs Tags: ${{ steps.meta_docs.outputs.tags }}"
+                  echo "Docs Labels: ${{ steps.meta_docs.outputs.labels }}"
 
-          if [[ -z "$VERSIONS" ]]; then
-            echo "❌ No versions found for $OWNER/$REPO"
-            exit 0
-          fi
+            - uses: actions/delete-package-versions@v5
+              with:
+                  package-type: container
+                  package-name: ${{ env.WEB_IMAGE_NAME }}
 
-          echo "Found versions:"
-          echo "$VERSIONS"
-          echo
-
-          LATEST_VERSION=$(echo "$VERSIONS" | head -n 1)
-          echo "Keeping latest version ID: $LATEST_VERSION"
-          echo
-
-          for VERSION_ID in $VERSIONS; do
-            if [[ "$VERSION_ID" == "$LATEST_VERSION" ]]; then
-              echo "Skipping latest version: $VERSION_ID"
-              continue
-            fi
-
-            echo "Deleting old version: $VERSION_ID"
-            gh api \
-              --method DELETE \
-              -H "Accept: application/vnd.github+json" \
-              /orgs/$OWNER/packages/container/$REPO/versions/$VERSION_ID
-          done
-
-          echo "✅ Cleanup complete! Only the latest remains."
+            - uses: actions/delete-package-versions@v5
+              with:
+                  package-type: container
+                  package-name: ${{ env.DOCS_IMAGE_NAME }}

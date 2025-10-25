@@ -3,10 +3,7 @@ services:
     extends:
       file: docker-compose.base.yml
       service: web
-    image: ghcr.io/chiballc/manyumba
-<<<<<<< HEAD
-    
-=======
+    image: ghcr.io/chiballc/manyumba_web
     labels:
       - com.centurylinklabs.watchtower.enable="true"
 
@@ -15,6 +12,19 @@ services:
     extends:
       file: docker-compose.base.yml
       service: db
+
+  docs:
+    extends:
+      file: docker-compose.base.yml
+      service: docs
+    image: ghcr.io/chiballc/manyumba_docs
+    labels:
+      - com.centurylinklabs.watchtower.enable="true"
+
+  nginx:
+    extends:
+      file: docker-compose.base.yml
+      service: nginx
 
   watchtower:
 <<<<<<< HEAD
@@ -30,6 +40,8 @@ volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     command:
       - --label-enable
+      - --interval
+      - "120"
 
 volumes:
   postgres_data:

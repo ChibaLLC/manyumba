@@ -1,5 +1,10 @@
 {
-  "editor.gotoLocation.multipleDefinitions": "goto",
-  "i18n-ally.localesPaths": ["./app/locales"],
-  "i18n-ally.enabledFrameworks": ["vue"]
+  "eslint.workingDirectories": [
+    {
+      "mode": "auto"
+    }
+  ],
+  "i18n-ally.localesPaths": [
+    "apps/web/app/locales"
+  ]
 }
