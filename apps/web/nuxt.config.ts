@@ -72,7 +72,4 @@ export default defineNuxtConfig({
   pages: {
     pattern: ["**/*.vue", "!**/components/**", "!**/_views/**"],
   },
-  experimental: {
-    typescriptPlugin: true,
-  },
 });
