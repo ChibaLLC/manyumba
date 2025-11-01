@@ -3,6 +3,7 @@ import { computedAsync } from "@vueuse/core";
 import clsx from "clsx";
 import type { ClassNameValue } from "tailwind-merge";
 import type { CommandPaletteGroup, CommandPaletteItem } from "@nuxt/ui";
+import { select } from "#build/ui";
 
 export type SuggestionResponse = {
   suggestions: Array<{
@@ -77,14 +78,13 @@ async function emitPlaceCoords(placeID: string) {
 const center = computedAsync(() => props.initialLocation ?? useCoords());
 
 const fetchSuggestions = debounce(async (value?: string) => {
-  const trimmed = value?.trim();
+  const trimmed = value?.trim?.();
   if (!trimmed) {
     data.value = undefined;
     return;
   }
   loading.value = true;
-
-  if (value === data.value?.suggestions[0]?.placePrediction?.structuredFormat?.mainText?.text) {
+  if (data.value?.suggestions.find((i) => i?.placePrediction?.structuredFormat?.mainText?.text === value)) {
     loading.value = false;
     return;
   }
@@ -113,7 +113,7 @@ const fetchSuggestions = debounce(async (value?: string) => {
     return;
   }
   data.value = result;
-}, 200);
+}, 300);
 
 const locationsSuggestions = computed(() => {
   return (
@@ -125,16 +125,18 @@ const locationsSuggestions = computed(() => {
   );
 });
 
-const groups = computed<CommandPaletteGroup<CommandPaletteItem>[]>(() => {
+const groups = computed(() => {
   return [
     {
+      id: "locations",
       label: "Locations",
       items: locationsSuggestions.value.map((l) => ({
         label: l.label,
         suffix: l.description,
+        id: l.id,
       })),
     },
-  ];
+  ] satisfies CommandPaletteGroup<CommandPaletteItem>[];
 });
 
 watch(input, fetchSuggestions);
@@ -146,26 +148,29 @@ function enterSubmit() {
     emitPlaceCoords(prediction.placePrediction.placeId);
   }
 }
-
-const binds = {
-  "@update:modelValue": (id: string) => {
-    const selected = data.value?.suggestions.find((s) => s.placePrediction.placeId === id);
-    if (selected) {
-      input.value = selected?.placePrediction?.structuredFormat?.mainText?.text;
-      emitPlaceCoords(selected.placePrediction.placeId);
-    }
-  },
-  "@keydown.enter.prevent": enterSubmit(),
-  "@input": (val: Event) => {
-    input.value = (val.target as HTMLInputElement).value;
-  },
-};
 </script>
 
 <template>
   <UModal :open @update:open="emits('update:open', $event)" v-if="modal">
     <template #content>
-      <UCommandPalette :groups="groups" class="flex-1" :loading v-bind="binds" placeholder="Start typing to search" />
+      <UCommandPalette
+        :groups="groups"
+        class="flex-1"
+        :loading
+        @update:modelValue="
+          (item) => {
+            const selected = data?.suggestions.find((s) => s.placePrediction.placeId === item.id);
+            if (selected) {
+              input = selected?.placePrediction?.structuredFormat?.mainText?.text;
+              emitPlaceCoords(selected.placePrediction.placeId);
+              emits('update:open', false);
+            }
+          }
+        "
+        placeholder="Start typing to search"
+        v-model:search-term="input"
+        selected-icon="i-lucide-check"
+      />
     </template>
   </UModal>
   <div class="relative" :class="ui?.container" v-else>
@@ -178,7 +183,21 @@ const binds = {
       open-on-focus
       value-key="id"
       class="w-full"
-      v-bind="binds"
+      @update:modelValue="
+        (id: string) => {
+          const selected = data?.suggestions.find((s) => s.placePrediction.placeId === id);
+          if (selected) {
+            input = selected?.placePrediction?.structuredFormat?.mainText?.text;
+            emitPlaceCoords(selected.placePrediction.placeId);
+          }
+        }
+      "
+      @keydown.enter.prevent="enterSubmit"
+      @input="
+        (val: Event) => {
+          input = (val.target as HTMLInputElement).value;
+        }
+      "
       :ui="{
         item: 'cursor-pointer hover:bg-gray-100',
         group: 'bg-white shadow-md rounded-md w-full p-2',

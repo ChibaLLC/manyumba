@@ -36,14 +36,17 @@
     --sky-200: hsl(213, 27%, 74%);
 
     --navy: hsl(222, 47%, 11%);
+
+    --grey: rgba(217, 217, 217, 0.5);
   }
 
   @theme {
     --color-navy: var(--navy);
     --color-sky-100: var(--sky-100);
-    --color-sky-200: var(--sky-200);    
+    --color-sky-200: var(--sky-200);
     --color-primary: hsl(var(--primary));
     --color-primary-foreground: hsl(var(--primary-foreground));
+    --color-grey: var(--grey);
 
     --font-inter: "Inter", serif;
     --font-mulish: "Mulish", serif;
