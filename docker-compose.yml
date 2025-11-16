@@ -4,8 +4,6 @@ services:
       file: docker-compose.base.yml
       service: web
     image: ghcr.io/chiballc/manyumba_web
-    labels:
-      - com.centurylinklabs.watchtower.enable="true"
 
   db:
     extends:
@@ -13,6 +11,8 @@ services:
       service: db
 
   docs:
+    environment:
+      - NUXT_APP_BASE_URL=/docs/
     extends:
       file: docker-compose.base.yml
       service: docs
@@ -24,15 +24,6 @@ services:
     extends:
       file: docker-compose.base.yml
       service: nginx
-
-  watchtower:
-    image: containrrr/watchtower
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    command:
-      - --label-enable
-      - --interval
-      - "120"
 
 volumes:
   postgres_data:

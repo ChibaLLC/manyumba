@@ -2,6 +2,8 @@
 import { computedAsync } from "@vueuse/core";
 import clsx from "clsx";
 import type { ClassNameValue } from "tailwind-merge";
+import type { CommandPaletteGroup, CommandPaletteItem } from "@nuxt/ui";
+import { select } from "#build/ui";
 
 export type SuggestionResponse = {
   suggestions: Array<{
@@ -32,7 +34,7 @@ const config = useRuntimeConfig();
 const data = shallowRef<SuggestionResponse>();
 const loading = ref(false);
 
-const emits = defineEmits<{ coordinates: [LocationCoods] }>();
+const emits = defineEmits<{ coordinates: [LocationCoods]; "update:open": [boolean] }>();
 const props = defineProps<{
   initialLocation?: LocationCoods;
   ui?: {
@@ -41,6 +43,8 @@ const props = defineProps<{
     leadingIcon?: ClassNameValue;
     empty?: ClassNameValue;
   };
+  modal?: boolean;
+  open?: boolean;
 }>();
 
 async function getPlaceCoordinates(placeID: string): Promise<LocationCoods | undefined> {
@@ -74,14 +78,13 @@ async function emitPlaceCoords(placeID: string) {
 const center = computedAsync(() => props.initialLocation ?? useCoords());
 
 const fetchSuggestions = debounce(async (value?: string) => {
-  const trimmed = value?.trim();
+  const trimmed = value?.trim?.();
   if (!trimmed) {
     data.value = undefined;
     return;
   }
   loading.value = true;
-
-  if (value === data.value?.suggestions[0]?.placePrediction?.structuredFormat?.mainText?.text) {
+  if (data.value?.suggestions.find((i) => i?.placePrediction?.structuredFormat?.mainText?.text === value)) {
     loading.value = false;
     return;
   }
@@ -110,7 +113,31 @@ const fetchSuggestions = debounce(async (value?: string) => {
     return;
   }
   data.value = result;
-}, 200);
+}, 300);
+
+const locationsSuggestions = computed(() => {
+  return (
+    data.value?.suggestions?.map((s) => ({
+      label: s?.placePrediction?.structuredFormat?.mainText.text,
+      id: s.placePrediction.placeId,
+      description: s?.placePrediction?.structuredFormat?.secondaryText?.text,
+    })) || []
+  );
+});
+
+const groups = computed(() => {
+  return [
+    {
+      id: "locations",
+      label: "Locations",
+      items: locationsSuggestions.value.map((l) => ({
+        label: l.label,
+        suffix: l.description,
+        id: l.id,
+      })),
+    },
+  ] satisfies CommandPaletteGroup<CommandPaletteItem>[];
+});
 
 watch(input, fetchSuggestions);
 
@@ -124,23 +151,40 @@ function enterSubmit() {
 </script>
 
 <template>
-  <div class="relative" :class="ui?.container">
+  <UModal :open @update:open="emits('update:open', $event)" v-if="modal">
+    <template #content>
+      <UCommandPalette
+        :groups="groups"
+        class="flex-1"
+        :loading
+        @update:modelValue="
+          (item) => {
+            const selected = data?.suggestions.find((s) => s.placePrediction.placeId === item.id);
+            if (selected) {
+              input = selected?.placePrediction?.structuredFormat?.mainText?.text;
+              emitPlaceCoords(selected.placePrediction.placeId);
+              emits('update:open', false);
+            }
+          }
+        "
+        placeholder="Start typing to search"
+        v-model:search-term="input"
+        selected-icon="i-lucide-check"
+      />
+    </template>
+  </UModal>
+  <div class="relative" :class="ui?.container" v-else>
     <UInputMenu
-      :items="
-        data?.suggestions?.map((s) => ({
-          label: s?.placePrediction?.structuredFormat?.mainText.text,
-          id: s.placePrediction.placeId,
-          description: s?.placePrediction?.structuredFormat?.secondaryText?.text,
-        })) || []
-      "
+      :items="locationsSuggestions"
       placeholder="Search location..."
       :loading="loading"
       selected-icon="i-lucide-check"
       loading-icon="i-lucide-loader"
       open-on-focus
       value-key="id"
+      class="w-full"
       @update:modelValue="
-        (id) => {
+        (id: string) => {
           const selected = data?.suggestions.find((s) => s.placePrediction.placeId === id);
           if (selected) {
             input = selected?.placePrediction?.structuredFormat?.mainText?.text;
@@ -149,7 +193,6 @@ function enterSubmit() {
         }
       "
       @keydown.enter.prevent="enterSubmit"
-      class="w-full"
       @input="
         (val: Event) => {
           input = (val.target as HTMLInputElement).value;

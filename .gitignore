@@ -144,3 +144,5 @@ dist
 .data
 
 .turbo
+
+.pnpm-store

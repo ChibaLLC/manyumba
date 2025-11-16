@@ -15,13 +15,6 @@ const items = computed<NavigationMenuItem[]>(() => [
     label: "Properties",
     to: "/listings",
     icon: "i-lucide-map-pin-house",
-    active: route.path.startsWith("/listings"),
-  },
-  {
-    label: "Documentation",
-    to: "/",
-    icon: "i-lucide-book-open",
-    active: route.path.startsWith("/docs/getting-started"),
   },
   {
     label: "Roadmap",
@@ -30,6 +23,13 @@ const items = computed<NavigationMenuItem[]>(() => [
     target: "_blank",
   },
 ]);
+
+const mobileInput = ref(false);
+function showMobileInput() {
+  mobileInput.value = true;
+}
+
+const inListing = computed(() => route.path.startsWith("/listings"));
 </script>
 
 <template>
@@ -42,7 +42,7 @@ const items = computed<NavigationMenuItem[]>(() => [
       <div class="flex items-center">
         <NuxtLink to="/" class="logo font-inknut">Manyumba</NuxtLink>
         <Button
-          class="font-mulish mt-0.5 font-semibold text-muted text-base hover:text-primary transition-colors"
+          class="font-mulish mt-0.5 font-semibold text-muted text-base hover:text-primary transition-colors max-sm:hidden"
           variant="ghost"
         >
           Payments
@@ -50,13 +50,29 @@ const items = computed<NavigationMenuItem[]>(() => [
       </div>
     </template>
 
-    <UNavigationMenu :items="items" />
-
+    <UInput
+      v-if="inListing"
+      leading-icon="i-lucide-search"
+      :ui="{
+        base: 'md:w-96',
+      }"
+      icon="i-lucide-map-pin"
+    />
+    <UNavigationMenu :items="items" v-else />
+    <InputLocation modal :open="mobileInput" @update:open="mobileInput = $event" />
     <template #right>
-      <NuxtLink to="/listings/new">
-        <Button variant="outline" class="border">List Property</Button>
-      </NuxtLink>
-      <div class="font-semibold ml-2"><span>Log In</span> | <span>Sign Up</span></div>
+      <UIcon
+        class="lg:hidden mr-1 text-navy/80 hover:text-navy p-1 rounded-md w-7.5 h-7.5 shadow-xs"
+        name="i-lucide-search"
+        @click="showMobileInput"
+        v-if="inListing"
+      />
+      <div class="flex items-center max-sm:hidden">
+        <NuxtLink to="/listings/new">
+          <Button variant="outline" class="border">List Property</Button>
+        </NuxtLink>
+        <div class="font-semibold ml-2 max-lg:hidden"><span>Log In</span> | <span>Sign Up</span></div>
+      </div>
     </template>
 
     <template #body>

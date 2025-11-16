@@ -1,8 +1,6 @@
 <template>
+  <NavTop />
   <UMain>
-    <NavTop />
-    <section class="main">
-      <slot />
-    </section>
+    <slot />
   </UMain>
 </template>
