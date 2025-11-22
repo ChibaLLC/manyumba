@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { Button } from "@/components/ui/button";
 import type { ListingData } from "types";
 
 const props = defineProps<{
@@ -165,14 +164,14 @@ const selectedFeatures = computed(() => {
     </div>
 
     <div class="mt-8 flex justify-between">
-      <Button variant="outline" @click="back" :disabled="isSubmitting">Back</Button>
-      <Button class="bg-navy text-white" @click="submit" :disabled="isSubmitting">
+      <UButton variant="outline" @click="back" :disabled="isSubmitting">Back</UButton>
+      <UButton class="bg-navy text-white" @click="submit" :disabled="isSubmitting">
         <span v-if="isSubmitting" class="flex items-center">
           <Icon name="local:spinner" class="animate-spin mr-2 w-4 h-4" />
           Submitting...
         </span>
         <span v-else>Submit Listing</span>
-      </Button>
+      </UButton>
     </div>
   </ListingContainer>
 </template>

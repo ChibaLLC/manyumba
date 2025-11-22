@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { Button } from "@/components/ui/button";
 const locator = useTemplateRef("locator");
 async function setPlaceCoords(coords: LocationCoods) {
   execute(locator.value?.setMapCenter, coords.cood, coords.isAccurate)
@@ -36,7 +35,7 @@ function next() {
       <p>You can use the search to get the general area. Then reposition the pin.</p>
     </div>
     <div class="flex w-full justify-between mt-4">
-      <Button class="w-fit bg-emerald-900 text-white hover:bg-emerald-800" @click="locator?.getCurrentLocation">Use Current Location</Button>
+      <UButton class="w-fit bg-emerald-900 text-white hover:bg-emerald-800" @click="locator?.getCurrentLocation">Use Current Location</UButton>
       <InputLocation @coordinates="setPlaceCoords" :initialLocation="location" />
     </div>
     <MapLocator class="my-2" ref="locator" @location="location = $event" />

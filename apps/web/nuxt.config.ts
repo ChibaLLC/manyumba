@@ -41,7 +41,7 @@ export default defineNuxtConfig({
     mode: "svg",
   },
   vite: {
-    plugins: [tailwindcss()],
+    plugins: [tailwindcss() as any[]],
     build: {
       sourcemap: false,
     },
@@ -70,9 +70,6 @@ export default defineNuxtConfig({
     pattern: ["**/*.vue", "!**/components/**", "!**/_views/**"],
   },
   telemetry: {
-    enabled: false
+    enabled: false,
   },
-  experimental: {
-    typescriptPlugin: true
-  }
 });

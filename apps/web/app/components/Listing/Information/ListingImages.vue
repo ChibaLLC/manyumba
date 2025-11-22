@@ -2,7 +2,6 @@
 export const { data: imagesData, validate } = useZodState(ImagesSchema);
 </script>
 <script setup lang="ts">
-import { Button } from "@/components/ui/button";
 import { Trash, Star } from "lucide-vue-next";
 import { ImagesSchema, pasteKeydownListener, pasteEventListener, dropItemListener, blobToFile } from "utils";
 import type { ImagesData } from "types";
@@ -40,7 +39,7 @@ function handleFileUpload(event: Event) {
   const target = event.target as HTMLInputElement;
   if (!target.files) return;
 
-  handleFiles(target.files)
+  handleFiles(target.files);
 
   // Reset input
   if (fileInput.value) fileInput.value.value = "";
@@ -94,7 +93,7 @@ function back() {
 }
 
 function handleBlob(blobs: Blob[] | File[]) {
-  handleFiles(blobs.map(blobToFile))
+  handleFiles(blobs.map(blobToFile));
 }
 
 onKeyDown(["Control", "Meta", "V", "v"], (e) => {
@@ -152,22 +151,22 @@ onUnmounted(() => {
             <div
               class="absolute inset-0 bg-black/30 bg-opacity-0 group-hover:bg-opacity-40 transition-all flex items-center justify-center opacity-0 group-hover:opacity-100 backdrop-blur-xs"
             >
-              <Button
-                variant="destructive"
-                size="icon"
+              <UButton
+                color="error"
+                icon="i-lucide-trash"
                 class="w-8 h-8 rounded-full text-white hover:text-red-500"
                 @click.stop="removeImage(index)"
-              >
-                <Trash class="w-4 h-4" />
-              </Button>
-              <Button variant="default" size="icon" class="w-8 h-8 rounded-full ml-2" @click.stop="setFeatured(index)">
-                <Star
-                  class="w-4 h-4 text-white"
-                  :class="{
+              />
+              <UButton
+                icon="i-lucide-star"
+                class="w-8 h-8 rounded-full ml-2"
+                @click.stop="setFeatured(index)"
+                :ui="{
+                  leadingIcon: cn('w-4 h-4 text-white', {
                     'text-yellow-500 fill-yellow-500': image.isFeatured,
-                  }"
-                />
-              </Button>
+                  }),
+                }"
+              />
             </div>
             <div
               v-if="image.isFeatured"
@@ -181,8 +180,8 @@ onUnmounted(() => {
     </div>
 
     <div class="mt-8 flex justify-between">
-      <Button variant="outline" @click="back">Back</Button>
-      <Button class="bg-navy text-white" @click="next">Next</Button>
+      <UButton variant="outline" @click="back">Back</UButton>
+      <UButton class="bg-navy text-white" @click="next">Next</UButton>
     </div>
   </ListingContainer>
 </template>

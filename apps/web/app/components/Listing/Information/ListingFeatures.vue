@@ -2,9 +2,6 @@
 export const { data: featuresData, validate } = useZodState(FeaturesSchema);
 </script>
 <script setup lang="ts">
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
 import type { FeaturesData } from "types";
 import { FeaturesSchema } from "utils";
 
@@ -119,8 +116,8 @@ function updateFeature(key: string, value: boolean) {
     </div>
 
     <div class="mt-8 flex justify-between">
-      <Button variant="outline" @click="back">Back</Button>
-      <Button class="bg-navy text-white" @click="next">Next</Button>
+      <UButton variant="outline" @click="back">Back</UButton>
+      <UButton class="bg-navy text-white" @click="next">Next</UButton>
     </div>
   </ListingContainer>
 </template>
