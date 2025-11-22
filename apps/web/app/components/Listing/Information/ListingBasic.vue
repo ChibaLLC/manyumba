@@ -2,11 +2,8 @@
 export const { data, validate } = useZodState(BasicSchema);
 </script>
 <script setup lang="ts">
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { BasicSchema, homeTypes, landTypes } from "utils";
 import type { AssetType, BasicInfoData, ListingType, PropertyType } from "types";
-import { toast } from "vue-sonner";
 
 const assetTypeSearch = ref<string>();
 
@@ -35,7 +32,7 @@ function next() {
   } else {
     console.log(error);
     console.log(data);
-    toast.error(String(error));
+    $alert.error(String(error));
   }
 }
 
@@ -71,7 +68,7 @@ function setAssetType(type: AssetType) {
     <div class="mt-6">
       <h2 class="font-newton font-semibold text-lg mb-2">Lease Type</h2>
       <div class="flex gap-3">
-        <Button
+        <UButton
           class="text-navy bg-sky-100 border-sky-200 border hover:bg-sky-200/15"
           :class="{
             'bg-navy text-white  hover:bg-navy/80': data.listingType === 'sale',
@@ -80,8 +77,8 @@ function setAssetType(type: AssetType) {
         >
           <Icon name="local:heart-home" class="mr-2" />
           Sale
-        </Button>
-        <Button
+        </UButton>
+        <UButton
           class="text-navy bg-sky-100 border-sky-200 border hover:bg-sky-200/15"
           :class="{
             'bg-navy text-white  hover:bg-navy/80': data.listingType === 'rent',
@@ -90,14 +87,14 @@ function setAssetType(type: AssetType) {
         >
           <Icon name="local:smile-home" class="mr-2" />
           Rent
-        </Button>
+        </UButton>
       </div>
     </div>
 
     <div class="mt-6">
       <h2 class="font-newton font-semibold text-lg mb-2">Property Type</h2>
       <div class="flex gap-3">
-        <Button
+        <UButton
           class="text-navy bg-sky-100 border-sky-200 border hover:bg-sky-200/15"
           :class="{
             'bg-navy text-white hover:bg-navy/80': data.propertyType === 'home',
@@ -106,8 +103,8 @@ function setAssetType(type: AssetType) {
         >
           <Icon name="local:shroom-home" class="mr-2" />
           Home
-        </Button>
-        <Button
+        </UButton>
+        <UButton
           class="text-navy bg-sky-100 border-sky-200 border hover:bg-sky-200/15"
           @click="setPropertyType('land')"
           :class="{
@@ -116,7 +113,7 @@ function setAssetType(type: AssetType) {
         >
           <Icon name="local:land" class="mr-2" />
           Land
-        </Button>
+        </UButton>
       </div>
     </div>
 

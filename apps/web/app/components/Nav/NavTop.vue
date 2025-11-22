@@ -6,7 +6,6 @@
 </style>
 <script setup lang="ts">
 import type { NavigationMenuItem } from "@nuxt/ui";
-import { Button } from "@/components/ui/button";
 
 const route = useRoute();
 
@@ -41,12 +40,12 @@ const inListing = computed(() => route.path.startsWith("/listings"));
     <template #left>
       <div class="flex items-center">
         <NuxtLink to="/" class="logo font-inknut">Manyumba</NuxtLink>
-        <Button
+        <UButton
           class="font-mulish mt-0.5 font-semibold text-muted text-base hover:text-primary transition-colors max-sm:hidden"
           variant="ghost"
         >
-          Payments
-        </Button>
+         Payments
+        </UButton>
       </div>
     </template>
 

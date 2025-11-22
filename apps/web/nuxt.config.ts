@@ -71,5 +71,8 @@ export default defineNuxtConfig({
   },
   telemetry: {
     enabled: false
+  },
+  experimental: {
+    typescriptPlugin: true
   }
 });

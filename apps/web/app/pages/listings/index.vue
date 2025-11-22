@@ -10,7 +10,7 @@
         <UButton icon="local:marimba-settings" />
       </div>
       <div class="properties-container">
-
+        
       </div>
     </aside>
     <main class="map-container">

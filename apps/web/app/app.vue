@@ -1,12 +1,7 @@
-<script setup lang="ts">
-import { Toaster } from "vue-sonner";
-import "vue-sonner/style.css";
-</script>
 <template>
   <UApp>
     <NuxtLayout>
       <NuxtLoadingIndicator :color="`repeating-linear-gradient(to right, #ee6c4d, red)`" :height="4" />
-      <Toaster />
       <NuxtPage />
     </NuxtLayout>
   </UApp>
