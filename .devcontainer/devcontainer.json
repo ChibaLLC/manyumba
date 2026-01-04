@@ -1,0 +1,68 @@
+{
+  "name": "Nuxt-Waitlist App Dev Container",
+  "dockerFile": "Dockerfile",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/app,type=bind,consistency=cached",
+  "workspaceFolder": "/workspaces/app",
+  "remoteUser": "vscode",
+  "mounts": ["source=build-cache,target=/workspaces/app/out,type=volume"],
+  "features": {
+    "ghcr.io/devcontainers/features/node": {},
+    "ghcr.io/devcontainers-extra/features/pnpm": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/docker-in-docker": {}
+  },
+  "postCreateCommand": "sudo chown -R vscode:vscode /workspaces/app",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "antfu.goto-alias",
+        "chwoerz.type-buddy",
+        "atommaterial.a-file-icon-vscode",
+        "usernamehw.errorlens",
+        "mikestead.dotenv",
+        "github.vscode-github-actions",
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss",
+        "wayou.vscode-todo-highlight",
+        "vue.volar",
+        "shd101wyy.markdown-preview-enhanced",
+        "christian-kohler.path-intellisense",
+        "doggy8088.quicktype-refresh",
+        "jock.svg",
+        "redhat.vscode-yaml",
+        "irongeek.vscode-env",
+        "yoavbls.pretty-ts-errors",
+        "alimozdemir.vscode-nuxt-dx-tools",
+        "eamodio.gitlens",
+        "lokalise.i18n-ally",
+        "pushqrdx.inline-html",
+        "unifiedjs.vscode-mdx",
+        "typescriptteam.native-preview",
+        "docker.docker",
+        "afzalsayed96.icones",
+        "antfu.iconify",
+        "Tobermory.es6-string-html",
+        "cweijan.dbclient-jdbc",
+        "cweijan.vscode-database-client2"
+      ]
+    }
+  },
+  "containerEnv": {
+    "POSTGRES_USER": "postgres",
+    "POSTGRES_PASSWORD": "postgres",
+    "POSTGRES_DB": "postgres",
+    "DATABASE_URL":"postgres://postgres:postgres@localhost:5432/postgres",
+    "NUXT_PUBLIC_MM_URL": "https://dev-community.finueva.com",
+    "NUXT_MATTERMOST_TOKEN": "z9pph1onkjnkbyfc1autpurjew",
+    "NUXT_MATTERMOST_TEAM_ID": "49cust57rbfd8cgftw63a91yjw",
+    "NUXT_MATTERMOST_BOTS_WELCOME_TOKEN": "a8sx57b8t7d9xxnpxedonxfu1w",
+    "NUXT_MATTERMOST_BOTS_INVITE_TOKEN": "aofwaosa8tnkppynyt3e6nmegh",
+    "NUXT_MATTERMOST_BOTS_NOTIFICATIONS_TOKEN": "7wmpb1oiyjdcipaenw4cjmcxar",
+    "NUXT_MATTERMOST_BOTS_SURVEYS_TOKEN": "m1cscmec8igkznithpaj3614fa",
+    "NUXT_MATTERMOST_BOTS_MODERATOR_TOKEN": "k8xjeufmr7bpfdk6a4pxc78umc",
+    "NUXT_MATTERMOST_BOTS_MODERATOR_NO_TOP_LEVEL_MESSAGE_CHANNELS": "bf777gsoipre8gr4ut8b7tixce",
+    "NUXT_MATTERMOST_BOTS_MODERATOR_NO_MESSAGE_CHANNELS": "g4riy9hzoiyoi8nnj9jhpjx86h"
+  },
+  "postStartCommand": "sudo service postgresql start"
+}
