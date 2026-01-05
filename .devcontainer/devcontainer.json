@@ -1,5 +1,5 @@
 {
-  "name": "Nuxt-Waitlist App Dev Container",
+  "name": "Manyumba App Dev Container",
   "dockerFile": "Dockerfile",
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/app,type=bind,consistency=cached",
   "workspaceFolder": "/workspaces/app",
