@@ -4,7 +4,9 @@
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/app,type=bind,consistency=cached",
   "workspaceFolder": "/workspaces/app",
   "remoteUser": "vscode",
-  "mounts": ["source=build-cache,target=/workspaces/app/out,type=volume"],
+  "mounts": [
+    "source=build-cache,target=/workspaces/app/out,type=volume"
+  ],
   "features": {
     "ghcr.io/devcontainers/features/node": {},
     "ghcr.io/devcontainers-extra/features/pnpm": {
@@ -53,8 +55,8 @@
     "POSTGRES_USER": "postgres",
     "POSTGRES_PASSWORD": "postgres",
     "POSTGRES_DB": "postgres",
-    "DATABASE_URL":"postgres://postgres:postgres@localhost:5432/postgres"
+    "DATABASE_URL": "postgres://postgres:postgres@localhost:5432/postgres"
   },
   "postStartCommand": "sudo service postgresql start",
-  "onCreateCommand": "gh auth login"
+  "onCreateCommand": "gh auth login && git config user.name \"$(gh api user -q .name)\" && git config user.email \"$(gh api user -q .email)\""
 }
