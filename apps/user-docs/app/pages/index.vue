@@ -1,0 +1,50 @@
+<script setup lang="ts">
+const { data: page } = await useAsyncData("index", () => queryCollection("index").first());
+if (!page.value) throw createError({ statusCode: 404, message: "Page not found", fatal: true });
+</script>
+
+<template>
+  <div v-if="page" class="relative flex flex-col gap-4 overflow-hidden">
+    <div id="visitors" class="absolute" />
+    <Hero :title="page.hero.title" :description="page.hero.description" :links="page.hero.links" />
+
+    <div class="relative">
+      <BgGradient />
+      <UPageSection
+        v-for="(section, index) in page.sections"
+        :key="index"
+        :description="section.description"
+        :links="section.links"
+        orientation="horizontal"
+        :reverse="index % 2 === 0"
+        :ui="{
+          container: 'sm:pb-0 lg:pb-8',
+          title: 'text-xl sm:text-xl lg:text-2xl font-normal',
+          description: 'mt-2 text-sm sm:text-md lg:text-sm text-muted',
+          links: 'mt-4 gap-3',
+        }"
+      >
+        <template #title>
+          <ScrambleText :label="section.title" class="main-gradient" />
+        </template>
+
+        <template #links>
+          <Motion
+            v-for="(link, _index) in section.links"
+            :key="_index"
+            as-child
+            :initial="{ opacity: 0, transform: 'translateY(20px)' }"
+            :while-in-view="{ opacity: 1, transform: 'translateY(0)' }"
+            :transition="{ delay: 0.2 + 0.2 * _index }"
+            :in-view-options="{ once: true }"
+          >
+            <UButton class="cursor-default hover:bg-transparent" :ui="{ label: 'main-gradient' }" v-bind="link" />
+          </Motion>
+        </template>
+      </UPageSection>
+      <UPageSection>
+        <Faq :faq="page.faq" />
+      </UPageSection>
+    </div>
+  </div>
+</template>

@@ -1,0 +1,19 @@
+---
+title: "<Post title here>"
+description: "<Brief description or summary of the post>"
+image: "<Path or URL to cover image>"
+date: "<MM/DD/YYYY>"
+minRead: <Estimated read time in minutes>
+tags:
+  - "<tag-1>"
+  - "<tag-2>"
+word: "<Optional one-word highlight or theme>"
+authors:
+  - name: "<Author full name>"
+    description: "<Author short bio or role>"
+    to: "<Author profile link>"
+    target: _blank
+    avatar:
+      src: "<Avatar image URL>"
+      alt: "<Alt text for avatar>"
+---
