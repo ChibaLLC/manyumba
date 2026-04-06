@@ -2,7 +2,10 @@
   "name": "manyumba",
   "private": true,
   "scripts": {
-    "dev": "turbo dev --filter=docs --filter=web",
+    "dev": "turbo dev --filter=user-docs --filter=web",
+    "dev:start": "node scripts/dev.mjs",
+    "dev:stop": "node scripts/dev.mjs --stop",
+    "dev:reset": "node scripts/dev.mjs --reset",
     "build": "turbo build",
     "cleanup": "turbo cleanup",
     "lint": "turbo lint",

@@ -1,6 +1,5 @@
 import { defineConfig } from "drizzle-kit";
-import { getCredentials } from "./server/db";
-import { stringifyParsedURL } from "ufo";
+import { getCredentials } from "./server/db/index";
 
 const credentials = getCredentials();
 
@@ -10,11 +9,6 @@ export default defineConfig({
   schema: "./server/db/schema/index.ts",
   verbose: true,
   dbCredentials: {
-    url: stringifyParsedURL({
-      host: credentials.host,
-      pathname: credentials.database,
-      protocol: "postgresql://",
-      auth: `${credentials.username}:${credentials.password}`,
-    }),
+    url: `${credentials.dialect}://${credentials.username}:${credentials.password}@${credentials.host}:${credentials.port}/${credentials.database}`,
   },
 });

@@ -45,6 +45,9 @@ export default defineNuxtConfig({
     build: {
       sourcemap: false,
     },
+    optimizeDeps: {
+      include: ["@vue/devtools-core", "@vue/devtools-kit"],
+    },
   },
   i18n: {
     defaultLocale: "en",
@@ -70,6 +73,6 @@ export default defineNuxtConfig({
     pattern: ["**/*.vue", "!**/components/**", "!**/_views/**"],
   },
   telemetry: {
-    enabled: false
-  }
+    enabled: false,
+  },
 });
