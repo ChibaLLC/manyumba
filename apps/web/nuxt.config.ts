@@ -66,11 +66,8 @@ export default defineNuxtConfig({
       },
     },
   },
-  ui: {
-    colorMode: false,
-  },
   pages: {
-    pattern: ["**/*.vue", "!**/components/**", "!**/_views/**"],
+    pattern: ["**/*.vue", "!**/components/**"],
   },
   telemetry: {
     enabled: false,
