@@ -22,7 +22,7 @@ export default defineNuxtConfig({
     ],
   },
   css: ["~/assets/css/tailwind.css", "~/assets/css/custom.scss"],
-  extends: ["github:kgarchie/nuxt-starter"],
+  extends: ["../base"],
   nitro: {
     experimental: {
       websocket: true,

@@ -2,6 +2,7 @@
 const ignoredComponents = ["ui", "__tests__", "*.test.*", "*.spec.*", "*.utils.*", "*.json"] as const;
 export default defineNuxtConfig({
   modules: ["@nuxt/ui", "@nuxt/content", "motion-v/nuxt", "@nuxt/image", "nuxt-og-image"],
+  extends: ["../base"],
   devtools: { enabled: true },
   future: {
     compatibilityVersion: 4,
@@ -83,6 +84,6 @@ export default defineNuxtConfig({
     ],
   },
   telemetry: {
-    enabled: false
-  }
+    enabled: false,
+  },
 });

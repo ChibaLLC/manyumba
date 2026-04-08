@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { BasicSchema, homeTypes, landTypes } from "utils";
 import type { AssetType, BasicInfoData, ListingType, PropertyType } from "types";
-import { toast } from "vue-sonner";
 
 const assetTypeSearch = ref<string>();
 
@@ -35,7 +34,7 @@ function next() {
   } else {
     console.log(error);
     console.log(data);
-    toast.error(String(error));
+    $alert.error(String(error));
   }
 }
 
