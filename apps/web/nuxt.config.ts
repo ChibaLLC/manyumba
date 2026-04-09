@@ -57,6 +57,9 @@ export default defineNuxtConfig({
     locales: [{ code: "en", name: "English", file: "en.json" }],
     langDir: "../app/locales",
   },
+  colorMode: {
+    classSuffix: "",
+  },
   runtimeConfig: {
     public: {
       google: {
