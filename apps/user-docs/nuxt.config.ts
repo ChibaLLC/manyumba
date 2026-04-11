@@ -1,7 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 const ignoredComponents = ["ui", "__tests__", "*.test.*", "*.spec.*", "*.utils.*", "*.json"] as const;
 export default defineNuxtConfig({
-  modules: ["@nuxt/ui", "@nuxt/content", "motion-v/nuxt", "@nuxt/image", "nuxt-og-image"],
+  modules: ["@nuxt/ui", "@nuxt/content", "motion-v/nuxt", "@nuxt/image", "nuxt-og-image", "@nuxt/eslint"],
   extends: ["../base"],
   devtools: { enabled: true },
   future: {

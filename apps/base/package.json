@@ -14,5 +14,9 @@
     "nuxt": "^4.4.2",
     "vue": "^3.5.32",
     "vue-router": "^5.0.4"
+  },
+  "devDependencies": {
+    "@chiballc/types": "^0.0.0",
+    "@chiballc/utils": "^2.2.2"
   }
 }

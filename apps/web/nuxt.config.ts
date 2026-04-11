@@ -5,7 +5,7 @@ const ignoredComponents = ["ui", "__tests__", "*.test.*", "*.spec.*", "*.utils.*
 export default defineNuxtConfig({
   compatibilityDate: "2025-06-09",
   devtools: { enabled: true },
-  modules: ["@nuxt/ui", "@nuxt/fonts", "@nuxt/icon", "@nuxtjs/i18n", "@nuxt/scripts", "@nuxt/image"],
+  modules: ["@nuxt/ui", "@nuxt/fonts", "@nuxt/icon", "@nuxtjs/i18n", "@nuxt/scripts", "@nuxt/image", "@nuxt/eslint"],
   components: {
     dirs: [
       {
@@ -41,7 +41,7 @@ export default defineNuxtConfig({
     mode: "svg",
   },
   vite: {
-    plugins: [tailwindcss()],
+    plugins: [tailwindcss() as any],
     build: {
       sourcemap: false,
     },
@@ -71,5 +71,10 @@ export default defineNuxtConfig({
   },
   telemetry: {
     enabled: false,
+  },
+  colorMode: {
+    preference: "dark",
+    fallback: "dark",
+    classSuffix: "",
   },
 });
