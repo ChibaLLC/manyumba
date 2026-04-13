@@ -1,4 +1,7 @@
+/// <reference types="google.maps" />
 import type { DeepReadonly } from "vue";
+import { execute } from "@chiballc/utils";
+import type { AsyncDataOptions } from "nuxt/app";
 
 export type LocationCoods = {
   isAccurate: boolean;
@@ -6,34 +9,28 @@ export type LocationCoods = {
 };
 
 export async function getApproximateLocation(): Promise<LocationResult | undefined> {
-  const { result: response, error } = await execute(
-    (async function () {
-      if (import.meta.server) {
-        const { getIpLocation } = await import("@@/shared/utils/location");
-        const event = useRequestEvent();
-        return await getIpLocation(event);
-      } else {
-        // @ts-ignore Deep types
-        return await $fetch("/api/ip-lookup");
-      }
-    })()
-  );
+  const { result: response, error } = await execute(async () => {
+    if (import.meta.server && tryUseNuxtApp()) {
+      const { getIpLocation } = await import("@@/shared/utils/location");
+      const event = useRequestEvent();
+      return getIpLocation(event);
+    } else {
+      return $fetch<IpapiResponse>("/api/ip-lookup");
+    }
+  });
 
-  // @ts-expect-error
   if (error || response.error) {
     console.error(error);
     return undefined;
   }
 
   return {
-    // @ts-expect-error
     lat: response.latitude,
-    // @ts-expect-error
     lng: response.longitude,
   };
 }
 
-export interface LocationResult extends google.maps.LatLngLiteral {
+export interface LocationResult extends Partial<google.maps.LatLngLiteral> {
   accuracy?: number;
 }
 export interface AccurateLocationOptions {
@@ -65,7 +62,7 @@ export async function getAccurateLocation(options?: AccurateLocationOptions): Pr
         });
       },
       reject,
-      options
+      options,
     );
   });
 
@@ -84,7 +81,7 @@ export async function getAccurateLocation(options?: AccurateLocationOptions): Pr
       console.error(error);
       $alert(error.message);
     },
-    options
+    options,
   );
 
   return readonly(reactiveLocation);
@@ -92,7 +89,7 @@ export async function getAccurateLocation(options?: AccurateLocationOptions): Pr
 
 export async function getLocation(options?: { aproximate?: boolean; watch?: boolean }) {
   if (import.meta.server || options?.aproximate) {
-    const coord = await getApproximateLocation();
+    const { result: coord } = await execute(getApproximateLocation);
     if (!coord) return undefined;
     return {
       isAccurate: false,
@@ -100,7 +97,7 @@ export async function getLocation(options?: { aproximate?: boolean; watch?: bool
     };
   }
 
-  const response = await execute(getAccurateLocation({ enableHighAccuracy: !options?.aproximate }));
+  const response = await execute(getAccurateLocation, { enableHighAccuracy: !options?.aproximate });
   if (!response.error) {
     return {
       isAccurate: true,
@@ -108,8 +105,7 @@ export async function getLocation(options?: { aproximate?: boolean; watch?: bool
     };
   }
 
-  console.error(response.error);
-  const { error, result } = await execute(getApproximateLocation());
+  const { error, result } = await execute(getApproximateLocation);
   if (error) {
     $alert("Unable to obtain your location");
     return undefined;
@@ -133,34 +129,44 @@ type WithDefaultReturnType<T extends LocationOptions> = T extends { default: obj
   ? LocationCoods
   : LocationCoods | undefined;
 
-export default async function useCoords<T extends LocationOptions>(options?: T): Promise<WithDefaultReturnType<T>> {
-  const pos = await (async function () {
-    const loc =
-      options?.initial ||
-      (await getLocation({
-        aproximate: !options?.accurate,
-      }));
-    if (!loc) return undefined;
+export default function useCoords<T extends LocationOptions>(
+  options?: MaybeRefOrGetter<T>,
+  dataOptions?: AsyncDataOptions<WithDefaultReturnType<T>>,
+) {
+  const getPos = async (options?: T) => {
+    const pos = await (async function () {
+      const loc =
+        options?.initial ||
+        (await getLocation({
+          aproximate: !options?.accurate,
+        }));
+      if (!loc) return undefined;
 
-    if (!loc.isAccurate && options?.accurate) {
-      if (import.meta.server) {
-        return undefined;
+      if (!loc.isAccurate && options?.accurate) {
+        if (import.meta.server) {
+          return undefined;
+        }
+
+        // TODO: Block until user allows or cancels the dialog
+        $alert("Please allow the website to get your location for correctness");
+        return await getLocation({ aproximate: false, watch: options.watch });
       }
 
-      // TODO: Block until user allows or cancels the dialog
-      $alert("Please allow the website to get your location for correctness");
-      return await getLocation({ aproximate: false, watch: options.watch });
+      return loc;
+    })();
+
+    if (!pos && options?.default) {
+      return {
+        isAccurate: false,
+        cood: options.default,
+      };
     }
 
-    return loc;
-  })();
+    return pos as WithDefaultReturnType<T>;
+  };
 
-  if (!pos && options?.default) {
-    return {
-      isAccurate: false,
-      cood: options.default,
-    };
-  }
-
-  return pos as WithDefaultReturnType<T>;
+  return useAsyncData("useCoords", () => getPos(toValue(options)), {
+    ...dataOptions,
+    watch: [() => toValue(options), ...(dataOptions?.watch || [])],
+  });
 }

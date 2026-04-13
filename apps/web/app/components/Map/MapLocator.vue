@@ -1,7 +1,7 @@
 <template>
   <Map ref="map" :initial-location="initialLocation" class="h-60" map-type-id="satellite">
     <div ref="pin">
-      <Icon name="bxs:pin" class="text-red-500 w-8 h-8 pin-glow" v-if="map && !map?.loading" />
+      <Icon v-if="map && !map?.loading" name="bxs:pin" class="text-red-500 w-8 h-8 pin-glow" />
     </div>
   </Map>
 </template>
@@ -35,17 +35,23 @@ function toCoord(
   };
 }
 
+const { data, error } = useCoords(() => ({
+  initial: props.initialLocation,
+  accurate: false,
+  default: {
+    //TODO: Our HQ
+    lat: -1.258507,
+    lng: 36.805931,
+  },
+}));
+
 async function createMarker(initialCoordinates?: LocationCoods) {
   if (!initialCoordinates) {
-    initialCoordinates = await useCoords({
-      initial: props.initialLocation,
-      accurate: false,
-      default: {
-        //TODO: Our HQ
-        lat: -1.258507,
-        lng: 36.805931,
-      },
-    });
+    if (error.value) {
+      consola.warn("Couldn't get user location, using default", error.value);
+    }
+
+    initialCoordinates = data.value;
   }
 
   if (!map.value) {
@@ -55,14 +61,14 @@ async function createMarker(initialCoordinates?: LocationCoods) {
   const { AdvancedMarkerElement } = (await window.google.maps.importLibrary("marker")) as google.maps.MarkerLibrary;
   return new AdvancedMarkerElement({
     map: map.value?.map,
-    position: initialCoordinates.cood,
+    position: initialCoordinates?.cood,
     content: pin.value,
     gmpDraggable: true,
   });
 }
 
 watch(
-  [() => map.value?.loading, props.initialLocation],
+  [() => map.value?.loading, () => props.initialLocation],
   async ([loading]) => {
     if (!map.value) {
       console.warn("Map Component Not Found");

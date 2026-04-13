@@ -1,4 +1,6 @@
 import type { H3Event } from "h3";
+import type {OneOf} from "@chiballc/types";
+import { execute } from "@chiballc/utils";
 
 export type IpapiResponse = OneOf<[IpapiError, IpapiSuccess]>;
 
@@ -76,12 +78,14 @@ export async function useIP(event?: H3Event) {
 
   if (typeof getRequestIp === "undefined") {
     const { getRequestIP } = await import("h3");
+    // eslint-disable-next-line no-var
     var ip =
       getRequestIP(event, {
         xForwardedFor: true,
       }) || event?.node.req.socket.remoteAddress;
   } else {
     // This will change in prod because of reverse proxy
+    // eslint-disable-next-line no-var
     var ip =
       getRequestIP(event, {
         xForwardedFor: true,

@@ -1,9 +1,8 @@
 <script lang="ts">
-import { computedAsync } from "@vueuse/core";
 import clsx from "clsx";
 import type { ClassNameValue } from "tailwind-merge";
 import type { CommandPaletteGroup, CommandPaletteItem } from "@nuxt/ui";
-import { select } from "#build/ui";
+import { debounce, execute } from "@chiballc/utils";
 
 export type SuggestionResponse = {
   suggestions: Array<{
@@ -75,7 +74,11 @@ async function emitPlaceCoords(placeID: string) {
   emits("coordinates", coords);
 }
 
-const center = computedAsync(() => props.initialLocation ?? useCoords());
+const { data: center } = useCoords(() => {
+  return {
+    initial: props.initialLocation,
+  };
+});
 
 const fetchSuggestions = debounce(async (value?: string) => {
   const trimmed = value?.trim?.();
@@ -151,13 +154,16 @@ function enterSubmit() {
 </script>
 
 <template>
-  <UModal :open @update:open="emits('update:open', $event)" v-if="modal">
+  <UModal v-if="modal" :open @update:open="emits('update:open', $event)">
     <template #content>
       <UCommandPalette
+        v-model:search-term="input"
         :groups="groups"
         class="flex-1"
         :loading
-        @update:modelValue="
+        placeholder="Start typing to search"
+        selected-icon="i-lucide-check"
+        @update:model-value="
           (item) => {
             const selected = data?.suggestions.find((s) => s.placePrediction.placeId === item.id);
             if (selected) {
@@ -167,13 +173,10 @@ function enterSubmit() {
             }
           }
         "
-        placeholder="Start typing to search"
-        v-model:search-term="input"
-        selected-icon="i-lucide-check"
       />
     </template>
   </UModal>
-  <div class="relative" :class="ui?.container" v-else>
+  <div v-else class="relative" :class="cn(ui?.container)">
     <UInputMenu
       :items="locationsSuggestions"
       placeholder="Search location..."
@@ -183,7 +186,15 @@ function enterSubmit() {
       open-on-focus
       value-key="id"
       class="w-full"
-      @update:modelValue="
+      :ui="{
+        item: 'cursor-pointer hover:bg-gray-100',
+        group: 'bg-white shadow-md rounded-md w-full p-2',
+        content: 'max-h-60 overflow-y-auto',
+        base: clsx('bg-white/80 backdrop-blur focus:outline-none input', ui?.input),
+        leadingIcon: ui?.leadingIcon,
+        empty: clsx('w-full p-2', ui?.empty),
+      }"
+      @update:model-value="
         (id: string) => {
           const selected = data?.suggestions.find((s) => s.placePrediction.placeId === id);
           if (selected) {
@@ -198,14 +209,6 @@ function enterSubmit() {
           input = (val.target as HTMLInputElement).value;
         }
       "
-      :ui="{
-        item: 'cursor-pointer hover:bg-gray-100',
-        group: 'bg-white shadow-md rounded-md w-full p-2',
-        content: 'max-h-60 overflow-y-auto',
-        base: clsx('bg-white/80 backdrop-blur focus:outline-none input', ui?.input),
-        leadingIcon: ui?.leadingIcon,
-        empty: clsx('w-full p-2', ui?.empty),
-      }"
     >
       <template #item="{ item }">
         <div class="flex flex-col">

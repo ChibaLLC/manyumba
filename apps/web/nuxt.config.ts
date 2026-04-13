@@ -46,7 +46,17 @@ export default defineNuxtConfig({
       sourcemap: false,
     },
     optimizeDeps: {
-      include: ["@vue/devtools-core", "@vue/devtools-kit"],
+      include: [
+        "@vue/devtools-core",
+        "@vue/devtools-kit",
+        "class-variance-authority",
+        "@vueuse/core",
+        "clsx",
+        "@chiballc/utils",
+        "tailwind-merge",
+        "zod/v4-mini",
+        "lucide-vue-next",
+      ],
     },
   },
   i18n: {

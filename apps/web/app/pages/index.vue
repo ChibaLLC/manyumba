@@ -27,12 +27,12 @@ function variant(expected: typeof query.lease) {
           </Button>
         </div>
         <InputLocation
-          class="w-[600px] h-14 rounded-lg focus:outline-none focus:ring-1 ring-purple-400 text-nm font-mulish lg:w-[700px]"
+          class="w-150 h-14 rounded-lg focus:outline-none focus:ring-1 ring-purple-400 text-nm font-mulish lg:w-175"
           placeholder="Enter a city, town or location to search"
-          @keydown.enter="navigateTo('./listings')"
           :ui="{
             input: 'py-3'
           }"
+          @keydown.enter="navigateTo('./listings')"
         />
       </div>
     </main>

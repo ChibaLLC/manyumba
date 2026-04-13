@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { Button } from "@/components/ui/button";
+import { execute } from "@chiballc/utils";
+
 const locator = useTemplateRef("locator");
 async function setPlaceCoords(coords: LocationCoods) {
-  execute(locator.value?.setMapCenter, coords.cood, coords.isAccurate)
+  execute(locator.value?.setMapCenter, coords.cood, coords.isAccurate);
   setTimeout(() => {
     if (!location.value) {
-      consola.warn("Force setting location because maps had a problem")
-      location.value = coords
+      consola.warn("Force setting location because maps had a problem");
+      location.value = coords;
     }
   });
 }
@@ -36,10 +38,12 @@ function next() {
       <p>You can use the search to get the general area. Then reposition the pin.</p>
     </div>
     <div class="flex w-full justify-between mt-4">
-      <Button class="w-fit bg-emerald-900 text-white hover:bg-emerald-800" @click="locator?.getCurrentLocation">Use Current Location</Button>
-      <InputLocation @coordinates="setPlaceCoords" :initialLocation="location" />
+      <Button class="w-fit bg-emerald-900 text-white hover:bg-emerald-800" @click="locator?.getCurrentLocation"
+        >Use Current Location</Button
+      >
+      <InputLocation :initial-location="location" @coordinates="setPlaceCoords" />
     </div>
-    <MapLocator class="my-2" ref="locator" @location="location = $event" />
+    <MapLocator ref="locator" class="my-2" @location="location = $event" />
     <Button class="self-end" @click="next()">Next</Button>
   </ListingContainer>
 </template>
