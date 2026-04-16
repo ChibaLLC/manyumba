@@ -187,10 +187,10 @@ function enterSubmit() {
       value-key="id"
       class="w-full"
       :ui="{
-        item: 'cursor-pointer hover:bg-gray-100',
-        group: 'bg-white shadow-md rounded-md w-full p-2',
+        item: 'cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700/50',
+        group: 'bg-white shadow-md rounded-md w-full p-2 dark:bg-gray-800/50',
         content: 'max-h-60 overflow-y-auto',
-        base: clsx('bg-white/80 backdrop-blur focus:outline-none input', ui?.input),
+        base: clsx('bg-white/80 backdrop-blur focus:outline-none dark:bg-gray-800/50 dark:ring-gray-600 dark:focus:ring-blue-500', ui?.input),
         leadingIcon: ui?.leadingIcon,
         empty: clsx('w-full p-2', ui?.empty),
       }"

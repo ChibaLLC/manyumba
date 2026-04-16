@@ -1,4 +1,5 @@
 import { z, safeParse } from "zod/v4-mini";
+import type { OneOf } from "@chiballc/types";
 
 type ZodSafeParseResult<T> =
   | { success: true; data: T; error: undefined }

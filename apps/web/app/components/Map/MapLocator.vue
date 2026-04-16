@@ -45,6 +45,7 @@ const { data, error } = useCoords(() => ({
   },
 }));
 
+const { getComponent } = useGoogleMaps();
 async function createMarker(initialCoordinates?: LocationCoods) {
   if (!initialCoordinates) {
     if (error.value) {
@@ -58,7 +59,7 @@ async function createMarker(initialCoordinates?: LocationCoods) {
     consola.warn("Map Value Component Not Found");
   }
 
-  const { AdvancedMarkerElement } = (await window.google.maps.importLibrary("marker")) as google.maps.MarkerLibrary;
+  const AdvancedMarkerElement = await getComponent("marker", "AdvancedMarkerElement");
   return new AdvancedMarkerElement({
     map: map.value?.map,
     position: initialCoordinates?.cood,
@@ -71,7 +72,6 @@ watch(
   [() => map.value?.loading, () => props.initialLocation],
   async ([loading]) => {
     if (!map.value) {
-      console.warn("Map Component Not Found");
       return;
     }
 

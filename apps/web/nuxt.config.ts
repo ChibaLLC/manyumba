@@ -56,6 +56,7 @@ export default defineNuxtConfig({
         "tailwind-merge",
         "zod/v4-mini",
         "lucide-vue-next",
+        'Consola',
       ],
     },
   },
