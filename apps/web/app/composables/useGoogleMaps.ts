@@ -31,6 +31,7 @@ export default function () {
   const config = useRuntimeConfig();
   const loadingLibrary = useState("googleMapsLoading", () => true);
   const map = useState("googleMapInstance", () => shallowRef<InstanceType<typeof google.maps.Map>>());
+  const loaded = computed(() => !loadingLibrary.value)
   const {
     onLoaded: onScriptLoaded,
     load,
@@ -120,7 +121,7 @@ export default function () {
         listeners[key]?.forEach(async (func) => {
           const { error } = await execute(func, e);
           if (error) {
-            console.error("[callback error - key]", error);
+            console.error("[callback error] - key:", error);
           }
         });
       });
@@ -161,11 +162,11 @@ export default function () {
         callback(window.google.maps, undefined);
       };
 
-      if (!loadingLibrary.value) {
+      if (!loaded) {
         payback();
       }
 
-      watch(loadingLibrary, payback, { once: true });
+      watch(loaded, payback, { once: true });
     },
     onError,
     getLibrary,
@@ -188,5 +189,6 @@ export default function () {
 
       listeners[event].delete(callback);
     },
+    loaded
   };
 }
